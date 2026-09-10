@@ -11,8 +11,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const VIEWS_DIR = path.join(__dirname, '..', 'views');
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const VIEWS_DIR = fs.existsSync(path.join(process.cwd(), 'views'))
+  ? path.join(process.cwd(), 'views')
+  : path.join(__dirname, '..', 'views');
+const PUBLIC_DIR = fs.existsSync(path.join(process.cwd(), 'public'))
+  ? path.join(process.cwd(), 'public')
+  : path.join(__dirname, '..', 'public');
 
 // Serve static assets
 app.use('/public', express.static(PUBLIC_DIR));
@@ -459,8 +463,12 @@ app.get('/health', (req: Request, res: Response) => {
 // Fallback to dashboard for unknown protected routes
 app.use((req: Request, res: Response) => renderView('dashboard.html', res));
 
-app.listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`🏫 VISION SCHOOL Admin Console running at http://localhost:${PORT}`);
-  console.log(`🔗 Connected API target: ${API_URL}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`🏫 VISION SCHOOL Admin Console running at http://localhost:${PORT}`);
+    console.log(`🔗 Connected API target: ${API_URL}`);
+  });
+}
+
+export default app;
 

@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "views/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/public/(.*)", "destination": "/public/$1" },
+    { "source": "/(.*)", "destination": "/api" }
+  ]
+}

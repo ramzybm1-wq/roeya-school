@@ -11,8 +11,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const VIEWS_DIR = path.join(__dirname, '..', 'views');
-const PUBLIC_DIR = path.join(__dirname, '..', 'public');
+const VIEWS_DIR = fs.existsSync(path.join(process.cwd(), 'views'))
+  ? path.join(process.cwd(), 'views')
+  : path.join(__dirname, '..', 'views');
+const PUBLIC_DIR = fs.existsSync(path.join(process.cwd(), 'public'))
+  ? path.join(process.cwd(), 'public')
+  : path.join(__dirname, '..', 'public');
 
 // Serve static assets (both /public and root)
 app.use('/public', express.static(PUBLIC_DIR));
@@ -198,8 +202,12 @@ app.use((err: any, req: Request, res: Response, next: any) => {
   renderView('500.html', res, 500);
 });
 
-app.listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`🎓 VISION SCHOOL Client Portal running at http://localhost:${PORT}`);
-  console.log(`🔗 Connected API target: ${API_URL}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`🎓 VISION SCHOOL Client Portal running at http://localhost:${PORT}`);
+    console.log(`🔗 Connected API target: ${API_URL}`);
+  });
+}
+
+export default app;
 
