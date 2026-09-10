@@ -27,6 +27,22 @@ export class DatabaseClient {
     return DatabaseClient.instance;
   }
 
+  private getPoolConfig(): PoolConfig {
+    const isSsl =
+      this.env.DATABASE_URL.includes('sslmode=require') ||
+      this.env.DATABASE_URL.includes('neon.tech') ||
+      this.env.DATABASE_URL.includes('supabase') ||
+      this.env.DATABASE_URL.includes('amazonaws.com') ||
+      this.env.NODE_ENV === 'production';
+
+    return {
+      connectionString: this.env.DATABASE_URL,
+      min: this.env.DATABASE_POOL_MIN,
+      max: this.env.DATABASE_POOL_MAX,
+      ...(isSsl ? { ssl: { rejectUnauthorized: false } } : {}),
+    };
+  }
+
   /**
    * Initializes the PostgreSQL connection pool and Drizzle ORM client.
    */
@@ -35,13 +51,7 @@ export class DatabaseClient {
       return this.dbInstance;
     }
 
-    const poolConfig: PoolConfig = {
-      connectionString: this.env.DATABASE_URL,
-      min: this.env.DATABASE_POOL_MIN,
-      max: this.env.DATABASE_POOL_MAX,
-    };
-
-    this.pool = new Pool(poolConfig);
+    this.pool = new Pool(this.getPoolConfig());
     this.dbInstance = drizzle(this.pool, { schema });
 
     return this.dbInstance;
@@ -53,12 +63,7 @@ export class DatabaseClient {
    */
   get db(): VisionSchoolDb {
     if (!this.dbInstance) {
-      const poolConfig: PoolConfig = {
-        connectionString: this.env.DATABASE_URL,
-        min: this.env.DATABASE_POOL_MIN,
-        max: this.env.DATABASE_POOL_MAX,
-      };
-      this.pool = new Pool(poolConfig);
+      this.pool = new Pool(this.getPoolConfig());
       this.dbInstance = drizzle(this.pool, { schema });
     }
     return this.dbInstance;
@@ -69,11 +74,7 @@ export class DatabaseClient {
    */
   get pgPool(): Pool {
     if (!this.pool) {
-      this.pool = new Pool({
-        connectionString: this.env.DATABASE_URL,
-        min: this.env.DATABASE_POOL_MIN,
-        max: this.env.DATABASE_POOL_MAX,
-      });
+      this.pool = new Pool(this.getPoolConfig());
     }
     return this.pool;
   }

@@ -31,8 +31,47 @@ export interface EnvConfig {
   ACTIVE_ACADEMIC_YEAR: string;
 }
 
+import fs from 'fs';
+import path from 'path';
+
+function loadDotEnv(): void {
+  const envPaths = [
+    path.resolve(process.cwd(), '.env'),
+    path.resolve(process.cwd(), '../../.env'),
+    path.resolve(__dirname, '../../../.env'),
+    path.resolve(__dirname, '../../../../.env'),
+  ];
+  for (const p of envPaths) {
+    if (fs.existsSync(p)) {
+      try {
+        const content = fs.readFileSync(p, 'utf-8');
+        for (const line of content.split('\n')) {
+          const trimmed = line.trim();
+          if (!trimmed || trimmed.startsWith('#')) continue;
+          const idx = trimmed.indexOf('=');
+          if (idx > 0) {
+            const key = trimmed.slice(0, idx).trim();
+            let val = trimmed.slice(idx + 1).trim();
+            if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+              val = val.slice(1, -1);
+            }
+            if (process.env[key] === undefined) {
+              process.env[key] = val;
+            }
+          }
+        }
+        break;
+      } catch {
+        // ignore read errors
+      }
+    }
+  }
+}
+
 export function loadEnvConfig(env: Record<string, string | undefined> = process.env): EnvConfig {
-  const nodeEnv = (env.NODE_ENV as 'development' | 'test' | 'production') || 'development';
+  loadDotEnv();
+  const activeEnv = process.env;
+  const nodeEnv = (activeEnv.NODE_ENV as 'development' | 'test' | 'production') || 'development';
 
   const config: EnvConfig = {
     NODE_ENV: nodeEnv,
