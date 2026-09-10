@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact &amp; Accès aux Campus | VISION SCHOOL</title>
+  <meta name="description" content="Contactez VISION SCHOOL : coordonnées téléphoniques, WhatsApp, adresses de nos campus à Alger et Oran, horaires d'ouverture et formulaire de message direct."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .contact-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-600) 100%);
+      color: #fff;
+      padding: 56px 40px 64px;
+      text-align: center;
+      position: relative;
+    }
+    .channels-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      max-width: 1280px;
+      margin: -32px auto 48px;
+      padding: 0 40px;
+      position: relative;
+      z-index: 10;
+    }
+    .channel-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      transition: all var(--t-fast);
+    }
+    .channel-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--indigo);
+    }
+    .channel-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .contact-main-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 36px;
+      max-width: 1280px;
+      margin: 0 auto 64px;
+      padding: 0 40px;
+      align-items: start;
+    }
+
+    .campus-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+    .map-preview {
+      height: 240px;
+      border-radius: var(--r-lg);
+      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCwoXdy-TUHizSzHmRUAO_7Pk2-VvDu_tkb6KRrBzGak9FMsP9LyGnbwxX0vxDZ9HhpIRb5DmfFcERXHqtpBRy0jiruJ3k8Qa-afB1AjyomVYHReesXZ965anSBZTLpJWSdzpF7QwLoRqw1kU6FZw8EPEeEMcl9NGd6yO7PU9SjXJQ1QnEKZAhr61I7HS4A_FF7E2jwTwoZ6gYRCqRJGi66nLbFihtMWOWt1NSooj5_KiSJiQMBEb9S');
+      background-size: cover;
+      background-position: center;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+
+    @media(max-width: 992px) {
+      .channels-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .contact-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media(max-width: 640px) {
+      .channels-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px;
+        margin-top: 16px;
+      }
+      .contact-main-grid {
+        padding: 0 16px;
+      }
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/inscription" class="client-nav-link">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link active">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire mon enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <div class="public-main">
+
+    <!-- Hero Header -->
+    <div class="contact-hero">
+      <div style="max-width:800px;margin:0 auto;position:relative;z-index:2;">
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 14px;background:rgba(255,255,255,0.14);border-radius:var(--r-full);font-size:12px;font-weight:600;margin-bottom:16px;letter-spacing:0.05em;text-transform:uppercase;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--gold);">support_agent</span>
+          À Votre Écoute
+        </div>
+        <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;color:#fff;">
+          Contactez Nos Équipes
+        </h1>
+        <p style="font-size:16px;color:rgba(255,255,255,0.85);max-width:620px;margin:0 auto;line-height:1.6;">
+          Nos conseillers pédagogiques et administratifs sont à votre disposition pour vous renseigner et vous accompagner dans votre projet scolaire.
+        </p>
+      </div>
+    </div>
+
+    <!-- 4 Direct Channels -->
+    <div class="channels-grid">
+      <!-- Phone -->
+      <div class="channel-card" id="card-channel-phone">
+        <div class="channel-icon" style="background:var(--navy-50);color:var(--navy);">
+          <span class="material-symbols-outlined">call</span>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;">Téléphone</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Dimanche au Jeudi, 8h - 16h30</div>
+        <a href="tel:" id="contact-channel-phone-link" class="btn btn-outline btn-sm w-full client-contact-phone" style="margin-top:auto;">
+          Chargement…
+        </a>
+      </div>
+
+      <!-- WhatsApp -->
+      <div class="channel-card" id="card-channel-whatsapp">
+        <div class="channel-icon" style="background:var(--success-bg);color:var(--success);">
+          <span class="material-symbols-outlined">chat</span>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;">WhatsApp Admissions</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Réponses rapides par messagerie</div>
+        <a href="#" target="_blank" id="contact-channel-whatsapp-link" class="btn btn-outline btn-sm w-full" style="margin-top:auto;border-color:var(--success);color:var(--success);">
+          Écrire sur WhatsApp
+        </a>
+      </div>
+
+      <!-- Email -->
+      <div class="channel-card" id="card-channel-email">
+        <div class="channel-icon" style="background:var(--indigo-50);color:var(--indigo);">
+          <span class="material-symbols-outlined">mail</span>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;">Courrier Électronique</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Réponse sous 24h ouvrées</div>
+        <a href="mailto:" id="contact-channel-email-link" class="btn btn-outline btn-sm w-full client-contact-email" style="margin-top:auto;">
+          Chargement…
+        </a>
+      </div>
+
+      <!-- RDV Visite -->
+      <div class="channel-card">
+        <div class="channel-icon" style="background:var(--warning-bg);color:var(--warning);">
+          <span class="material-symbols-outlined">calendar_month</span>
+        </div>
+        <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;">Visite Personnalisée</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Tous les samedis matin</div>
+        <a href="#contact-form" class="btn btn-primary btn-sm w-full" style="margin-top:auto;" onclick="document.getElementById('contact-subject').value='SCHOOL_VISIT';">
+          Prendre RDV
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Section: Form & Campus Map -->
+    <div class="contact-main-grid">
+
+      <!-- Left Column: Campuses & Hours -->
+      <div>
+        <h2 style="font-size:24px;font-weight:800;color:var(--navy);margin-bottom:20px;">Nos Campus &amp; Accès</h2>
+
+        <!-- Dynamic Campuses Container -->
+        <div id="campuses-container">
+          <div class="card p-6 text-center text-muted">
+            <span class="material-symbols-outlined spin" style="font-size:32px;">progress_activity</span>
+            <p class="mt-2">Chargement des coordonnées et plans des campus…</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Contact / Inquiry Form -->
+      <div id="contact-form" class="card" style="padding:32px;border-top:4px solid var(--indigo);">
+        <h2 style="font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px;">Envoyez-nous un message</h2>
+        <p style="font-size:14px;color:var(--text-muted);margin-bottom:24px;">
+          Remplissez le formulaire ci-dessous et notre équipe vous recontactera sous 24h.
+        </p>
+
+        <!-- Feedback Alert Banner -->
+        <div id="contact-form-alert" class="alert hidden" style="margin-bottom: 16px;"></div>
+
+        <form id="public-contact-form" style="display:flex;flex-direction:column;gap:16px;">
+          <div class="form-group mb-0">
+            <label class="form-label form-label-required" for="contact-name">Nom complet du parent</label>
+            <input class="form-control" id="contact-name" type="text" placeholder="Ex: Karim Benali" required/>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-label form-label-required" for="contact-phone">Numéro de téléphone</label>
+            <input class="form-control" id="contact-phone" type="tel" placeholder="05XX XX XX XX" required/>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-label" for="contact-email">Adresse email (optionnel)</label>
+            <input class="form-control" id="contact-email" type="email" placeholder="parent@email.dz"/>
+          </div>
+
+          <div class="mobile-stack" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="form-group mb-0">
+              <label class="form-label" for="contact-campus">Campus concerné</label>
+              <select class="form-control" id="contact-campus">
+                <option value="">Sélectionner un campus</option>
+              </select>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label" for="contact-subject">Motif de la demande</label>
+              <select class="form-control" id="contact-subject">
+                <option value="REGISTRATION">Admissions &amp; Inscriptions</option>
+                <option value="SCHOOL_VISIT">Réserver une visite de l'école</option>
+                <option value="TARIFF">Frais et tarifs de scolarité</option>
+                <option value="DOCUMENTS">Pièces à fournir</option>
+                <option value="OTHER">Autre renseignement</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-label form-label-required" for="contact-message">Votre message</label>
+            <textarea class="form-control" id="contact-message" rows="4" placeholder="Précisez le niveau de l'enfant et vos interrogations..." required></textarea>
+          </div>
+
+          <button class="btn btn-navy w-full" id="btn-submit-contact" style="padding:13px;font-size:15px;margin-top:8px;" type="submit">
+            <span class="material-symbols-outlined">send</span>
+            <span>Envoyer mon message</span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="client-brand-icon" style="width:32px;height:32px;"><span class="material-symbols-outlined" style="color:#fff;font-size:18px;">school</span></div>
+          <span class="client-footer-name" style="margin:0;">VISION SCHOOL</span>
+        </div>
+        <p class="client-footer-desc">
+          Établissement d'excellence dédié à l'épanouissement intellectuel, humain et créatif de chaque élève, de la maternelle au secondaire.
+        </p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/" class="client-footer-link">Accueil</a>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie photos</a>
+        <a href="/faq" class="client-footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Admissions</div>
+        <a href="/inscription" class="client-footer-link">Inscription en ligne</a>
+        <a href="/suivi" class="client-footer-link">Suivi de dossier</a>
+        <a href="/contact" class="client-footer-link">Prendre rendez-vous</a>
+        <a href="/niveaux-admissions#tarifs" class="client-footer-link">Grille tarifaire</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">location_on</span>
+          <span class="client-contact-address">Alger, Algérie</span>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">call</span>
+          <a href="tel:" class="client-contact-phone" style="color:inherit;text-decoration:none;">-</a>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">mail</span>
+          <a href="mailto:" class="client-contact-email" style="color:inherit;text-decoration:none;">-</a>
+        </div>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <div>© 2026 <span class="client-brand-name">VISION SCHOOL</span>. Tous droits réservés.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="/confidentialite" class="client-footer-link" style="margin:0;">Confidentialité &amp; Mentions</a>
+        <a href="http://localhost:3001" class="client-footer-link" style="margin:0;" target="_blank">Portail Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof initContactPage === 'function') {
+        initContactPage();
+      }
+    });
+  </script>
+</body>
+</html>

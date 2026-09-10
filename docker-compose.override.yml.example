@@ -1,0 +1,25 @@
+# ==============================================================================
+# docker-compose.override.yml — Local Development Overrides
+# ==============================================================================
+# Copy this file to docker-compose.override.yml and fill in your local values.
+# docker-compose.override.yml is gitignored — never commit it.
+#
+# Docker Compose automatically merges this file with docker-compose.yml
+# when running: docker compose up
+# ==============================================================================
+
+services:
+  postgres:
+    environment:
+      POSTGRES_DB: vision_school
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: CHANGE_TO_YOUR_LOCAL_PASSWORD
+
+  api:
+    environment:
+      DATABASE_URL: postgresql://postgres:CHANGE_TO_YOUR_LOCAL_PASSWORD@postgres:5432/vision_school?schema=public
+      AUTH_SECRET: CHANGE_TO_LOCAL_64_CHAR_RANDOM_SECRET_KEY_FOR_JWT_AND_SESSIONS
+      API_CORS_ORIGINS: http://localhost:3000,http://localhost:3001
+      PUBLIC_APP_URL: http://localhost:3000
+      ADMIN_APP_URL: http://localhost:3001
+      STORAGE_DRIVER: local

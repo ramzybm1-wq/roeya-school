@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Utilisateurs &amp; Rôles — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Utilisateurs</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestion des Utilisateurs &amp; Accès</h1>
+          <p class="page-subtitle">Administrateurs et agents de saisie uniquement — comptes parents gérés séparément.</p>
+        </div>
+        <button id="btn-add-user" class="btn btn-primary btn-sm">
+          <span class="material-symbols-outlined">person_add</span>
+          <span>Ajouter un collaborateur</span>
+        </button>
+      </div>
+
+      <!-- Alert -->
+      <div id="users-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Summary Cards -->
+      <div id="stat-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem;">
+        <div class="card" style="padding:1.25rem 1rem;text-align:center;">
+          <div id="stat-total" style="font-size:2rem;font-weight:700;color:var(--primary);line-height:1;">—</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;text-transform:uppercase;letter-spacing:.04em;">Total collaborateurs</div>
+        </div>
+        <div class="card" style="padding:1.25rem 1rem;text-align:center;">
+          <div id="stat-active" style="font-size:2rem;font-weight:700;color:var(--success);line-height:1;">—</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;text-transform:uppercase;letter-spacing:.04em;">Comptes actifs</div>
+        </div>
+        <div class="card" style="padding:1.25rem 1rem;text-align:center;">
+          <div id="stat-inactive" style="font-size:2rem;font-weight:700;color:var(--danger);line-height:1;">—</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;text-transform:uppercase;letter-spacing:.04em;">Désactivés / Suspendus</div>
+        </div>
+        <div class="card" style="padding:1.25rem 1rem;text-align:center;">
+          <div id="stat-superadmin" style="font-size:2rem;font-weight:700;color:var(--primary);line-height:1;">—</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;text-transform:uppercase;letter-spacing:.04em;">Super Admins</div>
+        </div>
+        <div class="card" style="padding:1.25rem 1rem;text-align:center;">
+          <div id="stat-admin" style="font-size:2rem;font-weight:700;color:var(--primary);line-height:1;">—</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;text-transform:uppercase;letter-spacing:.04em;">Administrateurs</div>
+        </div>
+        <div class="card" style="padding:1.25rem 1rem;text-align:center;">
+          <div id="stat-agent" style="font-size:2rem;font-weight:700;color:var(--primary);line-height:1;">—</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:0.35rem;text-transform:uppercase;letter-spacing:.04em;">Agents de saisie</div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="card mb-8">
+        <div class="card-header">
+          <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;flex:1;">
+            <div class="card-title">Comptes collaborateurs</div>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap;">
+              <button class="filter-tab active" data-role="">Tous</button>
+              <button class="filter-tab" data-role="SUPER_ADMIN">Super Admin</button>
+              <button class="filter-tab" data-role="ADMIN">Admin</button>
+              <button class="filter-tab" data-role="AGENT">Agent</button>
+            </div>
+          </div>
+          <div class="search-input-wrap" style="max-width:260px;">
+            <span class="material-symbols-outlined">search</span>
+            <input id="search-users" class="form-control" type="text" placeholder="Rechercher…"/>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Collaborateur</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Campus</th>
+                <th>Statut</th>
+                <th>Dernière connexion</th>
+                <th style="text-align:right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <tr><td colspan="7" class="text-center py-10 text-muted">Chargement…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit User Modal -->
+  <div id="modal-user" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-user-title" class="modal-title">Créer un compte collaborateur</h2>
+        <button id="btn-close-user-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-user" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="user-id"/>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="user-first-name">Prénom</label>
+              <input class="form-control" id="user-first-name" type="text" placeholder="Prénom" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="user-last-name">Nom</label>
+              <input class="form-control" id="user-last-name" type="text" placeholder="Nom de famille" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="user-email">Email institutionnel</label>
+            <input class="form-control" id="user-email" type="email" placeholder="nom@visionschool.dz" required/>
+          </div>
+          <div class="form-group" id="pw-group">
+            <label class="form-label form-label-required" for="user-password">Mot de passe temporaire</label>
+            <input class="form-control" id="user-password" type="password" placeholder="••••••••"/>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="user-role">Rôle</label>
+              <select id="user-role" class="form-control form-select">
+                <option value="AGENT">Agent d'inscription (Staff)</option>
+                <option value="ADMIN">Administrateur</option>
+                <option value="SUPER_ADMIN">Super Administrateur</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="user-school">Campus affecté</label>
+              <select id="user-school" class="form-control form-select">
+                <option value="">Tous les campus</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-user" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-user" type="submit" class="btn btn-primary">Créer le compte</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete User Confirmation Modal -->
+  <div id="modal-delete-user" class="modal-backdrop">
+    <div class="modal" style="max-width:480px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined" style="color:var(--danger);font-size:24px;">warning</span>
+          <h2 class="modal-title">Supprimer ce compte ?</h2>
+        </div>
+        <button id="btn-close-delete-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="delete-user-id"/>
+        <p style="font-size:0.9rem;color:var(--text-primary);margin-bottom:1rem;">
+          Cette action supprimera l'accès de cet utilisateur.
+        </p>
+        <div style="background:var(--bg-subtle, rgba(0,0,0,0.03));border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1rem;margin-bottom:1rem;">
+          <div style="margin-bottom:0.4rem;font-size:0.85rem;"><strong>Nom :</strong> <span id="del-user-name">—</span></div>
+          <div style="margin-bottom:0.4rem;font-size:0.85rem;"><strong>Email :</strong> <span id="del-user-email">—</span></div>
+          <div style="font-size:0.85rem;"><strong>Rôle :</strong> <span id="del-user-role">—</span></div>
+        </div>
+        <div id="delete-error-alert" class="alert alert-danger hidden mb-2" style="font-size:0.85rem;"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-cancel-delete" type="button" class="btn btn-secondary">Annuler</button>
+        <button id="btn-confirm-delete" type="button" class="btn" style="background:var(--danger);color:#fff;border:none;">
+          <span class="material-symbols-outlined" style="font-size:16px;">delete_forever</span>
+          <span>Supprimer définitivement</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .filter-tab{padding:.35rem .85rem;border-radius:var(--radius-full);border:1px solid var(--border-color);background:transparent;cursor:pointer;font-size:.8rem;font-weight:500;color:var(--text-muted);transition:all .15s;}
+    .filter-tab:hover{border-color:var(--primary);color:var(--primary);}
+    .filter-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
+    .badge-role{display:inline-flex;align-items:center;padding:.2rem .65rem;border-radius:var(--radius-full);font-size:.72rem;font-weight:600;}
+    .badge-role.SUPER_ADMIN{background:rgba(245,158,11,.15);color:#d97706;}
+    .badge-role.ADMIN{background:rgba(99,102,241,.15);color:#6366f1;}
+    .badge-role.AGENT{background:rgba(16,185,129,.15);color:#059669;}
+    .status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+    .status-dot.ACTIVE{background:var(--success);}
+    .status-dot.DISABLED,.status-dot.INACTIVE{background:var(--danger);}
+    .status-dot.SUSPENDED{background:var(--warning);}
+    .status-dot.INVITED{background:var(--info);}
+    .action-wrap{position:relative;display:inline-block;}
+    .action-drop{display:none;position:absolute;right:0;top:100%;z-index:50;background:var(--card-bg);border:1px solid var(--border-color);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);min-width:190px;padding:.25rem 0;}
+    .action-drop.open{display:block;}
+    .action-drop button{display:flex;align-items:center;gap:.5rem;width:100%;padding:.55rem 1rem;background:none;border:none;cursor:pointer;font-size:.82rem;color:var(--text-primary);transition:background .1s;}
+    .action-drop button:hover{background:var(--hover-bg);}
+    .action-drop button.danger{color:var(--danger);}
+    .action-drop button.success-btn{color:var(--success);}
+    .action-drop .sep{height:1px;background:var(--border-color);margin:.25rem 0;}
+  </style>
+
+  <script>
+  (async () => {
+    const API_BASE = '/api';
+    const API = `${API_BASE}/admin`;
+    const tok = () => localStorage.getItem('vs_admin_token') || localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken') || (document.cookie.match(/(?:^|;\s*)vs_admin_session=([^;]+)/)?.[1]);
+    const hdr = () => {
+      const token = tok();
+      const h = { 'Content-Type': 'application/json' };
+      if (token) h['Authorization'] = `Bearer ${token}`;
+      return h;
+    };
+
+    let allUsers = [], schools = [], currentRole = '', currentSearch = '';
+
+    function escapeHtml(s){
+      if (!s) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function showAlert(msg, type='danger'){
+      const el=document.getElementById('users-alert');
+      el.textContent=msg; el.className=`alert alert-${type} mb-6`;
+    }
+    function hideAlert(){ document.getElementById('users-alert').className='alert hidden mb-6'; }
+
+    function roleBadge(r){
+      const L={SUPER_ADMIN:'Super Admin',ADMIN:'Admin',AGENT:'Agent'};
+      return `<span class="badge-role ${r}">${L[r]||r}</span>`;
+    }
+    function statusLabel(s){
+      const map={ACTIVE:'Actif',DISABLED:'Désactivé',SUSPENDED:'Suspendu',INVITED:'Invité'};
+      return `<span class="status-dot ${s}"></span>${map[s]||s}`;
+    }
+    function fmtDate(iso){
+      if(!iso) return '<span class="text-muted">—</span>';
+      return new Date(iso).toLocaleDateString('fr-DZ',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    }
+    function schoolLabel(ids){
+      if(!ids||!ids.length) return '<span class="text-muted">Tous</span>';
+      const f=schools.filter(s=>ids.includes(s.id));
+      return f.length ? f.map(s=>s.name).join(', ') : '<span class="text-muted">—</span>';
+    }
+
+    function renderTable(){
+      const tbody=document.getElementById('users-tbody');
+      const rows=allUsers.filter(u=>{
+        const mr=!currentRole||u.role===currentRole;
+        const q=currentSearch.toLowerCase();
+        const ms=!q||u.firstName.toLowerCase().includes(q)||u.lastName.toLowerCase().includes(q)||u.email.toLowerCase().includes(q);
+        return mr&&ms;
+      });
+      if(!rows.length){tbody.innerHTML=`<tr><td colspan="7" class="text-center py-10 text-muted">Aucun utilisateur trouvé.</td></tr>`;return;}
+      tbody.innerHTML=rows.map(u=>{
+        const fullName = `${u.firstName} ${u.lastName}`;
+        return `
+        <tr>
+          <td><strong>${escapeHtml(fullName)}</strong></td>
+          <td>${escapeHtml(u.email)}</td>
+          <td>${roleBadge(u.role)}</td>
+          <td>${schoolLabel(u.allowedSchoolIds)}</td>
+          <td>${statusLabel(u.status)}</td>
+          <td>${fmtDate(u.lastLoginAt)}</td>
+          <td style="text-align:right;">
+            <div class="action-wrap">
+              <button class="btn-icon btn-icon-sm" onclick="toggleDrop('drop-${u.id}',event)">
+                <span class="material-symbols-outlined">more_vert</span>
+              </button>
+              <div class="action-drop" id="drop-${u.id}">
+                <button onclick="openEdit('${u.id}')"><span class="material-symbols-outlined" style="font-size:16px">edit</span>Modifier</button>
+                ${u.status==='INVITED'?`<button onclick="resendInv('${u.id}')"><span class="material-symbols-outlined" style="font-size:16px">forward_to_inbox</span>Renvoyer invitation</button>`:''}
+                <div class="sep"></div>
+                ${(u.status==='ACTIVE'||u.status==='INVITED')?
+                  `<button class="danger" onclick="disableUsr('${u.id}','${escapeHtml(fullName)}')"><span class="material-symbols-outlined" style="font-size:16px">block</span>Désactiver</button>`:
+                  `<button class="success-btn" onclick="reactivateUsr('${u.id}','${escapeHtml(fullName)}')"><span class="material-symbols-outlined" style="font-size:16px">check_circle</span>Réactiver</button>`
+                }
+                <div class="sep"></div>
+                <button class="danger" onclick="confirmDeleteUser('${u.id}')">
+                  <span class="material-symbols-outlined" style="font-size:16px">delete</span>Supprimer
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      `}).join('');
+    }
+
+    window.toggleDrop=function(id,e){
+      e.stopPropagation();
+      document.querySelectorAll('.action-drop.open').forEach(d=>{if(d.id!==id)d.classList.remove('open');});
+      document.getElementById(id)?.classList.toggle('open');
+    };
+    document.addEventListener('click',()=>document.querySelectorAll('.action-drop.open').forEach(d=>d.classList.remove('open')));
+
+    async function loadSummary(){
+      try{
+        const r=await fetch(`${API}/users/summary`,{headers:hdr()});
+        const d=await r.json();
+        if(d.success){
+          document.getElementById('stat-total').textContent=d.data.total;
+          document.getElementById('stat-active').textContent=d.data.active;
+          document.getElementById('stat-inactive').textContent=d.data.inactive;
+          document.getElementById('stat-superadmin').textContent=d.data.superAdmins;
+          document.getElementById('stat-admin').textContent=d.data.admins;
+          document.getElementById('stat-agent').textContent=d.data.agents;
+        }
+      }catch(e){console.warn('summary err',e);}
+    }
+
+    async function loadUsers(){
+      try{
+        const r=await fetch(`${API}/users`,{headers:hdr()});
+        const d=await r.json();
+        if(d.success){allUsers=d.data;renderTable();}
+        else showAlert(d.message||'Erreur de chargement.');
+      }catch(e){showAlert('Erreur réseau.');}
+    }
+
+    async function loadSchools(){
+      try{
+        const r=await fetch(`${API}/schools`,{headers:hdr()});
+        const d=await r.json();
+        if(d.success){
+          schools=d.data;
+          const sel=document.getElementById('user-school');
+          schools.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.name;sel.appendChild(o);});
+        }
+      }catch(e){}
+    }
+
+    document.querySelectorAll('.filter-tab').forEach(b=>{
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-tab').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        currentRole=b.dataset.role;
+        renderTable();
+      });
+    });
+    document.getElementById('search-users').addEventListener('input',e=>{currentSearch=e.target.value;renderTable();});
+
+    function openModal(){document.getElementById('modal-user').classList.add('active');}
+    function closeModal(){
+      document.getElementById('modal-user').classList.remove('active');
+      document.getElementById('form-user').reset();
+      document.getElementById('user-id').value='';
+      document.getElementById('modal-user-title').textContent='Créer un compte collaborateur';
+      document.getElementById('btn-save-user').textContent='Créer le compte';
+      document.getElementById('pw-group').style.display='';
+      hideAlert();
+    }
+    document.getElementById('btn-add-user').addEventListener('click',openModal);
+    document.getElementById('btn-close-user-modal').addEventListener('click',closeModal);
+    document.getElementById('btn-cancel-user').addEventListener('click',closeModal);
+    document.getElementById('modal-user').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+    window.openEdit=function(uid){
+      document.querySelectorAll('.action-drop.open').forEach(d=>d.classList.remove('open'));
+      const u=allUsers.find(x=>x.id===uid);if(!u)return;
+      document.getElementById('user-id').value=u.id;
+      document.getElementById('user-first-name').value=u.firstName;
+      document.getElementById('user-last-name').value=u.lastName;
+      document.getElementById('user-email').value=u.email;
+      document.getElementById('user-role').value=u.role;
+      document.getElementById('user-school').value=u.allowedSchoolIds[0]||'';
+      document.getElementById('pw-group').style.display='none';
+      document.getElementById('modal-user-title').textContent='Modifier le collaborateur';
+      document.getElementById('btn-save-user').textContent='Enregistrer';
+      openModal();
+    };
+
+    document.getElementById('form-user').addEventListener('submit',async e=>{
+      e.preventDefault();hideAlert();
+      const uid=document.getElementById('user-id').value;
+      const isEdit=!!uid;
+      const payload={
+        firstName:document.getElementById('user-first-name').value.trim(),
+        lastName:document.getElementById('user-last-name').value.trim(),
+        email:document.getElementById('user-email').value.trim(),
+        role:document.getElementById('user-role').value,
+        allowedSchoolIds:document.getElementById('user-school').value?[document.getElementById('user-school').value]:[],
+      };
+      if(!isEdit) payload.password=document.getElementById('user-password').value;
+      try{
+        const r=await fetch(isEdit?`${API}/users/${uid}`:`${API}/users`,{method:isEdit?'PUT':'POST',headers:hdr(),body:JSON.stringify(payload)});
+        const d=await r.json();
+        if(d.success){closeModal();await loadUsers();await loadSummary();}
+        else showAlert(d.message||'Erreur lors de la sauvegarde.');
+      }catch(e){showAlert('Erreur réseau.');}
+    });
+
+    window.disableUsr=async function(uid,name){
+      document.querySelectorAll('.action-drop.open').forEach(d=>d.classList.remove('open'));
+      if(!confirm(`Désactiver le compte de ${name} ?`))return;
+      try{
+        const r=await fetch(`${API}/users/${uid}/disable`,{method:'POST',headers:hdr()});
+        const d=await r.json();
+        if(d.success){await loadUsers();await loadSummary();}
+        else showAlert(d.message||'Erreur.');
+      }catch(e){showAlert('Erreur réseau.');}
+    };
+
+    window.reactivateUsr=async function(uid,name){
+      document.querySelectorAll('.action-drop.open').forEach(d=>d.classList.remove('open'));
+      if(!confirm(`Réactiver le compte de ${name} ?`))return;
+      try{
+        const r=await fetch(`${API}/users/${uid}/reactivate`,{method:'POST',headers:hdr()});
+        const d=await r.json();
+        if(d.success){await loadUsers();await loadSummary();}
+        else showAlert(d.message||'Erreur.');
+      }catch(e){showAlert('Erreur réseau.');}
+    };
+
+    window.resendInv=async function(uid){
+      document.querySelectorAll('.action-drop.open').forEach(d=>d.classList.remove('open'));
+      try{
+        const r=await fetch(`${API}/users/${uid}/resend-invitation`,{method:'POST',headers:hdr()});
+        const d=await r.json();
+        if(d.success)showAlert('Invitation renvoyée avec succès.','success');
+        else showAlert(d.message||'Erreur.');
+      }catch(e){showAlert('Erreur réseau.');}
+    };
+
+    // ── Delete Confirmation Modal Logic ──
+    window.confirmDeleteUser=function(uid){
+      document.querySelectorAll('.action-drop.open').forEach(d=>d.classList.remove('open'));
+      const u=allUsers.find(x=>x.id===uid);
+      if(!u) return;
+      document.getElementById('delete-user-id').value=u.id;
+      document.getElementById('del-user-name').textContent=`${u.firstName} ${u.lastName}`;
+      document.getElementById('del-user-email').textContent=u.email;
+      const roleMap={SUPER_ADMIN:'Super Administrateur',ADMIN:'Administrateur',AGENT:'Agent de saisie'};
+      document.getElementById('del-user-role').textContent=roleMap[u.role]||u.role;
+      document.getElementById('delete-error-alert').classList.add('hidden');
+      document.getElementById('modal-delete-user').classList.add('active');
+    };
+
+    function closeDeleteModal(){
+      document.getElementById('modal-delete-user').classList.remove('active');
+      document.getElementById('delete-user-id').value='';
+      document.getElementById('delete-error-alert').classList.add('hidden');
+    }
+
+    document.getElementById('btn-close-delete-modal')?.addEventListener('click',closeDeleteModal);
+    document.getElementById('btn-cancel-delete')?.addEventListener('click',closeDeleteModal);
+    document.getElementById('modal-delete-user')?.addEventListener('click',e=>{
+      if(e.target===e.currentTarget)closeDeleteModal();
+    });
+
+    document.getElementById('btn-confirm-delete')?.addEventListener('click',async()=>{
+      const uid=document.getElementById('delete-user-id').value;
+      if(!uid)return;
+      const errEl=document.getElementById('delete-error-alert');
+      errEl.classList.add('hidden');
+
+      const btn=document.getElementById('btn-confirm-delete');
+      const origText=btn.innerHTML;
+      btn.disabled=true;
+      btn.innerHTML='<span>Suppression...</span>';
+
+      try{
+        const r=await fetch(`${API}/users/${uid}`,{method:'DELETE',headers:hdr()});
+        const d=await r.json();
+        if(d.success){
+          closeDeleteModal();
+          showAlert('Compte collaborateur supprimé définitivement.','success');
+          await loadUsers();
+          await loadSummary();
+        }else{
+          errEl.textContent=d.error?.message || d.message || 'Impossible de supprimer cet utilisateur.';
+          errEl.classList.remove('hidden');
+        }
+      }catch(err){
+        errEl.textContent='Erreur réseau lors de la suppression.';
+        errEl.classList.remove('hidden');
+      }finally{
+        btn.disabled=false;
+        btn.innerHTML=origText;
+      }
+    });
+
+    await Promise.all([loadSchools(),loadSummary(),loadUsers()]);
+  })();
+  </script>
+</body>
+</html>

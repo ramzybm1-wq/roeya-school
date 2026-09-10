@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulaire d'inscription — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .fb-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      margin-bottom: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .fb-section-header {
+      padding: 18px 24px;
+      background: var(--surface-alt);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .fb-field-row {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.15s ease;
+    }
+    .fb-field-row:last-child {
+      border-bottom: none;
+    }
+    .fb-field-row:hover {
+      background: rgba(15, 30, 61, 0.02);
+    }
+    .fb-field-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+    .fb-field-label {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fb-field-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .fb-field-controls {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .toggle-switch {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+    .toggle-slider {
+      width: 38px;
+      height: 20px;
+      background-color: var(--border);
+      border-radius: 20px;
+      position: relative;
+      transition: background-color 0.2s;
+    }
+    .toggle-slider:before {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: var(--indigo);
+    }
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(18px);
+    }
+    .toggle-switch input:disabled + .toggle-slider {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Formulaire d'inscription</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Éditeur de Formulaire d'Inscription</h1>
+          <p class="page-subtitle">Personnalisez les rubriques, libellés, champs obligatoires et options du portail public sans modifier le code.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-open-preview" class="btn btn-secondary btn-sm flex items-center gap-2" onclick="openPreviewModal()">
+            <span class="material-symbols-outlined" style="font-size:18px;">preview</span>
+            <span>Prévisualiser le formulaire</span>
+          </button>
+          <a href="http://localhost:3000/inscription?preview=true" target="_blank" class="btn btn-secondary btn-sm flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:18px;">open_in_new</span>
+            <span>Ouvrir sur le portail</span>
+          </a>
+          <button id="btn-publish-form" class="btn btn-primary btn-sm flex items-center gap-2">
+            <span class="material-symbols-outlined" style="font-size:18px;">publish</span>
+            <span>Publier la version</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Status & Version Bar -->
+      <div class="card mb-6" style="background: linear-gradient(135deg, #091426, #1e293b); color: #fff;">
+        <div class="card-body-sm flex justify-between items-center flex-wrap gap-4">
+          <div class="flex items-center gap-3">
+            <span class="badge" style="background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.4);">
+              <span class="badge-dot" style="background: #34d399;"></span>
+              <span id="fb-version-label">Version v1 - Publiée</span>
+            </span>
+            <span class="text-xs text-muted" style="color: #94a3b8;" id="fb-last-update">Enregistrement automatique des modifications actif</span>
+          </div>
+          <div class="text-xs text-muted" style="color: #cbd5e1;">
+            💡 Les modifications de libellés et de bascules sont synchronisées avec l'API publique en temps réel.
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Builder Sections Container -->
+      <div id="form-builder-sections">
+        <div class="card py-12 text-center text-muted">
+          Chargement de la structure du formulaire…
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Edit Field Details -->
+  <div id="modal-edit-field" class="modal-backdrop">
+    <div class="modal" style="max-width: 550px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Modifier le champ</h2>
+        <button id="btn-close-field-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-edit-field" novalidate>
+        <input type="hidden" id="edit-field-id"/>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label form-label-required" for="edit-field-label-fr">Libellé (Français)</label>
+            <input class="form-control" id="edit-field-label-fr" type="text" required/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-field-label-ar">Libellé (Arabe - facultatif)</label>
+            <input class="form-control" id="edit-field-label-ar" type="text" dir="rtl"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-field-placeholder">Texte indicatif (Placeholder)</label>
+            <input class="form-control" id="edit-field-placeholder" type="text"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-field-help">Texte d'aide ou consigne pour les parents</label>
+            <input class="form-control" id="edit-field-help" type="text"/>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group mb-0">
+              <label class="form-check">
+                <input class="form-check-input" id="edit-field-required" type="checkbox"/>
+                <span class="form-check-label font-medium">Champ obligatoire</span>
+              </label>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-check">
+                <input class="form-check-input" id="edit-field-visible" type="checkbox"/>
+                <span class="form-check-label font-medium">Visible sur le portail</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-field" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-submit-field" type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add Document Requirement -->
+  <div id="modal-add-doc-requirement" class="modal-backdrop">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter une pièce justificative</h2>
+        <button id="btn-close-doc-req-modal" class="btn-icon btn-icon-sm" type="button" onclick="closeAddDocReqModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-add-doc-req" onsubmit="submitAddDocReq(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label form-label-required" for="doc-req-type">Type de document</label>
+            <select class="form-control" id="doc-req-type" required>
+              <option value="">Sélectionner un type de document…</option>
+            </select>
+          </div>
+
+          <div style="font-weight:600;font-size:13px;color:var(--text-secondary);margin:16px 0 8px;">Portée d'application (Filtrage)</div>
+          <div class="grid grid-cols-2 gap-3 mb-3">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs" for="doc-req-school">Établissement</label>
+              <select class="form-control" id="doc-req-school">
+                <option value="">Tous les établissements (Global)</option>
+              </select>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label text-xs" for="doc-req-year">Année académique</label>
+              <select class="form-control" id="doc-req-year">
+                <option value="">Toutes les années académiques</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 mb-4">
+            <div class="form-group mb-0">
+              <label class="form-label text-xs" for="doc-req-cycle">Cycle</label>
+              <select class="form-control" id="doc-req-cycle">
+                <option value="">Tous les cycles</option>
+              </select>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label text-xs" for="doc-req-level">Niveau</label>
+              <select class="form-control" id="doc-req-level">
+                <option value="">Tous les niveaux</option>
+              </select>
+            </div>
+            <div class="form-group mb-0">
+              <label class="form-label text-xs" for="doc-req-choice">Filière / Option</label>
+              <select class="form-control" id="doc-req-choice">
+                <option value="">Toutes les filières</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="font-weight:600;font-size:13px;color:var(--text-secondary);margin:16px 0 8px;">Visibilité &amp; Règles</div>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="form-check">
+              <input class="form-check-input" id="doc-req-show-client" type="checkbox" checked/>
+              <span class="form-check-label font-medium text-sm">Afficher côté client</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" id="doc-req-is-required" type="checkbox" checked/>
+              <span class="form-check-label font-medium text-sm">Document obligatoire</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" id="doc-req-block" type="checkbox" checked/>
+              <span class="form-check-label font-medium text-sm">Bloquer la soumission si absent</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" id="doc-req-is-active" type="checkbox" checked/>
+              <span class="form-check-label font-medium text-sm">Règle active</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeAddDocReqModal()">Annuler</button>
+          <button type="submit" id="btn-submit-add-doc-req" class="btn btn-primary">Ajouter la pièce justificative</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Live Form Preview -->
+  <div id="modal-preview-form" class="modal-backdrop">
+    <div class="modal" style="max-width: 800px;">
+      <div class="modal-header">
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined" style="color:var(--indigo);">preview</span>
+          <h2 class="modal-title">Prévisualisation du tunnel d'inscription</h2>
+        </div>
+        <button class="btn-icon btn-icon-sm" type="button" onclick="closePreviewModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <div class="modal-body" style="background:var(--bg-app);padding:24px;">
+        <div id="preview-stepper-container" style="margin-bottom:24px;"></div>
+        <div id="preview-body-container" class="card p-6" style="background:#fff;border-radius:var(--r-xl);box-shadow:var(--shadow-sm);"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closePreviewModal()">Fermer la prévisualisation</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    const tok = () => localStorage.getItem('vs_admin_token') || localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken') || (document.cookie.match(/(?:^|;\s*)vs_admin_session=([^;]+)/)?.[1]);
+    const hdr = () => {
+      const token = tok();
+      const h = { 'Content-Type': 'application/json' };
+      if (token) h['Authorization'] = `Bearer ${token}`;
+      return h;
+    };
+
+    let activeForm = null;
+
+    function escapeHtml(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function showStatusFeedback(msg, isError = false) {
+      const el = document.getElementById('fb-last-update');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.color = isError ? '#f87171' : '#34d399';
+      setTimeout(() => {
+        el.textContent = 'Enregistrement automatique des modifications actif';
+        el.style.color = '#94a3b8';
+      }, 4000);
+    }
+
+    async function loadFormDefinition() {
+      const container = document.getElementById('form-builder-sections');
+      if (!container) return;
+      container.innerHTML = '<div class="card py-12 text-center text-muted">Chargement de la structure du formulaire…</div>';
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/forms/default`, { headers: hdr() });
+        const json = await res.json();
+
+        if (!json.success || !json.data) {
+          container.innerHTML = '<div class="card py-12 text-center text-danger">Impossible de charger la structure du formulaire.</div>';
+          return;
+        }
+
+        activeForm = json.data;
+        renderFormMeta(activeForm);
+        renderSections(activeForm.sections || []);
+      } catch (err) {
+        console.error('[FormBuilder] Error loading form:', err);
+        container.innerHTML = '<div class="card py-12 text-center text-danger">Erreur de communication avec le serveur.</div>';
+      }
+    }
+
+    function renderFormMeta(form) {
+      const verLabel = document.getElementById('fb-version-label');
+      if (verLabel) {
+        verLabel.textContent = `Version v${form.version || 1} — ${form.status === 'PUBLISHED' ? 'Publiée' : 'Brouillon'}`;
+      }
+    }
+
+    function renderSections(sections) {
+      const container = document.getElementById('form-builder-sections');
+      if (!container) return;
+
+      if (!sections || sections.length === 0) {
+        container.innerHTML = '<div class="card py-12 text-center text-muted">Aucune section définie dans ce formulaire.</div>';
+        return;
+      }
+
+      container.innerHTML = sections.map(sec => {
+        if (sec.key === 'step_documents') {
+          return `
+            <div class="fb-section" data-section-id="${sec.id}" style="border: 2px solid var(--indigo); box-shadow: 0 4px 12px rgba(99,102,241,0.08);">
+              <div class="fb-section-header" style="background: rgba(99,102,241,0.05); border-bottom: 1.5px solid rgba(99,102,241,0.15);">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="color:var(--indigo);font-size:22px;">folder_shared</span>
+                    <span class="font-bold text-base text-primary">${escapeHtml(sec.labelFr)}</span>
+                    ${sec.labelAr ? `<span class="text-xs text-muted" dir="rtl">(${escapeHtml(sec.labelAr)})</span>` : ''}
+                    <span class="badge ${sec.isVisible !== false ? 'badge-open' : 'badge-danger'} text-xs" id="badge-doc-step-status">
+                      ${sec.isVisible !== false ? 'Étape Active' : 'Étape Désactivée (Ignorée)'}
+                    </span>
+                  </div>
+                  <div class="text-xs text-muted mt-1">Étape 4 du tunnel d'inscription client • Rubrique technique : <code>step_documents</code></div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold" style="color:var(--text-secondary);">Afficher cette étape :</span>
+                    <label class="toggle-switch">
+                      <input type="checkbox" id="step-doc-visible-toggle" ${sec.isVisible !== false ? 'checked' : ''} onchange="toggleStep4Visibility('${sec.id}', this.checked)">
+                      <span class="toggle-slider"></span>
+                      <span id="step-doc-visible-text" style="font-weight:600;color:${sec.isVisible !== false ? 'var(--indigo)' : 'var(--text-muted)'};">${sec.isVisible !== false ? 'ON' : 'OFF'}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-6">
+                <!-- Disabled Notice Banner -->
+                <div id="step-doc-disabled-banner" style="display:${sec.isVisible !== false ? 'none' : 'flex'};align-items:flex-start;gap:12px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:var(--r-lg);padding:14px 18px;margin-bottom:20px;">
+                  <span class="material-symbols-outlined text-danger" style="font-size:24px;">info</span>
+                  <div>
+                    <div class="font-bold text-sm text-danger">Étape 4 masquée pour les candidats</div>
+                    <div class="text-xs text-muted mt-1">Le portail client sautera directement l'étape des documents (Enchaînement automatique : <strong>1. Établissement → 2. Élève → 3. Parent → 4. Confirmation</strong>). Aucune pièce justificative ne sera exigée.</div>
+                  </div>
+                </div>
+
+                <!-- Step 4 Metadata Configuration Form -->
+                <div class="card p-5 mb-6" style="background:var(--surface-alt);border:1px solid var(--border);">
+                  <div class="font-bold text-sm text-primary mb-3 flex items-center gap-2">
+                    <span class="material-symbols-outlined" style="font-size:18px;color:var(--indigo);">tune</span>
+                    Paramètres de l'étape sur le portail client
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div class="form-group mb-0">
+                      <label class="form-label text-xs font-semibold" for="doc-step-label-fr">Titre de l'étape (Français)</label>
+                      <input class="form-control" id="doc-step-label-fr" type="text" value="${escapeHtml(sec.labelFr)}"/>
+                    </div>
+                    <div class="form-group mb-0">
+                      <label class="form-label text-xs font-semibold" for="doc-step-label-ar">Titre de l'étape (Arabe)</label>
+                      <input class="form-control" id="doc-step-label-ar" type="text" dir="rtl" value="${escapeHtml(sec.labelAr || '')}"/>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4 mb-3">
+                    <div class="form-group mb-0">
+                      <label class="form-label text-xs font-semibold" for="doc-step-desc-fr">Consigne / Description (Français)</label>
+                      <textarea class="form-control" id="doc-step-desc-fr" rows="2">${escapeHtml(sec.descriptionFr || '')}</textarea>
+                    </div>
+                    <div class="form-group mb-0">
+                      <label class="form-label text-xs font-semibold" for="doc-step-desc-ar">Consigne / Description (Arabe)</label>
+                      <textarea class="form-control" id="doc-step-desc-ar" dir="rtl" rows="2">${escapeHtml(sec.descriptionAr || '')}</textarea>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between mt-4 pt-3" style="border-top:1px solid var(--border);">
+                    <div class="flex items-center gap-2">
+                      <label class="form-label text-xs mb-0" for="doc-step-display-order">Ordre d'affichage :</label>
+                      <input class="form-control text-xs" id="doc-step-display-order" type="number" style="width:70px;" value="${sec.displayOrder || 4}"/>
+                    </div>
+                    <button class="btn btn-primary btn-sm flex items-center gap-1" onclick="saveStep4Metadata('${sec.id}')">
+                      <span class="material-symbols-outlined" style="font-size:16px;">save</span>
+                      <span>Enregistrer les libellés de l'étape</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Document Requirements Management -->
+                <div class="flex justify-between items-center mb-3">
+                  <div>
+                    <h3 class="text-sm font-bold text-primary flex items-center gap-2">
+                      <span class="material-symbols-outlined" style="font-size:18px;color:var(--navy);">file_copy</span>
+                      Pièces justificatives configurées (Exigences réelles en base de données)
+                    </h3>
+                    <p class="text-xs text-muted">Ces pièces sont chargées dynamiquement selon l'établissement, le cycle, le niveau et la filière choisis.</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm flex items-center gap-1" onclick="openAddDocReqModal()">
+                    <span class="material-symbols-outlined" style="font-size:16px;">add</span>
+                    <span>Ajouter une pièce justificative</span>
+                  </button>
+                </div>
+
+                <div id="doc-requirements-table-container">
+                  <div class="p-4 text-center text-xs text-muted">Chargement des exigences documentaires…</div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="fb-section" data-section-id="${sec.id}">
+            <div class="fb-section-header">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-base text-primary">${escapeHtml(sec.labelFr)}</span>
+                  ${sec.labelAr ? `<span class="text-xs text-muted" dir="rtl">(${escapeHtml(sec.labelAr)})</span>` : ''}
+                  <span class="badge badge-inactive text-xs">${sec.fields ? sec.fields.length : 0} champs</span>
+                </div>
+                <div class="text-xs text-muted mt-1">Rubrique technique : <code>${escapeHtml(sec.key)}</code></div>
+              </div>
+              <div class="flex items-center gap-3">
+                <label class="toggle-switch">
+                  <input type="checkbox" ${sec.isVisible !== false ? 'checked' : ''} onchange="toggleSectionProp('${sec.id}', 'isVisible', this.checked)">
+                  <span class="toggle-slider"></span>
+                  <span>Section visible</span>
+                </label>
+              </div>
+            </div>
+            <div class="fb-section-body">
+              ${(sec.fields && sec.fields.length > 0) ? sec.fields.map(f => `
+                <div class="fb-field-row" id="field-row-${f.id}">
+                  <div class="fb-field-info">
+                    <div class="fb-field-label">
+                      <span>${escapeHtml(f.labelFr)}</span>
+                      ${f.labelAr ? `<span class="text-xs text-muted font-normal" dir="rtl">(${escapeHtml(f.labelAr)})</span>` : ''}
+                      <span class="badge" style="font-size:10px;padding:1px 6px;background:var(--surface-alt);border:1px solid var(--border);">${escapeHtml(f.fieldType)}</span>
+                      ${f.isSystemProtected ? '<span class="badge" style="font-size:10px;padding:1px 6px;background:rgba(99,102,241,0.1);color:#6366f1;">Système</span>' : ''}
+                    </div>
+                    <div class="fb-field-meta">
+                      <span>Clé : <code>${escapeHtml(f.fieldKey)}</code></span>
+                      ${f.placeholderFr ? `<span>Indicatif : "<em>${escapeHtml(f.placeholderFr)}</em>"</span>` : ''}
+                      ${f.helpTextFr ? `<span class="text-muted">Aide : ${escapeHtml(f.helpTextFr)}</span>` : ''}
+                    </div>
+                  </div>
+                  <div class="fb-field-controls">
+                    <label class="toggle-switch">
+                      <input type="checkbox" ${f.isVisible !== false ? 'checked' : ''} onchange="toggleFieldProp('${f.id}', 'isVisible', this.checked)">
+                      <span class="toggle-slider"></span>
+                      <span>Visible</span>
+                    </label>
+                    <label class="toggle-switch">
+                      <input type="checkbox" ${f.isRequired ? 'checked' : ''} onchange="toggleFieldProp('${f.id}', 'isRequired', this.checked)">
+                      <span class="toggle-slider"></span>
+                      <span>Requis</span>
+                    </label>
+                    <button class="btn btn-secondary btn-sm flex items-center gap-1" onclick="openEditFieldModal('${f.id}')">
+                      <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+                      <span>Modifier</span>
+                    </button>
+                  </div>
+                </div>
+              `).join('') : '<div class="p-4 text-center text-xs text-muted">Aucun champ dans cette section.</div>'}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // If document section is present, load real database requirements
+      if (sections.some(s => s.key === 'step_documents')) {
+        loadDocumentRequirements();
+      }
+    }
+
+    async function toggleFieldProp(fieldId, prop, value) {
+      showStatusFeedback(`Enregistrement de ${prop}…`);
+      try {
+        const res = await fetch(`${API_BASE}/admin/forms/fields/${fieldId}`, {
+          method: 'PUT',
+          headers: hdr(),
+          body: JSON.stringify({ [prop]: value })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showStatusFeedback(`✓ Champ mis à jour avec succès`);
+          // Update local memory
+          if (activeForm && activeForm.sections) {
+            for (const s of activeForm.sections) {
+              const f = (s.fields || []).find(field => field.id === fieldId);
+              if (f) {
+                f[prop] = value;
+                break;
+              }
+            }
+          }
+        } else {
+          showStatusFeedback(`Erreur: ${json.error?.message || 'Échec de la mise à jour'}`, true);
+        }
+      } catch (err) {
+        showStatusFeedback('Erreur serveur lors de la mise à jour.', true);
+      }
+    }
+
+    async function toggleSectionProp(sectionId, prop, value) {
+      showStatusFeedback(`Enregistrement de la section…`);
+      try {
+        const res = await fetch(`${API_BASE}/admin/forms/sections/${sectionId}`, {
+          method: 'PUT',
+          headers: hdr(),
+          body: JSON.stringify({ [prop]: value })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showStatusFeedback(`✓ Section mise à jour`);
+        } else {
+          showStatusFeedback(`Erreur: ${json.error?.message || 'Échec'}`, true);
+        }
+      } catch (err) {
+        showStatusFeedback('Erreur serveur.', true);
+      }
+    }
+
+    function openEditFieldModal(fieldId) {
+      if (!activeForm || !activeForm.sections) return;
+      let targetField = null;
+      for (const s of activeForm.sections) {
+        const f = (s.fields || []).find(field => field.id === fieldId);
+        if (f) {
+          targetField = f;
+          break;
+        }
+      }
+      if (!targetField) return;
+
+      document.getElementById('edit-field-id').value = targetField.id;
+      document.getElementById('edit-field-label-fr').value = targetField.labelFr || '';
+      document.getElementById('edit-field-label-ar').value = targetField.labelAr || '';
+      document.getElementById('edit-field-placeholder').value = targetField.placeholderFr || '';
+      document.getElementById('edit-field-help').value = targetField.helpTextFr || '';
+      document.getElementById('edit-field-required').checked = Boolean(targetField.isRequired);
+      document.getElementById('edit-field-visible').checked = targetField.isVisible !== false;
+
+      const modal = document.getElementById('modal-edit-field');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeEditFieldModal() {
+      const modal = document.getElementById('modal-edit-field');
+      if (modal) modal.classList.remove('open');
+    }
+
+    // ── STEP 4 (DOCUMENTS) CONFIGURATION ──
+
+    async function toggleStep4Visibility(sectionId, isVisible) {
+      const txt = document.getElementById('step-doc-visible-text');
+      if (txt) {
+        txt.textContent = isVisible ? 'ON' : 'OFF';
+        txt.style.color = isVisible ? 'var(--indigo)' : 'var(--text-muted)';
+      }
+      const badge = document.getElementById('badge-doc-step-status');
+      if (badge) {
+        badge.textContent = isVisible ? 'Étape Active' : 'Étape Désactivée (Ignorée)';
+        badge.className = `badge ${isVisible ? 'badge-open' : 'badge-danger'} text-xs`;
+      }
+      const banner = document.getElementById('step-doc-disabled-banner');
+      if (banner) {
+        banner.style.display = isVisible ? 'none' : 'flex';
+      }
+
+      showStatusFeedback(`Enregistrement de l'état de l'Étape 4…`);
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/forms/sections/${sectionId}`, {
+          method: 'PUT',
+          headers: hdr(),
+          body: JSON.stringify({ isVisible })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showStatusFeedback(`✓ Étape 4 ${isVisible ? 'activée (visible)' : 'désactivée (masquée/ignorée)'}`);
+          if (activeForm && activeForm.sections) {
+            const sec = activeForm.sections.find(s => s.id === sectionId);
+            if (sec) sec.isVisible = isVisible;
+          }
+        } else {
+          showStatusFeedback(`Erreur: ${json.error?.message || 'Échec'}`, true);
+        }
+      } catch (err) {
+        showStatusFeedback('Erreur serveur.', true);
+      }
+    }
+
+    async function saveStep4Metadata(sectionId) {
+      const labelFr = document.getElementById('doc-step-label-fr')?.value.trim();
+      const labelAr = document.getElementById('doc-step-label-ar')?.value.trim() || null;
+      const descriptionFr = document.getElementById('doc-step-desc-fr')?.value.trim() || null;
+      const descriptionAr = document.getElementById('doc-step-desc-ar')?.value.trim() || null;
+      const displayOrder = parseInt(document.getElementById('doc-step-display-order')?.value, 10) || 4;
+
+      if (!labelFr) {
+        alert("Le titre français de l'étape est obligatoire.");
+        return;
+      }
+
+      showStatusFeedback(`Enregistrement des libellés de l'étape 4…`);
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/forms/sections/${sectionId}`, {
+          method: 'PUT',
+          headers: hdr(),
+          body: JSON.stringify({
+            labelFr,
+            labelAr,
+            descriptionFr,
+            descriptionAr,
+            displayOrder
+          })
+        });
+        const json = await res.json();
+        if (json.success) {
+          showStatusFeedback(`✓ Paramètres de l'étape 4 enregistrés`);
+          if (activeForm && activeForm.sections) {
+            const sec = activeForm.sections.find(s => s.id === sectionId);
+            if (sec) {
+              sec.labelFr = labelFr;
+              sec.labelAr = labelAr;
+              sec.descriptionFr = descriptionFr;
+              sec.descriptionAr = descriptionAr;
+              sec.displayOrder = displayOrder;
+            }
+          }
+        } else {
+          showStatusFeedback(`Erreur: ${json.error?.message || 'Échec'}`, true);
+        }
+      } catch (err) {
+        showStatusFeedback('Erreur serveur.', true);
+      }
+    }
+
+    // ── DOCUMENT REQUIREMENTS MANAGEMENT ──
+
+    let cachedDocTypes = [];
+
+    async function loadDocumentRequirements() {
+      const container = document.getElementById('doc-requirements-table-container');
+      if (!container) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/requirements`, { headers: hdr() });
+        const json = await res.json();
+
+        if (!json.success || !json.data) {
+          container.innerHTML = '<div class="p-4 text-center text-xs text-danger">Impossible de charger les exigences documentaires.</div>';
+          return;
+        }
+
+        const list = json.data;
+        if (list.length === 0) {
+          container.innerHTML = `
+            <div class="p-6 text-center text-xs text-muted" style="background:#fff;border-radius:var(--r-lg);border:1.5px dashed var(--border);">
+              <span class="material-symbols-outlined mb-2" style="font-size:32px;color:var(--text-muted);display:block;margin:0 auto 8px;">folder_open</span>
+              Aucune pièce justificative configurée en base de données pour le moment.<br/>
+              Cliquez sur <strong>« Ajouter une pièce justificative »</strong> pour exiger des documents aux candidats.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="table-responsive" style="background:#fff;border-radius:var(--r-lg);border:1px solid var(--border);overflow:hidden;">
+            <table class="table" style="width:100%;font-size:13px;border-collapse:collapse;">
+              <thead style="background:var(--surface-alt);border-bottom:1px solid var(--border);">
+                <tr>
+                  <th style="padding:10px 14px;text-align:left;">Document</th>
+                  <th style="padding:10px 14px;text-align:left;">Portée d'application</th>
+                  <th style="padding:10px 14px;text-align:center;">Visible client</th>
+                  <th style="padding:10px 14px;text-align:center;">Obligatoire</th>
+                  <th style="padding:10px 14px;text-align:center;">Actif</th>
+                  <th style="padding:10px 14px;text-align:right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${list.map(r => {
+                  let scopeBadge = '<span class="badge" style="background:rgba(99,102,241,0.1);color:var(--indigo);">Global (Tous)</span>';
+                  const parts = [];
+                  if (r.schoolName || r.schoolShortName) parts.push(r.schoolShortName || r.schoolName);
+                  if (r.academicYearName) parts.push(r.academicYearName);
+                  if (r.levelName) parts.push(r.levelName);
+                  if (r.choiceName) parts.push(r.choiceName);
+                  if (parts.length > 0) {
+                    scopeBadge = `<span class="badge badge-inactive" title="${escapeHtml(parts.join(' • '))}">${escapeHtml(parts.join(' • '))}</span>`;
+                  }
+
+                  const maxMo = Math.round((r.maxFileSizeBytes || 5242880) / (1024 * 1024));
+
+                  return `
+                    <tr style="border-bottom:1px solid var(--border);">
+                      <td style="padding:12px 14px;">
+                        <div class="font-semibold text-primary">${escapeHtml(r.docTypeNameFr || r.nameFr || 'Document')}</div>
+                        ${r.docTypeNameAr ? `<div class="text-xs text-muted" dir="rtl">${escapeHtml(r.docTypeNameAr)}</div>` : ''}
+                        <div class="text-xs text-muted mt-0.5">${escapeHtml(r.fileRuleType || 'PDF/Images')} • Max ${maxMo} Mo</div>
+                      </td>
+                      <td style="padding:12px 14px;">
+                        ${scopeBadge}
+                      </td>
+                      <td style="padding:12px 14px;text-align:center;">
+                        <label class="toggle-switch" style="display:inline-flex;">
+                          <input type="checkbox" ${r.showClient !== false ? 'checked' : ''} onchange="toggleDocReqProp('${r.id}', 'showClient', this.checked, ${r.isRequired})">
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </td>
+                      <td style="padding:12px 14px;text-align:center;">
+                        <label class="toggle-switch" style="display:inline-flex;">
+                          <input type="checkbox" ${r.isRequired ? 'checked' : ''} onchange="toggleDocReqProp('${r.id}', 'isRequired', this.checked, ${r.isRequired})">
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </td>
+                      <td style="padding:12px 14px;text-align:center;">
+                        <label class="toggle-switch" style="display:inline-flex;">
+                          <input type="checkbox" ${r.isActive !== false ? 'checked' : ''} onchange="toggleDocReqProp('${r.id}', 'isActive', this.checked)">
+                          <span class="toggle-slider"></span>
+                        </label>
+                      </td>
+                      <td style="padding:12px 14px;text-align:right;">
+                        <button class="btn btn-secondary btn-sm text-danger" title="Supprimer l'exigence" onclick="deleteDocRequirement('${r.id}')" style="padding:4px 8px;">
+                          <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+                        </button>
+                      </td>
+                    </tr>
+                  `;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = '<div class="p-4 text-center text-xs text-danger">Erreur de communication lors du chargement des exigences.</div>';
+      }
+    }
+
+    async function toggleDocReqProp(reqId, prop, value, currentIsRequired) {
+      showStatusFeedback(`Mise à jour de la pièce justificative…`);
+      try {
+        const payload = { [prop]: value };
+        // Business rule: a document hidden from client cannot be required
+        if (prop === 'showClient' && value === false) {
+          payload.isRequired = false;
+        } else if (prop === 'isRequired' && value === true) {
+          payload.showClient = true;
+        }
+
+        const res = await fetch(`${API_BASE}/admin/documents/requirements/${reqId}`, {
+          method: 'PUT',
+          headers: hdr(),
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+        if (json.success) {
+          showStatusFeedback(`✓ Pièce justificative mise à jour`);
+          loadDocumentRequirements();
+        } else {
+          showStatusFeedback(`Erreur: ${json.error?.message || 'Échec'}`, true);
+          loadDocumentRequirements();
+        }
+      } catch (err) {
+        showStatusFeedback('Erreur serveur.', true);
+        loadDocumentRequirements();
+      }
+    }
+
+    async function deleteDocRequirement(reqId) {
+      if (!confirm('Supprimer cette pièce justificative des exigences d\'inscription ?')) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/requirements/${reqId}`, {
+          method: 'DELETE',
+          headers: hdr()
+        });
+        const json = await res.json();
+        if (json.success) {
+          showStatusFeedback(`✓ Pièce justificative supprimée`);
+          loadDocumentRequirements();
+        } else {
+          alert(json.error?.message || 'Erreur lors de la suppression.');
+        }
+      } catch (err) {
+        alert('Erreur de communication avec le serveur.');
+      }
+    }
+
+    // Modal Add Document Requirement logic
+    async function openAddDocReqModal() {
+      const modal = document.getElementById('modal-add-doc-requirement');
+      if (!modal) return;
+
+      // Populate document types
+      const typeSelect = document.getElementById('doc-req-type');
+      if (typeSelect && typeSelect.options.length <= 1) {
+        try {
+          const res = await fetch(`${API_BASE}/admin/documents/types`, { headers: hdr() });
+          const json = await res.json();
+          if (json.success && json.data) {
+            cachedDocTypes = json.data;
+            typeSelect.innerHTML = '<option value="">Sélectionner un type de document…</option>' +
+              json.data.map(t => `<option value="${t.id}">${escapeHtml(t.nameFr)}${t.nameAr ? ` (${escapeHtml(t.nameAr)})` : ''}</option>`).join('');
+          }
+        } catch (e) {}
+      }
+
+      // Populate schools
+      const schoolSelect = document.getElementById('doc-req-school');
+      if (schoolSelect && schoolSelect.options.length <= 1) {
+        try {
+          const res = await fetch(`${API_BASE}/public/schools`);
+          const json = await res.json();
+          if (json.success && json.data) {
+            schoolSelect.innerHTML = '<option value="">Tous les établissements (Global)</option>' +
+              json.data.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+          }
+        } catch (e) {}
+      }
+
+      // Populate cycles
+      const cycleSelect = document.getElementById('doc-req-cycle');
+      if (cycleSelect && cycleSelect.options.length <= 1) {
+        try {
+          const res = await fetch(`${API_BASE}/public/cycles`);
+          const json = await res.json();
+          if (json.success && json.data) {
+            cycleSelect.innerHTML = '<option value="">Tous les cycles</option>' +
+              json.data.map(c => `<option value="${c.id}">${escapeHtml(c.nameFr)}</option>`).join('');
+          }
+        } catch (e) {}
+      }
+
+      // Populate levels
+      const levelSelect = document.getElementById('doc-req-level');
+      if (levelSelect && levelSelect.options.length <= 1) {
+        try {
+          const res = await fetch(`${API_BASE}/public/levels`);
+          const json = await res.json();
+          if (json.success && json.data) {
+            levelSelect.innerHTML = '<option value="">Tous les niveaux</option>' +
+              json.data.map(l => `<option value="${l.id}">${escapeHtml(l.nameFr)}</option>`).join('');
+          }
+        } catch (e) {}
+      }
+
+      // Level select change listener to load choices
+      levelSelect?.addEventListener('change', async () => {
+        const choiceSelect = document.getElementById('doc-req-choice');
+        if (!choiceSelect) return;
+        choiceSelect.innerHTML = '<option value="">Toutes les filières</option>';
+        if (!levelSelect.value) return;
+        try {
+          const res = await fetch(`${API_BASE}/public/levels/${levelSelect.value}/choices`);
+          const json = await res.json();
+          if (json.success && json.data) {
+            choiceSelect.innerHTML = '<option value="">Toutes les filières</option>' +
+              json.data.map(c => `<option value="${c.id}">${escapeHtml(c.nameFr)}</option>`).join('');
+          }
+        } catch (e) {}
+      });
+
+      // Synchronize showClient and isRequired toggles in modal
+      const showClientEl = document.getElementById('doc-req-show-client');
+      const isReqEl = document.getElementById('doc-req-is-required');
+      if (showClientEl && isReqEl) {
+        showClientEl.onchange = () => {
+          if (!showClientEl.checked) {
+            isReqEl.checked = false;
+            isReqEl.disabled = true;
+          } else {
+            isReqEl.disabled = false;
+          }
+        };
+      }
+
+      modal.classList.add('open');
+    }
+
+    function closeAddDocReqModal() {
+      const modal = document.getElementById('modal-add-doc-requirement');
+      if (modal) modal.classList.remove('open');
+    }
+
+    async function submitAddDocReq(e) {
+      e.preventDefault();
+      const documentTypeId = document.getElementById('doc-req-type')?.value;
+      if (!documentTypeId) {
+        alert('Veuillez sélectionner un type de document.');
+        return;
+      }
+
+      const schoolId = document.getElementById('doc-req-school')?.value || null;
+      const cycleId = document.getElementById('doc-req-cycle')?.value || null;
+      const levelId = document.getElementById('doc-req-level')?.value || null;
+      const choiceId = document.getElementById('doc-req-choice')?.value || null;
+      const showClient = document.getElementById('doc-req-show-client')?.checked ?? true;
+      const isRequired = document.getElementById('doc-req-is-required')?.checked ?? true;
+      const blockSubmissionIfMissing = document.getElementById('doc-req-block')?.checked ?? false;
+      const isActive = document.getElementById('doc-req-is-active')?.checked ?? true;
+
+      const btn = document.getElementById('btn-submit-add-doc-req');
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/requirements`, {
+          method: 'POST',
+          headers: hdr(),
+          body: JSON.stringify({
+            documentTypeId,
+            schoolId,
+            cycleId,
+            levelId,
+            choiceId,
+            showClient,
+            isRequired,
+            blockSubmissionIfMissing,
+            isActive
+          })
+        });
+        const json = await res.json();
+        if (json.success) {
+          closeAddDocReqModal();
+          showStatusFeedback(`✓ Nouvelle pièce justificative ajoutée avec succès`);
+          loadDocumentRequirements();
+        } else {
+          alert(json.error?.message || 'Erreur lors de l\'ajout.');
+        }
+      } catch (err) {
+        alert('Erreur serveur lors de l\'enregistrement.');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    // ── LIVE PREVIEW MODAL ──
+    function openPreviewModal() {
+      const modal = document.getElementById('modal-preview-form');
+      if (!modal) return;
+
+      const stepperContainer = document.getElementById('preview-stepper-container');
+      const bodyContainer = document.getElementById('preview-body-container');
+
+      const docSec = activeForm?.sections?.find(s => s.key === 'step_documents');
+      const isStep4Visible = docSec ? (docSec.isVisible !== false) : true;
+
+      let steps = [
+        { num: 1, label: 'Établissement & Niveau' },
+        { num: 2, label: 'Informations Élève' },
+        { num: 3, label: 'Informations Parent' },
+      ];
+
+      if (isStep4Visible) {
+        steps.push({ num: 4, label: docSec?.labelFr || 'Documents' });
+        steps.push({ num: 5, label: 'Confirmation' });
+      } else {
+        steps.push({ num: 4, label: 'Confirmation' });
+      }
+
+      if (stepperContainer) {
+        stepperContainer.innerHTML = `
+          <div class="stepper" style="margin:0 auto;max-width:650px;">
+            ${steps.map((st, i) => `
+              <div class="stepper-step ${i === 0 ? 'active' : ''}">
+                <div class="stepper-dot">${st.num}</div>
+                <span class="stepper-label">${escapeHtml(st.label)}</span>
+              </div>
+              ${i < steps.length - 1 ? '<div class="stepper-line"></div>' : ''}
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (bodyContainer) {
+        bodyContainer.innerHTML = `
+          <div style="border-bottom:1px solid var(--border);padding-bottom:16px;margin-bottom:16px;">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base text-primary">Simulation du tunnel d'inscription</h3>
+              <span class="badge ${isStep4Visible ? 'badge-open' : 'badge-danger'}">
+                ${isStep4Visible ? 'Étape 4 Active (5 étapes)' : 'Étape 4 Masquée (4 étapes directes)'}
+              </span>
+            </div>
+            <p class="text-xs text-muted mt-1">
+              ${isStep4Visible 
+                ? 'Les candidats passeront par l’étape 4 (« ' + escapeHtml(docSec?.labelFr || 'Documents') + ' ») pour téléverser leurs pièces justificatives.'
+                : 'L’étape 4 est complètement ignorée pour le client. Le passage se fait directement de l’étape 3 (Parent) à l’étape 4 (Confirmation).'}
+            </p>
+          </div>
+
+          <div style="background:var(--surface-alt);border-radius:var(--r-lg);padding:16px;font-size:13px;">
+            <div class="font-bold text-primary mb-2">Structure actuelle du tunnel :</div>
+            <ol style="margin-left:20px;display:flex;flex-direction:column;gap:8px;">
+              <li><strong>Étape 1 :</strong> Établissement, cycle, niveau et filière</li>
+              <li><strong>Étape 2 :</strong> Informations de l'élève (état civil, scolarité)</li>
+              <li><strong>Étape 3 :</strong> Responsable légal / Parent (coordonnées, lien de parenté)</li>
+              ${isStep4Visible ? `
+                <li style="color:var(--indigo);font-weight:600;">
+                  Étape 4 : ${escapeHtml(docSec?.labelFr || 'Pièces justificatives')}
+                  <div class="text-xs text-muted font-normal mt-0.5">« ${escapeHtml(docSec?.descriptionFr || 'Joignez les pièces justificatives…')} »</div>
+                </li>
+                <li><strong>Étape 5 :</strong> Confirmation et génération du code de dossier unique</li>
+              ` : `
+                <li style="color:var(--success);font-weight:600;">
+                  Étape 4 : Confirmation et génération du code de dossier unique (Documents ignorés)
+                </li>
+              `}
+            </ol>
+          </div>
+        `;
+      }
+
+      modal.classList.add('open');
+    }
+
+    function closePreviewModal() {
+      const modal = document.getElementById('modal-preview-form');
+      if (modal) modal.classList.remove('open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFormDefinition();
+
+      document.getElementById('btn-close-field-modal')?.addEventListener('click', closeEditFieldModal);
+      document.getElementById('btn-cancel-field')?.addEventListener('click', closeEditFieldModal);
+
+      // Submit field edits
+      document.getElementById('form-edit-field')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fieldId = document.getElementById('edit-field-id').value;
+        const labelFr = document.getElementById('edit-field-label-fr').value.trim();
+        const labelAr = document.getElementById('edit-field-label-ar').value.trim() || null;
+        const placeholderFr = document.getElementById('edit-field-placeholder').value.trim() || null;
+        const helpTextFr = document.getElementById('edit-field-help').value.trim() || null;
+        const isRequired = document.getElementById('edit-field-required').checked;
+        const isVisible = document.getElementById('edit-field-visible').checked;
+
+        if (!labelFr) {
+          alert('Le libellé français est obligatoire.');
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/admin/forms/fields/${fieldId}`, {
+            method: 'PUT',
+            headers: hdr(),
+            body: JSON.stringify({
+              labelFr,
+              labelAr,
+              placeholderFr,
+              helpTextFr,
+              isRequired,
+              isVisible
+            })
+          });
+          const json = await res.json();
+          if (json.success) {
+            closeEditFieldModal();
+            showStatusFeedback('✓ Champ modifié et synchronisé');
+            loadFormDefinition();
+          } else {
+            alert(json.error?.message || 'Erreur lors de la modification');
+          }
+        } catch (err) {
+          alert('Erreur de communication avec le serveur.');
+        }
+      });
+
+      // Publish Form Button
+      document.getElementById('btn-publish-form')?.addEventListener('click', async () => {
+        if (!confirm('Publier cette version du formulaire sur le portail public des inscriptions ?')) return;
+        const btn = document.getElementById('btn-publish-form');
+        if (btn) btn.disabled = true;
+
+        try {
+          const res = await fetch(`${API_BASE}/admin/forms/default/publish`, {
+            method: 'POST',
+            headers: hdr()
+          });
+          const json = await res.json();
+          if (json.success) {
+            showStatusFeedback('✓ Formulaire publié avec succès');
+            loadFormDefinition();
+          } else {
+            alert(json.error?.message || 'Erreur lors de la publication.');
+          }
+        } catch (err) {
+          alert('Erreur serveur lors de la publication.');
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

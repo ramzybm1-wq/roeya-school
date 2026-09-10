@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Grille Tarifaire — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Tarifs</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestion de la Grille Tarifaire</h1>
+          <p class="page-subtitle">Définissez les frais de scolarité, inscriptions et options par cycle et établissement.</p>
+        </div>
+        <button id="btn-add-tariff" class="btn btn-primary btn-sm">
+          <span class="material-symbols-outlined">add</span>
+          <span>Ajouter un tarif</span>
+        </button>
+      </div>
+
+      <!-- Alert -->
+      <div id="tarifs-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Filters Card -->
+      <div class="card mb-6">
+        <div class="card-body-sm">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="search-input-wrap">
+              <span class="material-symbols-outlined">search</span>
+              <input id="search-tariff" class="form-control" type="text" placeholder="Rechercher par niveau, libellé…"/>
+            </div>
+            <div>
+              <select id="filter-tariff-school" class="form-control form-select">
+                <option value="">Tous les établissements</option>
+              </select>
+            </div>
+            <div>
+              <select id="filter-tariff-cycle" class="form-control form-select">
+                <option value="">Tous les cycles</option>
+                <option value="PRE_SCHOOL">Préscolaire</option>
+                <option value="PRIMARY">Primaire</option>
+                <option value="MIDDLE_SCHOOL">Moyen / Collège</option>
+                <option value="HIGH_SCHOOL">Secondaire / Lycée</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tariffs Table Card -->
+      <div class="card mb-8">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Niveau / Prestation</th>
+                <th>Cycle</th>
+                <th>Établissement</th>
+                <th style="text-align: right;">Montant (DZD)</th>
+                <th>Périodicité</th>
+                <th>Affiché aux parents</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tarifs-tbody">
+              <tr>
+                <td colspan="7" class="text-center py-10 text-muted">
+                  Chargement des tarifs…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add / Edit Tariff Modal -->
+  <div id="modal-tariff" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-tariff-title" class="modal-title">Ajouter un tarif</h2>
+        <button id="btn-close-tariff-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-tariff" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="tariff-id"/>
+          
+          <div class="form-group">
+            <label class="form-label form-label-required" for="tariff-name">Nom de la prestation / Niveau</label>
+            <input class="form-control" id="tariff-name" type="text" placeholder="Ex: Frais de scolarité — 1ère Année Primaire" required/>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="tariff-school">Établissement</label>
+              <select id="tariff-school" class="form-control form-select" required></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="tariff-level">Niveau scolaire</label>
+              <select id="tariff-level" class="form-control form-select" required></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="tariff-amount">Montant (DZD)</label>
+              <input class="form-control" id="tariff-amount" type="number" min="0" step="500" placeholder="55000" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="tariff-period">Périodicité</label>
+              <select id="tariff-period" class="form-control form-select">
+                <option value="ANNUAL">Annuel</option>
+                <option value="TRIMESTER">Trimestriel</option>
+                <option value="MONTHLY">Mensuel</option>
+                <option value="ONE_TIME">Frais unique à l'inscription</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-check" for="tariff-visible">
+              <input class="form-check-input" id="tariff-visible" type="checkbox" checked/>
+              <span class="form-check-label text-sm">Visible publiquement par les parents lors de la candidature</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-tariff" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-tariff" type="submit" class="btn btn-primary">Enregistrer le tarif</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

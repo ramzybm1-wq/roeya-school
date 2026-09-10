@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vérification 2FA — VISION SCHOOL</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .otp-input-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .otp-digit {
+      width: 46px;
+      height: 54px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface);
+      outline: none;
+      transition: all var(--t-fast);
+    }
+    .otp-digit:focus {
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+    }
+  </style>
+</head>
+<body class="auth-page">
+  <main class="auth-card animate-fadeIn">
+    <!-- Header -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <span class="material-symbols-outlined">security</span>
+      </div>
+      <div>
+        <div class="auth-logo-name">VISION SCHOOL</div>
+        <div class="auth-logo-sub">Sécurité renforcée</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">Vérification en deux étapes</h1>
+    <p class="auth-desc">
+      Saisissez le code de vérification à 6 chiffres généré par votre application d'authentification ou reçu par email.
+    </p>
+
+    <!-- Error / Status -->
+    <div id="status-2fa" class="alert hidden mb-4" role="alert"></div>
+
+    <form id="2fa-form" novalidate>
+      <div class="form-group mb-4">
+        <div class="otp-input-wrap" id="code-inputs">
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autofocus autocomplete="one-time-code"/>
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*"/>
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*"/>
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*"/>
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*"/>
+          <input class="otp-digit" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*"/>
+        </div>
+      </div>
+
+      <button id="btn-2fa-submit" class="btn btn-primary btn-lg w-full mb-3" type="submit">
+        <span id="btn-2fa-text">Valider le code</span>
+        <span class="material-symbols-outlined">check_circle</span>
+      </button>
+    </form>
+
+    <div class="flex items-center justify-between text-xs text-muted mt-3">
+      <span id="timer-text" class="flex items-center gap-1">
+        <span class="material-symbols-outlined" style="font-size:15px;">schedule</span>
+        <span>Valable: <strong class="text-primary-color" id="timer-counter">00:45</strong></span>
+      </span>
+      <button id="resend-btn" class="btn btn-ghost btn-xs disabled" disabled>
+        Renvoyer un code
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="text-center">
+      <a class="text-sm text-muted flex items-center justify-center gap-1 hover:text-primary-color" href="/login">
+        <span class="material-symbols-outlined" style="font-size:17px;">arrow_back</span>
+        <span>Annuler et retourner</span>
+      </a>
+    </div>
+  </main>
+
+  <script>
+    const inputs = document.querySelectorAll('#code-inputs input');
+    inputs.forEach((input, index) => {
+      input.addEventListener('input', (e) => {
+        if (e.target.value.length === 1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+      });
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Backspace' && !e.target.value && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const data = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+        data.split('').forEach((char, i) => {
+          if (inputs[i]) inputs[i].value = char;
+        });
+        if (inputs[data.length - 1]) inputs[data.length - 1].focus();
+      });
+    });
+
+    let timeLeft = 45;
+    const timerElem = document.getElementById('timer-counter');
+    const resendBtn = document.getElementById('resend-btn');
+    const timer = setInterval(() => {
+      timeLeft--;
+      if (timeLeft >= 0) {
+        timerElem.textContent = `00:${timeLeft < 10 ? '0' : ''}${timeLeft}`;
+      } else {
+        clearInterval(timer);
+        timerElem.textContent = 'Expiré';
+        resendBtn.disabled = false;
+        resendBtn.classList.remove('disabled');
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

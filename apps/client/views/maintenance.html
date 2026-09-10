@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maintenance Technique Programmée | VISION SCHOOL</title>
+  <meta name="description" content="Le portail VISION SCHOOL fait l'objet d'une mise à niveau technique planifiée. Nous serons de retour très prochainement."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    body.public-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-700) 100%);
+      padding: 24px;
+    }
+    .maint-card {
+      max-width: 580px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-2xl);
+      padding: 48px 40px;
+      box-shadow: var(--shadow-xl);
+      text-align: center;
+    }
+    .maint-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--indigo-50);
+      color: var(--indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .maint-icon .material-symbols-outlined {
+      font-size: 34px;
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <div class="maint-card">
+    <div class="maint-icon">
+      <span class="material-symbols-outlined">build_circle</span>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:var(--r-full);background:var(--warning-bg);color:var(--warning-text);font-size:12px;font-weight:700;margin-bottom:16px;">
+      <span class="material-symbols-outlined" style="font-size:15px;">schedule</span>
+      Mise à niveau en cours
+    </div>
+    <h1 style="font-size:26px;font-weight:800;color:var(--navy);margin-bottom:12px;">
+      Maintenance Programmée
+    </h1>
+    <p style="font-size:15px;color:var(--text-secondary);line-height:1.6;margin-bottom:28px;">
+      Notre plateforme en ligne fait actuellement l'objet d'une intervention de maintenance visant à améliorer les performances et la sécurité de notre système de gestion scolaire.
+    </p>
+
+    <div style="background:var(--bg);border-radius:var(--r-lg);padding:18px;margin-bottom:28px;text-align:left;border:1px solid var(--border);font-size:13.5px;color:var(--text-secondary);line-height:1.6;">
+      <div style="font-weight:700;color:var(--navy);margin-bottom:4px;">Besoin d'une assistance urgente ?</div>
+      Pendant la maintenance, notre secrétariat reste joignable par téléphone au <a href="tel:+21321000000"><strong>+213 21 00 00 00</strong></a> ou par email à <a href="mailto:contact@visionschool.dz"><strong>contact@visionschool.dz</strong></a>.
+    </div>
+
+    <button onclick="window.location.reload()" class="btn btn-navy w-full" style="padding:12px;font-size:14px;">
+      <span class="material-symbols-outlined">refresh</span>
+      Vérifier si le service est rétabli
+    </button>
+  </div>
+
+</body>
+</html>

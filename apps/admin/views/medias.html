@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Médiathèque &amp; Images — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .media-card {
+      position: relative;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: var(--shadow-sm);
+      transition: all var(--t-fast);
+      cursor: pointer;
+    }
+    .media-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .media-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .media-card-body {
+      padding: 12px 14px;
+    }
+  </style>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Médias &amp; Galerie</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Médiathèque Institutionnelle</h1>
+          <p class="page-subtitle">Gérez les visuels, photographies des campus et bannières du portail d'inscription.</p>
+        </div>
+        <button id="btn-upload-media" class="btn btn-primary btn-sm">
+          <span class="material-symbols-outlined">add_photo_alternate</span>
+          <span>Ajouter une image</span>
+        </button>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 mb-6 overflow-x-auto">
+        <button class="chip active" onclick="filterMedia('ALL')">Tous les médias</button>
+        <button class="chip" onclick="filterMedia('CAMPUS')">Campus &amp; Bâtiments</button>
+        <button class="chip" onclick="filterMedia('ACTIVITIES')">Activités &amp; Sport</button>
+        <button class="chip" onclick="filterMedia('CLASSES')">Salles de classe</button>
+        <button class="chip" onclick="filterMedia('EVENTS')">Événements</button>
+      </div>
+
+      <!-- Media Grid -->
+      <div id="media-grid" class="grid grid-cols-4 gap-4 mb-8">
+        <!-- Media Items -->
+        <div class="media-card" onclick="previewImage('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=800')">
+          <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600" alt="Façade Campus" loading="lazy"/>
+          <div class="media-card-body">
+            <div class="text-sm font-semibold truncate">Façade Campus Principal</div>
+            <div class="flex items-center justify-between text-xs text-muted mt-1">
+              <span>Campus</span>
+              <span>JPG • 1.2 MB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="media-card" onclick="previewImage('https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800')">
+          <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600" alt="Salle de classe" loading="lazy"/>
+          <div class="media-card-body">
+            <div class="text-sm font-semibold truncate">Salle de classe interactive</div>
+            <div class="flex items-center justify-between text-xs text-muted mt-1">
+              <span>Classes</span>
+              <span>JPG • 980 KB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="media-card" onclick="previewImage('https://images.unsplash.com/photo-1577896851231-70ef18881754?w=800')">
+          <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=600" alt="Bibliothèque" loading="lazy"/>
+          <div class="media-card-body">
+            <div class="text-sm font-semibold truncate">Bibliothèque &amp; Médiathèque</div>
+            <div class="flex items-center justify-between text-xs text-muted mt-1">
+              <span>Installations</span>
+              <span>JPG • 1.5 MB</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="media-card" onclick="previewImage('https://images.unsplash.com/photo-1526676037777-05a232554f77?w=800')">
+          <img src="https://images.unsplash.com/photo-1526676037777-05a232554f77?w=600" alt="Activités artistiques" loading="lazy"/>
+          <div class="media-card-body">
+            <div class="text-sm font-semibold truncate">Atelier d'éveil &amp; Arts</div>
+            <div class="flex items-center justify-between text-xs text-muted mt-1">
+              <span>Activités</span>
+              <span>JPG • 840 KB</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Upload Modal -->
+  <div id="modal-media-upload" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Ajouter un média à la galerie</h2>
+        <button id="btn-close-media-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-media-upload" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label form-label-required" for="media-title">Titre du média</label>
+            <input class="form-control" id="media-title" type="text" placeholder="Ex: Laboratoire de sciences modernes" required/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="media-category">Catégorie</label>
+            <select id="media-category" class="form-control form-select">
+              <option value="CAMPUS">Campus &amp; Bâtiments</option>
+              <option value="ACTIVITIES">Activités &amp; Sport</option>
+              <option value="CLASSES">Salles de classe</option>
+              <option value="EVENTS">Événements</option>
+            </select>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-label form-label-required">Fichier image (JPG, PNG, WEBP, max 5MB)</label>
+            <div class="file-upload-zone" onclick="document.getElementById('media-file-input').click()">
+              <span class="material-symbols-outlined">add_photo_alternate</span>
+              <div class="file-upload-text">Cliquez ou déposez votre image ici</div>
+              <input type="file" id="media-file-input" class="hidden" accept="image/*"/>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-media" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-media" type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox-modal" class="modal-backdrop" onclick="this.classList.remove('open')">
+    <div style="max-width: 90vw; max-height: 90vh;">
+      <img id="lightbox-img" src="" alt="Agrandissement" style="max-width: 100%; max-height: 85vh; border-radius: var(--r-lg); box-shadow: var(--shadow-xl);"/>
+    </div>
+  </div>
+
+  <script>
+    function previewImage(url) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox-modal').classList.add('open');
+    }
+    function filterMedia(category) {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

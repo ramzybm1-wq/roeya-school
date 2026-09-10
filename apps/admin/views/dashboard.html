@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tableau de bord — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="app-shell">
+  <!-- Sidebar and Topbar injected canonically by server.ts -->
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Tableau de bord</h1>
+          <p class="page-subtitle">Vue d'ensemble des inscriptions et indicateurs clés en temps réel.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/inscriptions" class="btn btn-secondary btn-sm">
+            <span class="material-symbols-outlined">table_view</span>
+            <span>Toutes les demandes</span>
+          </a>
+          <a href="/rapports" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined">download</span>
+            <span>Exporter rapport</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Operational Alerts Container -->
+      <div id="dashboard-alerts" class="mb-6"></div>
+
+      <!-- KPI Stat Cards Grid -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <!-- Total -->
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-navy">
+            <span class="material-symbols-outlined">assignment</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">Total Demandes</div>
+            <div id="kpi-total" class="stat-value"><span class="skeleton skeleton-text" style="display:inline-block;width:50px;"></span></div>
+            <div class="stat-delta">
+              <span class="material-symbols-outlined" style="font-size:14px;">calendar_today</span>
+              <span>Année active</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acceptées -->
+        <div class="stat-card" style="border-bottom: 3px solid var(--success);">
+          <div class="stat-icon stat-icon-green">
+            <span class="material-symbols-outlined">verified</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">Acceptées</div>
+            <div id="kpi-accepted" class="stat-value text-success"><span class="skeleton skeleton-text" style="display:inline-block;width:40px;"></span></div>
+            <div class="stat-delta stat-delta-up">
+              <span class="material-symbols-outlined" style="font-size:14px;">check_circle</span>
+              <span>Places confirmées</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- En attente -->
+        <div class="stat-card" style="border-bottom: 3px solid var(--warning);">
+          <div class="stat-icon stat-icon-amber">
+            <span class="material-symbols-outlined">hourglass_top</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">En attente</div>
+            <div id="kpi-pending" class="stat-value text-warning"><span class="skeleton skeleton-text" style="display:inline-block;width:40px;"></span></div>
+            <div class="stat-delta">
+              <span class="material-symbols-outlined" style="font-size:14px;">pending_actions</span>
+              <span>À traiter</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Refusées -->
+        <div class="stat-card" style="border-bottom: 3px solid var(--error);">
+          <div class="stat-icon stat-icon-red">
+            <span class="material-symbols-outlined">cancel</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">Refusées</div>
+            <div id="kpi-refused" class="stat-value text-error"><span class="skeleton skeleton-text" style="display:inline-block;width:40px;"></span></div>
+            <div class="stat-delta stat-delta-down">
+              <span class="material-symbols-outlined" style="font-size:14px;">block</span>
+              <span>Dossiers non retenus</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary KPIs -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-blue">
+            <span class="material-symbols-outlined">format_list_numbered</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">Liste d'attente</div>
+            <div id="kpi-waiting" class="stat-value" style="color: var(--info);"><span class="skeleton skeleton-text" style="display:inline-block;width:30px;"></span></div>
+            <div class="stat-delta">
+              <a href="/liste-attente" class="text-xs text-primary-color font-medium hover:underline">Gérer la liste &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-indigo">
+            <span class="material-symbols-outlined">event_seat</span>
+          </div>
+          <div class="stat-body">
+            <div class="stat-label">Places Restantes Globales</div>
+            <div id="kpi-places" class="stat-value text-primary-color"><span class="skeleton skeleton-text" style="display:inline-block;width:50px;"></span></div>
+            <div class="stat-delta">
+              <a href="/niveaux-capacites" class="text-xs text-primary-color font-medium hover:underline">Voir les capacités par niveau &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-3 gap-6 mb-6">
+        <!-- Main Trend Chart (2 cols) -->
+        <div class="card" style="grid-column: span 2;">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--indigo);">show_chart</span>
+              <span>Évolution des inscriptions par semaine</span>
+            </div>
+            <span class="badge badge-sm badge-active">Temps réel</span>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; height: 260px;">
+              <canvas id="chart-registrations-trend"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Distribution Chart (1 col) -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--gold);">donut_small</span>
+              <span>Répartition par statut</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div style="position: relative; height: 260px;">
+              <canvas id="chart-status-distribution"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Registrations Table -->
+      <div class="card mb-6">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Dernières demandes reçues</div>
+            <p class="text-xs text-muted mt-1">Les dossiers les plus récents soumis via le portail en ligne.</p>
+          </div>
+          <a href="/inscriptions" class="btn btn-outline btn-xs">
+            <span>Voir tout</span>
+            <span class="material-symbols-outlined" style="font-size:14px;">arrow_forward</span>
+          </a>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>N° Dossier</th>
+                <th>Élève</th>
+                <th>Établissement</th>
+                <th>Niveau</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="recent-registrations-tbody">
+              <!-- Skeletons while loading -->
+              <tr>
+                <td colspan="7" class="text-center py-6 text-muted">
+                  <div class="flex items-center justify-center gap-2">
+                    <span class="skeleton skeleton-text" style="width: 200px;"></span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

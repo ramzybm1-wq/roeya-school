@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inscription confirmée | VISION SCHOOL</title>
+  <meta name="description" content="Votre dossier d'inscription a été soumis avec succès à VISION SCHOOL."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <script>
+    (function() {
+      var token = localStorage.getItem('vs_client_token');
+      if (!token) {
+        var currentUrl = window.location.pathname + window.location.search;
+        window.location.replace('/connexion?redirect=' + encodeURIComponent(currentUrl));
+      } else if (!document.cookie.includes('vs_client_session=')) {
+        document.cookie = 'vs_client_session=' + encodeURIComponent(token) + '; path=/; max-age=28800; SameSite=Lax';
+      }
+    })();
+  </script>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/suivi" class="client-nav-link active">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="public-main">
+    <div class="funnel-wrap" style="align-items:center;">
+
+      <!-- All Steps Done -->
+      <div style="width:100%;max-width:960px;margin:0 auto;">
+
+        <!-- Completed Stepper -->
+        <div class="stepper" style="margin-bottom:40px;">
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Établissement</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Élève</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Parent</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Documents</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Confirmation</span>
+          </div>
+        </div>
+
+        <!-- Confirmation Card -->
+        <div class="confirmation-card animate-slideUp">
+          <div class="confirmation-icon">
+            <span class="material-symbols-outlined">check_circle</span>
+          </div>
+          <h1 style="font-size:26px;font-weight:800;color:var(--navy);margin-bottom:8px;">Dossier soumis avec succès !</h1>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:20px;">
+            Votre demande d'inscription a bien été enregistrée. Notre équipe admissions examinera votre dossier dans les meilleurs délais.
+          </p>
+
+          <div class="reg-code-box">
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;">Votre numéro de dossier</div>
+            <div class="reg-code" id="confirmation-code">VS-000000</div>
+          </div>
+
+          <div style="background:var(--warning-bg);border:1px solid var(--warning);border-radius:var(--r-lg);padding:14px 18px;margin:16px 0;text-align:left;">
+            <div style="font-size:13px;font-weight:700;color:var(--warning-text);margin-bottom:4px;">⚠️ Conservez ce numéro précieusement</div>
+            <div style="font-size:13px;color:var(--warning-text);">Il vous permettra de suivre l'avancement de votre dossier en ligne. Un email de confirmation a été envoyé à <strong id="confirm-email">votre adresse</strong>.</div>
+          </div>
+
+          <!-- What's next timeline -->
+          <div style="text-align:left;margin-top:24px;">
+            <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em;">Prochaines étapes</div>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--indigo-100);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">1</div>
+                <div>
+                  <div class="text-sm font-semibold">Examen du dossier</div>
+                  <div class="text-xs text-muted" style="margin-top:2px;">Notre équipe admissions examine votre dossier sous 3 à 5 jours ouvrables.</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--indigo-100);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">2</div>
+                <div>
+                  <div class="text-sm font-semibold">Notification du résultat</div>
+                  <div class="text-xs text-muted" style="margin-top:2px;">Vous serez contacté par email et SMS pour la décision d'admission.</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:flex-start;gap:14px;">
+                <div style="width:32px;height:32px;border-radius:50%;background:var(--indigo-100);color:var(--indigo);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">3</div>
+                <div>
+                  <div class="text-sm font-semibold">Suivi en ligne</div>
+                  <div class="text-xs text-muted" style="margin-top:2px;">Consultez l'état de votre dossier à tout moment avec votre numéro de dossier.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:32px;">
+            <a href="/mon-espace" class="btn btn-primary btn-lg" style="background:var(--indigo);color:white;display:inline-flex;align-items:center;gap:8px;font-weight:700;">
+              <span class="material-symbols-outlined">dashboard</span>
+              Accéder à mon espace parent
+            </a>
+            <a href="/suivi" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;">
+              <span class="material-symbols-outlined">search</span>
+              Suivre mon dossier
+            </a>
+            <a href="/" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;">
+              <span class="material-symbols-outlined">home</span>
+              Retour à l'accueil
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div class="client-footer-name"><span class="material-symbols-outlined">school</span> VISION SCHOOL</div>
+        <p class="client-footer-desc">Excellence en éducation — du préscolaire au secondaire.</p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Support</div>
+        <a href="tel:+213210000000" class="client-footer-link">+213 21 00 00 00</a>
+        <a href="mailto:admissions@visionschool.dz" class="client-footer-link">admissions@visionschool.dz</a>
+        <a href="/contact" class="client-footer-link">Formulaire de contact</a>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <span>© 2026 VISION SCHOOL. Tous droits réservés.</span>
+    </div>
+  </footer>
+
+  <script src="/public/js/client-app.js"></script>
+  <script>
+    // Load confirmation data from sessionStorage
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('vs_reg_draft') || '{}');
+      const result = JSON.parse(sessionStorage.getItem('vs_reg_result') || '{}');
+
+      if (result.registrationCode || result.code) {
+        document.getElementById('confirmation-code').textContent = result.registrationCode || result.code;
+      }
+      if (draft.primaryParent && draft.primaryParent.email) {
+        document.getElementById('confirm-email').textContent = draft.primaryParent.email;
+      } else if (result.email) {
+        document.getElementById('confirm-email').textContent = result.email;
+      }
+      // Clear draft after success
+      sessionStorage.removeItem('vs_reg_draft');
+    } catch(e) {}
+  </script>
+
+</body>
+</html>

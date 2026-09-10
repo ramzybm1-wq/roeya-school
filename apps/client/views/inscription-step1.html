@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inscription — Étape 1 : Établissement &amp; Niveau | VISION SCHOOL</title>
+  <meta name="description" content="Sélectionnez l'établissement et le niveau scolaire pour l'inscription de votre enfant à VISION SCHOOL."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <script>
+    (function() {
+      var token = localStorage.getItem('vs_client_token');
+      if (!token) {
+        var currentUrl = window.location.pathname + window.location.search;
+        window.location.replace('/connexion?redirect=' + encodeURIComponent(currentUrl));
+      } else if (!document.cookie.includes('vs_client_session=')) {
+        document.cookie = 'vs_client_session=' + encodeURIComponent(token) + '; path=/; max-age=28800; SameSite=Lax';
+      }
+    })();
+  </script>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/inscription" class="client-nav-link active">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Funnel Content -->
+  <div class="public-main">
+    <div class="funnel-wrap">
+      <div class="funnel-inner">
+
+        <!-- Step Indicator -->
+        <div class="stepper">
+          <div class="stepper-step active">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">school</span></div>
+            <span class="stepper-label">Établissement</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step">
+            <div class="stepper-dot">2</div>
+            <span class="stepper-label">Élève</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step">
+            <div class="stepper-dot">3</div>
+            <span class="stepper-label">Parent</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step">
+            <div class="stepper-dot">4</div>
+            <span class="stepper-label">Documents</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step">
+            <div class="stepper-dot">5</div>
+            <span class="stepper-label">Confirmation</span>
+          </div>
+        </div>
+
+        <!-- Two-column Layout -->
+        <div class="funnel-cols">
+
+          <!-- Left: Form -->
+          <div class="funnel-form-card">
+            <h1 class="funnel-title">Choisissez l'établissement et le niveau</h1>
+            <p class="funnel-subtitle">Sélectionnez le campus VISION SCHOOL et le niveau scolaire souhaité pour l'inscription de votre enfant.</p>
+
+            <div id="step1-alert" class="alert hidden mb-6" role="alert"></div>
+
+            <!-- School Selection -->
+            <div class="form-group">
+              <label class="form-label form-label-required" for="select-school">Établissement (Campus)</label>
+              <select id="select-school" class="form-control form-select" required>
+                <option value="">Chargement des établissements…</option>
+              </select>
+            </div>
+
+            <!-- Level Cards (rendered dynamically) -->
+            <div class="form-group">
+              <label class="form-label form-label-required">Niveau scolaire souhaité</label>
+              <div id="levels-grid" class="flex flex-col gap-3" style="display:flex;flex-direction:column;gap:10px;">
+                <div class="text-muted text-sm" style="padding:16px;text-align:center;">Sélectionnez d'abord un établissement pour voir les niveaux disponibles.</div>
+              </div>
+              <input type="hidden" id="selected-level-id" required/>
+            </div>
+
+            <!-- Dynamic Choice / Filière Selection -->
+            <div id="choice-container" class="form-group" style="display:none;margin-top:16px;padding:16px;background:var(--slate-50,#f8fafc);border-radius:8px;border:1px solid #e2e8f0;">
+              <label class="form-label form-label-required" id="choice-label" for="select-choice">Filière / Option d'orientation</label>
+              <select id="select-choice" class="form-control form-select">
+                <option value="">Sélectionnez une filière…</option>
+              </select>
+              <div id="subchoice-wrapper" style="display:none;margin-top:12px;">
+                <label class="form-label form-label-required" id="subchoice-label" for="select-subchoice">Spécialité / Sous-option</label>
+                <select id="select-subchoice" class="form-control form-select">
+                  <option value="">Sélectionnez une spécialité…</option>
+                </select>
+              </div>
+              <input type="hidden" id="selected-choice-id"/>
+            </div>
+
+            <div class="funnel-actions">
+              <a href="/" class="btn btn-secondary">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Retour à l'accueil
+              </a>
+              <button id="btn-step1-next" class="btn btn-navy btn-lg" type="button" disabled>
+                Continuer
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Summary Card -->
+          <div class="funnel-summary-card">
+            <h3>
+              <span class="material-symbols-outlined" style="color:var(--indigo);">info</span>
+              Récapitulatif
+            </h3>
+            <div class="summary-row">
+              <span class="summary-label">Année scolaire</span>
+              <span class="summary-val">2026/2027</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Établissement</span>
+              <span class="summary-val" id="summary-school">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Niveau choisi</span>
+              <span class="summary-val" id="summary-level">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Statut</span>
+              <span class="cap-badge-open" id="summary-status">Ouvert</span>
+            </div>
+
+            <div id="summary-docs-box" style="margin-top:20px;padding:14px;background:var(--navy-50);border-radius:var(--r-lg);border:1px solid var(--navy-200);">
+              <div class="text-sm font-semibold" style="color:var(--navy);margin-bottom:6px;">📋 Documents à préparer</div>
+              <ul id="summary-docs-list" style="list-style:none;font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:5px;">
+                <li>• Extrait de naissance de l'élève</li>
+                <li>• Carte d'identité du parent</li>
+                <li>• Bulletin de notes de l'année précédente</li>
+                <li>• 2 photos d'identité de l'élève</li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div class="client-footer-name"><span class="material-symbols-outlined">school</span> VISION SCHOOL</div>
+        <p class="client-footer-desc">Établissement privé d'enseignement d'excellence, du préscolaire au secondaire.</p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie</a>
+        <a href="/faq" class="client-footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Inscription</div>
+        <a href="/inscription" class="client-footer-link">Déposer un dossier</a>
+        <a href="/suivi" class="client-footer-link">Suivi de dossier</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <a href="/contact" class="client-footer-link">Nous contacter</a>
+        <a href="tel:+213210000000" class="client-footer-link">+213 21 00 00 00</a>
+        <a href="mailto:admissions@visionschool.dz" class="client-footer-link">admissions@visionschool.dz</a>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <span>© 2026 VISION SCHOOL. Tous droits réservés.</span>
+      <span><a href="/confidentialite" style="color:rgba(255,255,255,.4);text-decoration:none;">Politique de confidentialité</a></span>
+    </div>
+  </footer>
+
+</body>
+</html>

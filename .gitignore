@@ -1,0 +1,108 @@
+# ==============================================================================
+# Dependencies
+# ==============================================================================
+node_modules/
+.pnp
+.pnp.js
+
+# ==============================================================================
+# Build Outputs
+# ==============================================================================
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# ==============================================================================
+# Environment & Secrets — NEVER COMMIT THESE
+# ==============================================================================
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test.local
+.env.production
+.env.production.local
+.env.docker
+# Allow only the safe example templates
+!.env.example
+!.env.docker.example
+!.env.production.example
+
+# ==============================================================================
+# Testing & Coverage
+# ==============================================================================
+coverage/
+.nyc_output/
+
+# ==============================================================================
+# Logs
+# ==============================================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ==============================================================================
+# Runtime Storage Uploads (NOT part of source code)
+# ==============================================================================
+storage/private-documents/*
+!storage/private-documents/.gitkeep
+storage/public-media/*
+!storage/public-media/.gitkeep
+storage/local-data/
+
+# API local runtime uploads (private docs, media uploads)
+apps/api/storage/private/
+apps/api/storage/public/public/
+# Keep branding assets (school logos) — optional: remove line below to also exclude
+# apps/api/storage/public/branding/
+
+# ==============================================================================
+# Temporary & Scratch Files
+# ==============================================================================
+scratch/
+roya/
+tmp/
+temp/
+
+# ==============================================================================
+# Operating System
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ==============================================================================
+# IDE / Editor
+# ==============================================================================
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swp
+*.swo
+
+# ==============================================================================
+# Docker (local override only)
+# ==============================================================================
+docker-compose.override.yml
+
+# ==============================================================================
+# Database — Keep migrations, ignore dumps/backups
+# ==============================================================================
+*.dump
+*.sql.gz
+*.backup
+db-backup/

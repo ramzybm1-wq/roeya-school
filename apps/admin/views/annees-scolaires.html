@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Années Scolaires — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Années scolaires</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestion des Années Scolaires</h1>
+          <p class="page-subtitle">Définissez les périodes d'inscription, activez l'année courante et archivez les sessions passées.</p>
+        </div>
+        <button id="btn-add-year" class="btn btn-primary btn-sm">
+          <span class="material-symbols-outlined">add</span>
+          <span>Créer une année scolaire</span>
+        </button>
+      </div>
+
+      <!-- Alert -->
+      <div id="years-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Active Year Banner -->
+      <div class="card mb-6" style="border-left: 4px solid var(--success); background: linear-gradient(to right, rgba(5,150,105,0.04), var(--surface));">
+        <div class="card-body flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="stat-icon stat-icon-green">
+              <span class="material-symbols-outlined">verified</span>
+            </div>
+            <div>
+              <div class="text-xs text-muted uppercase font-semibold">Session actuellement active</div>
+              <div id="active-year-label" class="text-xl font-bold text-primary">2026/2027</div>
+              <div id="active-year-dates" class="text-xs text-muted mt-1">Du 01/09/2026 au 30/06/2027 • Inscriptions ouvertes</div>
+            </div>
+          </div>
+          <span class="badge badge-lg badge-accepted">En cours</span>
+        </div>
+      </div>
+
+      <!-- Academic Years List -->
+      <div class="card mb-8">
+        <div class="card-header">
+          <div class="card-title">Toutes les années scolaires</div>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Année scolaire</th>
+                <th>Date d'ouverture</th>
+                <th>Date de clôture</th>
+                <th>Statut</th>
+                <th style="text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="years-tbody">
+              <tr>
+                <td colspan="5" class="text-center py-8 text-muted">Chargement des années scolaires…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add / Edit Year Modal -->
+  <div id="modal-year" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-year-title" class="modal-title">Créer une année scolaire</h2>
+        <button id="btn-close-year-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-year" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="year-id"/>
+          
+          <div class="form-group">
+            <label class="form-label form-label-required" for="year-name">Libellé (ex: 2027/2028)</label>
+            <input class="form-control" id="year-name" type="text" placeholder="2027/2028" required/>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="year-start">Date de début</label>
+              <input class="form-control" id="year-start" type="date" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="year-end">Date de fin</label>
+              <input class="form-control" id="year-end" type="date" required/>
+            </div>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-label" for="year-status">Statut de l'année</label>
+            <select id="year-status" class="form-control form-select">
+              <option value="PLANNED">Planifiée / Future</option>
+              <option value="ACTIVE">Active (inscriptions courantes)</option>
+              <option value="ARCHIVED">Archivée (clôturée)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-year" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-year" type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

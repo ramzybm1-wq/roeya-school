@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mon Espace Parent | VISION SCHOOL</title>
+  <meta name="description" content="Consultez l'état de vos dossiers d'inscription, téléversez des documents complémentaires et suivez chaque étape du processus d'admission."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <script>
+    (function() {
+      var token = localStorage.getItem('vs_client_token');
+      if (!token) {
+        var currentUrl = window.location.pathname + window.location.search;
+        window.location.replace('/connexion?redirect=' + encodeURIComponent(currentUrl));
+      } else if (!document.cookie.includes('vs_client_session=')) {
+        document.cookie = 'vs_client_session=' + encodeURIComponent(token) + '; path=/; max-age=28800; SameSite=Lax';
+      }
+    })();
+  </script>
+  <style>
+    .dashboard-wrapper {
+      min-height: calc(100vh - 68px);
+      padding-top: 68px;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-700) 100%);
+      color: #fff;
+      padding: 36px 40px 32px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .dashboard-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(37,99,235,0.18), transparent 60%);
+    }
+    .dashboard-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .dashboard-welcome {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .dashboard-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: var(--r-full);
+      background: linear-gradient(135deg, var(--indigo) 0%, var(--indigo-700) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+    .dashboard-greet h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .dashboard-greet p {
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.75);
+    }
+    .dashboard-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .dashboard-btn {
+      padding: 10px 20px;
+      border-radius: var(--r-md);
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--t-fast);
+      text-decoration: none;
+      border: none;
+      font-family: inherit;
+    }
+    .dashboard-btn-primary {
+      background: var(--indigo);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+    .dashboard-btn-primary:hover {
+      background: var(--indigo-700);
+      text-decoration: none;
+    }
+    .dashboard-btn-ghost {
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .dashboard-btn-ghost:hover {
+      background: rgba(220,38,38,0.2);
+      border-color: rgba(220,38,38,0.4);
+      color: #fca5a5;
+      text-decoration: none;
+    }
+    .dashboard-btn .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* Tabs Bar */
+    .dashboard-tabs-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow-xs);
+    }
+    .dashboard-tabs-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 40px;
+      display: flex;
+      gap: 8px;
+    }
+    .dashboard-tab {
+      padding: 16px 20px;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .dashboard-tab:hover {
+      color: var(--navy);
+    }
+    .dashboard-tab.active {
+      color: var(--indigo);
+      border-bottom-color: var(--indigo);
+    }
+
+    /* Content */
+    .dashboard-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 40px 60px;
+    }
+
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-xs);
+      transition: transform var(--t-fast);
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon.total { background: var(--indigo-50); color: var(--indigo); }
+    .stat-icon.pending { background: #fef3c7; color: #d97706; }
+    .stat-icon.accepted { background: #d1fae5; color: #059669; }
+    .stat-icon.waitlisted { background: #f1f5f9; color: #475569; }
+    .stat-icon .material-symbols-outlined {
+      font-size: 22px;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .dashboard-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    /* Registration Cards */
+    .reg-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .reg-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--t-fast);
+    }
+    .reg-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--indigo-200);
+    }
+    .reg-card-inner {
+      padding: 22px 26px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+    .reg-card-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .reg-card-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .reg-code {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--indigo);
+      font-family: monospace;
+      background: var(--indigo-50);
+      padding: 3px 10px;
+      border-radius: var(--r-sm);
+      border: 1px solid var(--indigo-100);
+    }
+    .reg-student {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+    .reg-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+    .reg-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .reg-meta-item .material-symbols-outlined {
+      font-size: 16px;
+      color: var(--indigo);
+    }
+    .reg-card-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 12px;
+    }
+    .reg-date {
+      font-size: 12px;
+      color: var(--text-subtle);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--r-full);
+      font-size: 12.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .status-new { background: var(--indigo-50); color: var(--indigo-700); border: 1px solid var(--indigo-100); }
+    .status-review { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+    .status-pending { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+    .status-accepted { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+    .status-refused { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+    .status-waitlist { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .status-cancelled { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 70px 24px;
+      background: var(--surface);
+      border: 2px dashed var(--border);
+      border-radius: var(--r-xl);
+    }
+    .empty-state-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: var(--r-full);
+      background: var(--indigo-50);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .empty-state-icon .material-symbols-outlined {
+      font-size: 32px;
+      color: var(--indigo);
+    }
+    .empty-state h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: 14.5px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      max-width: 460px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    /* Modal Styles */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--t-fast);
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .modal-card {
+      background: var(--surface);
+      width: 100%;
+      max-width: 780px;
+      max-height: 90vh;
+      border-radius: var(--r-xl);
+      box-shadow: var(--shadow-xl);
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: all var(--t-normal);
+      display: flex;
+      flex-direction: column;
+    }
+    .modal-backdrop.open .modal-card {
+      transform: translateY(0);
+    }
+    .modal-header {
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: var(--surface);
+      z-index: 10;
+    }
+    .modal-body {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .modal-close:hover {
+      background: var(--error-bg);
+      color: var(--error);
+      border-color: var(--error-bg);
+    }
+
+    /* Status Explanatory Cards */
+    .status-explainer {
+      border-radius: var(--r-lg);
+      padding: 20px 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .status-explainer-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--r-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .status-explainer.accepted {
+      background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+      border: 1.5px solid #6ee7b7;
+      color: #064e3b;
+    }
+    .status-explainer.accepted .status-explainer-icon { background: #059669; color: #fff; }
+    .status-explainer.refused {
+      background: #fef2f2;
+      border: 1.5px solid #fca5a5;
+      color: #7f1d1d;
+    }
+    .status-explainer.refused .status-explainer-icon { background: #dc2626; color: #fff; }
+    .status-explainer.waitlist {
+      background: #fffbeb;
+      border: 1.5px solid #fcd34d;
+      color: #78350f;
+    }
+    .status-explainer.waitlist .status-explainer-icon { background: #d97706; color: #fff; }
+    .status-explainer.review {
+      background: #eff6ff;
+      border: 1.5px solid #93c5fd;
+      color: #1e3a8a;
+    }
+    .status-explainer.review .status-explainer-icon { background: #2563eb; color: #fff; }
+    .status-explainer.new {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      color: #1e293b;
+    }
+    .status-explainer.new .status-explainer-icon { background: #64748b; color: #fff; }
+
+    /* Detail Grid */
+    .dossier-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .dossier-section {
+      background: var(--bg);
+      border-radius: var(--r-lg);
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+    }
+    .dossier-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dossier-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13.5px;
+      padding: 5px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .dossier-row:last-child {
+      border-bottom: none;
+    }
+    .dossier-label {
+      color: var(--text-muted);
+    }
+    .dossier-val {
+      font-weight: 600;
+      color: var(--navy);
+      text-align: right;
+    }
+
+    /* Documents Table */
+    .doc-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .doc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 12px 16px;
+    }
+    .doc-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .doc-upload-btn {
+      font-size: 12.5px;
+      padding: 6px 12px;
+      border-radius: var(--r-sm);
+      background: var(--indigo-50);
+      color: var(--indigo);
+      border: 1px solid var(--indigo-100);
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .doc-upload-btn:hover {
+      background: var(--indigo);
+      color: #fff;
+    }
+
+    /* Profile Section */
+    .profile-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px 32px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+    }
+    .profile-card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .profile-card-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .form-group-full {
+      grid-column: 1 / -1;
+    }
+    .profile-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .profile-field input {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--r-md);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: all var(--t-fast);
+    }
+    .profile-field input:focus {
+      background: #fff;
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .profile-field input:disabled {
+      background: #f1f5f9;
+      color: var(--text-subtle);
+      cursor: not-allowed;
+    }
+
+    /* Loading Spinner */
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 24px;
+      gap: 16px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--indigo);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media(max-width: 768px) {
+      .dashboard-header { padding: 24px 16px 20px; }
+      .dashboard-tabs-inner { padding: 0 16px; }
+      .dashboard-content { padding: 20px 16px 40px; }
+      .dashboard-header-inner { flex-direction: column; align-items: flex-start; }
+      .reg-card-inner { grid-template-columns: 1fr; }
+      .reg-card-right { align-items: flex-start; flex-direction: row; gap: 12px; }
+      .dossier-grid { grid-template-columns: 1fr; }
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/mon-espace" class="client-nav-link active">Mon Espace</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire un enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Dashboard Wrapper -->
+  <div class="dashboard-wrapper">
+
+    <!-- Header -->
+    <div class="dashboard-header" id="dashboard-header">
+      <div class="dashboard-header-inner">
+        <div class="dashboard-welcome">
+          <div class="dashboard-avatar" id="dashboard-avatar">P</div>
+          <div class="dashboard-greet">
+            <h1 id="dashboard-greeting">Bonjour</h1>
+            <p>Espace Parent sécurisé — Suivez vos dossiers en direct</p>
+          </div>
+        </div>
+        <div class="dashboard-actions">
+          <a href="/inscription" class="dashboard-btn dashboard-btn-primary">
+            <span class="material-symbols-outlined">add_circle</span>
+            Inscrire un enfant
+          </a>
+          <button class="dashboard-btn dashboard-btn-ghost" id="btn-logout">
+            <span class="material-symbols-outlined">logout</span>
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs Bar -->
+    <div class="dashboard-tabs-bar">
+      <div class="dashboard-tabs-inner">
+        <button class="dashboard-tab active" id="tab-btn-inscriptions">
+          <span class="material-symbols-outlined">folder_shared</span>
+          Mes Inscriptions (<span id="tab-count-inscriptions">0</span>)
+        </button>
+        <button class="dashboard-tab" id="tab-btn-profil">
+          <span class="material-symbols-outlined">manage_accounts</span>
+          Mon Profil &amp; Sécurité
+        </button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="dashboard-content">
+
+      <!-- SECTION 1: MES INSCRIPTIONS -->
+      <div id="section-inscriptions">
+
+        <!-- Loading State -->
+        <div class="loading-state" id="dashboard-loading">
+          <div class="spinner"></div>
+          <span>Chargement de vos dossiers…</span>
+        </div>
+
+        <!-- Stats Summary -->
+        <div class="dashboard-stats" id="dashboard-stats" style="display:none;"></div>
+
+        <!-- Registrations List -->
+        <div id="dashboard-registrations" style="display:none;">
+          <div class="dashboard-section-title">
+            <span>Dossiers d'inscription de vos enfants</span>
+            <a href="/inscription" class="btn btn-secondary btn-sm" style="display:inline-flex;align-items:center;gap:4px;font-size:13px;padding:6px 14px;">
+              <span class="material-symbols-outlined" style="font-size:16px;">add</span> Inscrire un autre enfant
+            </a>
+          </div>
+          <div class="reg-list" id="reg-list"></div>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="dashboard-empty" style="display:none;">
+          <div class="empty-state-icon">
+            <span class="material-symbols-outlined">family_restroom</span>
+          </div>
+          <h3>Aucun dossier d'inscription</h3>
+          <p>Vous n'avez pas encore soumis de demande d'inscription pour vos enfants. Commencez dès maintenant en quelques étapes simples.</p>
+          <a href="/inscription" class="btn btn-primary btn-lg" style="display:inline-flex;align-items:center;gap:8px;padding:12px 28px;font-size:15px;background:var(--indigo);color:#fff;font-weight:700;">
+            <span class="material-symbols-outlined">edit_square</span>
+            Inscrire mon enfant
+          </a>
+        </div>
+
+      </div>
+
+      <!-- SECTION 2: MON PROFIL -->
+      <div id="section-profil" style="display:none;">
+
+        <!-- Personal Info Card -->
+        <div class="profile-card">
+          <div class="profile-card-title">
+            <span class="material-symbols-outlined" style="color:var(--indigo);">person</span>
+            Mes Coordonnées de Responsable Légal
+          </div>
+          <p class="profile-card-sub">Ces coordonnées sont utilisées pour la communication administrative et les convocations.</p>
+
+          <form id="form-profile">
+            <div class="profile-grid">
+              <div class="profile-field">
+                <label for="prof-firstname">Prénom *</label>
+                <input type="text" id="prof-firstname" required placeholder="Votre prénom"/>
+              </div>
+              <div class="profile-field">
+                <label for="prof-lastname">Nom de famille *</label>
+                <input type="text" id="prof-lastname" required placeholder="Votre nom"/>
+              </div>
+              <div class="profile-field">
+                <label for="prof-email">Adresse email (identifiant de compte)</label>
+                <input type="email" id="prof-email" disabled title="L'email ne peut pas être modifié"/>
+              </div>
+              <div class="profile-field">
+                <label for="prof-phone">Numéro de téléphone *</label>
+                <input type="tel" id="prof-phone" required placeholder="05XX XX XX XX"/>
+              </div>
+              <div class="profile-field form-group-full">
+                <label for="prof-address">Adresse de résidence</label>
+                <input type="text" id="prof-address" placeholder="N°, rue, quartier"/>
+              </div>
+              <div class="profile-field">
+                <label for="prof-wilaya">Wilaya</label>
+                <input type="text" id="prof-wilaya" placeholder="Ex: Alger, Oran, Blida"/>
+              </div>
+              <div class="profile-field">
+                <label for="prof-commune">Commune</label>
+                <input type="text" id="prof-commune" placeholder="Ex: Sidi M'Hamed, Hydra"/>
+              </div>
+            </div>
+
+            <div style="margin-top:24px;display:flex;justify-content:flex-end;">
+              <button type="submit" class="btn btn-navy" id="btn-save-profile" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;">
+                <span class="material-symbols-outlined">save</span>
+                Enregistrer mes modifications
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Password Change Card -->
+        <div class="profile-card">
+          <div class="profile-card-title">
+            <span class="material-symbols-outlined" style="color:var(--indigo);">lock_reset</span>
+            Sécurité &amp; Mot de passe
+          </div>
+          <p class="profile-card-sub">Changez votre mot de passe pour protéger l'accès à votre espace parent.</p>
+
+          <form id="form-change-password">
+            <div class="profile-grid">
+              <div class="profile-field form-group-full">
+                <label for="pwd-current">Mot de passe actuel *</label>
+                <input type="password" id="pwd-current" required placeholder="••••••••"/>
+              </div>
+              <div class="profile-field">
+                <label for="pwd-new">Nouveau mot de passe *</label>
+                <input type="password" id="pwd-new" required minlength="6" placeholder="Min. 6 caractères"/>
+              </div>
+              <div class="profile-field">
+                <label for="pwd-confirm">Confirmer le nouveau mot de passe *</label>
+                <input type="password" id="pwd-confirm" required minlength="6" placeholder="Min. 6 caractères"/>
+              </div>
+            </div>
+
+            <div style="margin-top:24px;display:flex;justify-content:flex-end;">
+              <button type="submit" class="btn btn-secondary" id="btn-change-pwd" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;">
+                <span class="material-symbols-outlined">key</span>
+                Mettre à jour le mot de passe
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DOSSIER DETAIL MODAL -->
+  <div class="modal-backdrop" id="dossier-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div style="font-size:12px;color:var(--indigo);font-weight:700;letter-spacing:.05em;text-transform:uppercase;" id="modal-dossier-code">DOSSIER</div>
+          <div style="font-size:20px;font-weight:800;color:var(--navy);" id="modal-student-name">Nom de l'enfant</div>
+        </div>
+        <button class="modal-close" id="modal-btn-close" aria-label="Fermer">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Status Explanatory Card -->
+        <div id="modal-status-card" class="status-explainer">
+          <div class="status-explainer-icon" id="modal-status-icon">
+            <span class="material-symbols-outlined">info</span>
+          </div>
+          <div>
+            <div style="font-size:16px;font-weight:800;margin-bottom:4px;" id="modal-status-title">État du dossier</div>
+            <div style="font-size:13.5px;line-height:1.5;" id="modal-status-desc">Description de l'état actuel de la demande.</div>
+          </div>
+        </div>
+
+        <!-- Student & Registration Information -->
+        <div class="dossier-grid">
+          <div class="dossier-section">
+            <div class="dossier-section-title">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--indigo);">badge</span>
+              Informations Élève
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Date de naissance :</span>
+              <span class="dossier-val" id="modal-student-dob">—</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Genre :</span>
+              <span class="dossier-val" id="modal-student-gender">—</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Lieu de naissance :</span>
+              <span class="dossier-val" id="modal-student-place">—</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Établissement précédent :</span>
+              <span class="dossier-val" id="modal-student-prev">—</span>
+            </div>
+          </div>
+
+          <div class="dossier-section">
+            <div class="dossier-section-title">
+              <span class="material-symbols-outlined" style="font-size:17px;color:var(--indigo);">school</span>
+              Vœux d'admission
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Campus :</span>
+              <span class="dossier-val" id="modal-school-name">—</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Niveau demandé :</span>
+              <span class="dossier-val" id="modal-level-name">—</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Filière / Option :</span>
+              <span class="dossier-val" id="modal-choice-name">—</span>
+            </div>
+            <div class="dossier-row">
+              <span class="dossier-label">Année scolaire :</span>
+              <span class="dossier-val" id="modal-year-name">—</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Checklist & Inline Replacement -->
+        <div class="dossier-section" style="background:var(--surface);">
+          <div class="dossier-section-title">
+            <span class="material-symbols-outlined" style="font-size:17px;color:var(--indigo);">attach_file</span>
+            Documents transmis &amp; Statut
+          </div>
+          <div class="doc-list" id="modal-docs-list">
+            <div class="text-xs text-muted">Chargement des documents…</div>
+          </div>
+        </div>
+
+        <!-- Administration Contact Box -->
+        <div style="background:var(--navy-50);border-radius:var(--r-lg);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--navy);">Une question concernant cette candidature ?</div>
+            <div style="font-size:12.5px;color:var(--text-muted);">Le bureau des admissions est à votre disposition du dimanche au jeudi.</div>
+          </div>
+          <a href="/contact" class="btn btn-navy btn-sm" style="font-size:12.5px;display:inline-flex;align-items:center;gap:4px;">
+            <span class="material-symbols-outlined" style="font-size:15px;">mail</span>
+            Contacter les admissions
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="client-brand-icon" style="width:32px;height:32px;"><span class="material-symbols-outlined" style="color:#fff;font-size:18px;">school</span></div>
+          <span class="client-footer-name" style="margin:0;">VISION SCHOOL</span>
+        </div>
+        <p class="client-footer-desc">
+          Établissement d'excellence dédié à l'épanouissement intellectuel, humain et créatif de chaque élève, de la maternelle au secondaire.
+        </p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/" class="client-footer-link">Accueil</a>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie photos</a>
+        <a href="/contact" class="client-footer-link">Contact</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Admissions</div>
+        <a href="/inscription" class="client-footer-link">Inscription en ligne</a>
+        <a href="/mon-espace" class="client-footer-link">Mon Espace Parent</a>
+        <a href="/suivi" class="client-footer-link">Suivi anonyme</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">location_on</span>
+          Alger, Algérie
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">call</span>
+          +213 21 00 00 00
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">mail</span>
+          contact@visionschool.dz
+        </div>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <div>© 2026 VISION SCHOOL. Tous droits réservés.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="/confidentialite" class="client-footer-link" style="margin:0;">Confidentialité &amp; Mentions</a>
+        <a href="http://localhost:3001" class="client-footer-link" style="margin:0;" target="_blank">Portail Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/public/js/client-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Centre de Notifications — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container" style="max-width: 900px;">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Notifications</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Centre de Notifications</h1>
+          <p class="page-subtitle">Historique des alertes opérationnelles, candidatures reçues et événements système.</p>
+        </div>
+        <button id="btn-mark-all-read" class="btn btn-secondary btn-sm">
+          <span class="material-symbols-outlined">done_all</span>
+          <span>Tout marquer comme lu</span>
+        </button>
+      </div>
+
+      <!-- Filter Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="filterNotifs('ALL')">
+          <span>Toutes</span>
+          <span id="notif-count-all" class="tab-badge">0</span>
+        </button>
+        <button class="tab" onclick="filterNotifs('UNREAD')">
+          <span>Non lues</span>
+          <span id="notif-count-unread" class="tab-badge" style="background:var(--error-bg);color:var(--error);">0</span>
+        </button>
+        <button class="tab" onclick="filterNotifs('APPLICATIONS')">
+          <span>Candidatures</span>
+        </button>
+        <button class="tab" onclick="filterNotifs('CAPACITY')">
+          <span>Capacités &amp; Seuils</span>
+        </button>
+      </div>
+
+      <!-- Notifications List Card -->
+      <div class="card mb-8">
+        <div id="notifications-list" class="flex flex-col divide-y divide-gray-100">
+          <div class="empty-state">
+            <span class="material-symbols-outlined empty-state-icon">notifications_none</span>
+            <div class="empty-state-title">Aucune nouvelle notification</div>
+            <div class="empty-state-desc">Vous êtes à jour. Les alertes importantes et nouvelles candidatures apparaîtront ici.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

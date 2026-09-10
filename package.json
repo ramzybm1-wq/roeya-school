@@ -1,0 +1,30 @@
+{
+  "name": "vision-school",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VISION SCHOOL - Private school registration and administration platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "storage"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:client": "npm run dev --workspace=apps/client",
+    "dev:admin": "npm run dev --workspace=apps/admin",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build": "npm run build --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "seed": "npm run seed --workspace=packages/database"
+  },
+  "keywords": [
+    "vision-school",
+    "education",
+    "registration",
+    "admin-dashboard",
+    "typescript"
+  ],
+  "author": "VISION SCHOOL Engineering",
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paramètres &amp; Configuration — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container" style="max-width: 1280px; width: 100%; margin: 0 auto;">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Paramètres</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Configuration de la Plateforme</h1>
+          <p class="page-subtitle">Réglez les paramètres généraux, les alertes d'admissions et votre profil administrateur.</p>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div id="settings-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Settings Navigation Tabs -->
+      <div class="tabs">
+        <button class="tab active" data-tab="general" onclick="showSettingsTab('general')">
+          <span class="material-symbols-outlined">tune</span>
+          <span>Général</span>
+        </button>
+        <button class="tab" data-tab="admissions" onclick="showSettingsTab('admissions')">
+          <span class="material-symbols-outlined">how_to_reg</span>
+          <span>Règles d'admission</span>
+        </button>
+        <button class="tab" data-tab="notifications" onclick="showSettingsTab('notifications')">
+          <span class="material-symbols-outlined">notifications</span>
+          <span>Notifications</span>
+        </button>
+        <button class="tab" data-tab="profile" data-tab-profile onclick="showSettingsTab('profile')">
+          <span class="material-symbols-outlined">person</span>
+          <span>Mon profil &amp; Sécurité</span>
+        </button>
+      </div>
+
+
+      <!-- Tab 1: General & Branding -->
+      <div id="tab-content-general" class="settings-pane card mb-8">
+        <div class="card-header">
+          <div class="card-title">Identité &amp; Branding de l'Institution</div>
+        </div>
+        <div class="card-body">
+          <form id="form-settings-general" novalidate>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="setting-school-name">Nom complet de l'établissement</label>
+                <input class="form-control" id="setting-school-name" type="text" placeholder="Ex: ROEYA SCHOOL" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="setting-short-name">Nom abrégé / Marque</label>
+                <input class="form-control" id="setting-short-name" type="text" placeholder="Ex: ROEYA"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setting-school-sub">Devise / Slogan institutionnel</label>
+              <input class="form-control" id="setting-school-sub" type="text" placeholder="Ex: Excellence &amp; Innovation Pédagogique"/>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="setting-email">Email officiel de contact</label>
+                <input class="form-control" id="setting-email" type="email" placeholder="contact@roeyaschool.dz"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="setting-phone">Téléphone standard</label>
+                <input class="form-control" id="setting-phone" type="tel" placeholder="+213 21 00 00 00"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setting-address">Adresse du siège</label>
+              <input class="form-control" id="setting-address" type="text" placeholder="Hydra, Alger, Algérie"/>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="setting-wilaya">Wilaya du siège</label>
+                <input class="form-control" id="setting-wilaya" type="text" placeholder="Ex: Alger ou 16 - Alger"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="setting-commune">Commune du siège</label>
+                <input class="form-control" id="setting-commune" type="text" placeholder="Ex: Hydra"/>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label" for="setting-latitude">Latitude GPS (ex: 36.7525)</label>
+                <input class="form-control" id="setting-latitude" type="number" step="0.000001" placeholder="36.752500"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="setting-longitude">Longitude GPS (ex: 3.0420)</label>
+                <input class="form-control" id="setting-longitude" type="number" step="0.000001" placeholder="3.042000"/>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="setting-google-maps-url">Lien Google Maps ou URL Partage</label>
+              <input class="form-control" id="setting-google-maps-url" type="url" placeholder="https://maps.google.com/?q=..."/>
+              <span class="text-xs text-muted">Ce lien ou ces coordonnées sont utilisés par défaut pour la localisation du siège sur le portail public.</span>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button class="btn btn-primary" type="submit">
+                <span class="material-symbols-outlined text-sm">save</span>
+                <span>Enregistrer l'identité</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Logos & Favicon Management Section -->
+          <div class="divider my-6"></div>
+          <h3 class="text-base font-bold mb-4">Logos &amp; Éléments Graphiques</h3>
+
+          <div class="grid grid-cols-3 gap-6">
+            <!-- Client Logo -->
+            <div class="card p-4 flex flex-col items-center text-center">
+              <div class="text-xs font-semibold uppercase text-muted mb-2">Logo Portail Client</div>
+              <div class="w-24 h-24 mb-3 flex items-center justify-center border rounded bg-light" style="background:#f8fafc;">
+                <img id="preview-client-logo" src="" alt="Client Logo" class="max-h-20 max-w-20 object-contain hidden"/>
+                <span id="placeholder-client-logo" class="material-symbols-outlined text-muted" style="font-size:36px;">school</span>
+              </div>
+              <input type="file" id="input-client-logo" class="hidden" accept="image/png,image/jpeg,image/svg+xml,image/webp"/>
+              <div class="flex gap-2">
+                <button type="button" class="btn btn-secondary btn-xs" onclick="document.getElementById('input-client-logo').click()">
+                  <span class="material-symbols-outlined text-xs">upload</span>
+                  <span>Changer</span>
+                </button>
+                <button type="button" id="btn-remove-client-logo" class="btn btn-danger-outline btn-xs hidden" onclick="removeLogo('client')">
+                  <span class="material-symbols-outlined text-xs">delete</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Admin Logo -->
+            <div class="card p-4 flex flex-col items-center text-center">
+              <div class="text-xs font-semibold uppercase text-muted mb-2">Logo Administration</div>
+              <div class="w-24 h-24 mb-3 flex items-center justify-center border rounded bg-light" style="background:#f8fafc;">
+                <img id="preview-admin-logo" src="" alt="Admin Logo" class="max-h-20 max-w-20 object-contain hidden"/>
+                <span id="placeholder-admin-logo" class="material-symbols-outlined text-muted" style="font-size:36px;">shield_person</span>
+              </div>
+              <input type="file" id="input-admin-logo" class="hidden" accept="image/png,image/jpeg,image/svg+xml,image/webp"/>
+              <div class="flex gap-2">
+                <button type="button" class="btn btn-secondary btn-xs" onclick="document.getElementById('input-admin-logo').click()">
+                  <span class="material-symbols-outlined text-xs">upload</span>
+                  <span>Changer</span>
+                </button>
+                <button type="button" id="btn-remove-admin-logo" class="btn btn-danger-outline btn-xs hidden" onclick="removeLogo('admin')">
+                  <span class="material-symbols-outlined text-xs">delete</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Favicon -->
+            <div class="card p-4 flex flex-col items-center text-center">
+              <div class="text-xs font-semibold uppercase text-muted mb-2">Favicon Navigateur</div>
+              <div class="w-24 h-24 mb-3 flex items-center justify-center border rounded bg-light" style="background:#f8fafc;">
+                <img id="preview-favicon" src="" alt="Favicon" class="max-h-12 max-w-12 object-contain hidden"/>
+                <span id="placeholder-favicon" class="material-symbols-outlined text-muted" style="font-size:36px;">tab</span>
+              </div>
+              <input type="file" id="input-favicon" class="hidden" accept="image/png,image/x-icon,image/svg+xml"/>
+              <div class="flex gap-2">
+                <button type="button" class="btn btn-secondary btn-xs" onclick="document.getElementById('input-favicon').click()">
+                  <span class="material-symbols-outlined text-xs">upload</span>
+                  <span>Changer</span>
+                </button>
+                <button type="button" id="btn-remove-favicon" class="btn btn-danger-outline btn-xs hidden" onclick="removeLogo('favicon')">
+                  <span class="material-symbols-outlined text-xs">delete</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Admissions Rules -->
+      <div id="tab-content-admissions" class="settings-pane card mb-8 hidden">
+        <div class="card-header">
+          <div class="card-title">Règles &amp; Automatisation des Inscriptions</div>
+        </div>
+        <div class="card-body">
+          <form id="form-settings-admissions" novalidate>
+            <div class="form-group">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" checked/>
+                <span class="form-check-label font-medium">Activer la bascule automatique en liste d'attente quand le quota est atteint (100%)</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" checked/>
+                <span class="form-check-label font-medium">Autoriser les parents à modifier leur dossier tant qu'il n'est pas instruit</span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" checked/>
+                <span class="form-check-label font-medium">Exiger l'extrait de naissance obligatoire dès le premier dépôt</span>
+              </label>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button class="btn btn-primary" type="submit">Enregistrer les règles</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tab 3: Notifications -->
+      <div id="tab-content-notifications" class="settings-pane card mb-8 hidden">
+        <div class="card-header">
+          <div class="card-title">Destinataires des Alertes Administratives</div>
+        </div>
+        <div class="card-body">
+          <form id="form-settings-notifications" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="setting-notif-email">Email de réception des nouvelles candidatures</label>
+              <input class="form-control" id="setting-notif-email" type="email" value="admissions@visionschool.dz"/>
+            </div>
+
+            <div class="form-group">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" checked/>
+                <span class="form-check-label font-medium">Envoyer un SMS automatique aux parents lors de l'acceptation</span>
+              </label>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button class="btn btn-primary" type="submit">Sauvegarder</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Tab 4: Profile & Security -->
+      <div id="tab-content-profile" class="settings-pane card mb-8 hidden">
+        <div class="card-header">
+          <div class="card-title">Mon Profil Administrateur</div>
+        </div>
+        <div class="card-body">
+          <form id="form-settings-profile" novalidate class="mb-6">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="profile-first-name">Prénom</label>
+                <input class="form-control" id="profile-first-name" type="text" placeholder="Prénom" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="profile-last-name">Nom</label>
+                <input class="form-control" id="profile-last-name" type="text" placeholder="Nom" required/>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+              <div class="form-group">
+                <label class="form-label" for="profile-phone">Numéro de téléphone</label>
+                <input class="form-control" id="profile-phone" type="tel" placeholder="+213 550 00 00 00"/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="profile-email">Adresse e-mail (Identifiant)</label>
+                <input class="form-control" id="profile-email" type="email" disabled/>
+              </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button class="btn btn-primary" id="btn-save-profile" type="submit">Enregistrer mon profil</button>
+            </div>
+          </form>
+
+          <div class="divider" style="margin: 24px 0; border-top: 1px solid var(--border);"></div>
+
+          <form id="form-change-password" novalidate>
+            <div class="text-sm font-semibold mb-3">Changer mon mot de passe</div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="pw-current">Mot de passe actuel</label>
+              <input class="form-control" id="pw-current" type="password" placeholder="••••••••" required/>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="pw-new">Nouveau mot de passe</label>
+                <input class="form-control" id="pw-new" type="password" placeholder="••••••••" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="pw-confirm">Confirmer le nouveau mot de passe</label>
+                <input class="form-control" id="pw-confirm" type="password" placeholder="••••••••" required/>
+              </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button class="btn btn-secondary" id="btn-change-password" type="submit">Mettre à jour mon mot de passe</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function showSettingsTab(tabId) {
+      document.querySelectorAll('.tab').forEach(t => {
+        const match = t.getAttribute('data-tab') === tabId || (t.getAttribute('onclick') && t.getAttribute('onclick').includes(tabId));
+        t.classList.toggle('active', !!match);
+      });
+      document.querySelectorAll('.settings-pane').forEach(p => p.classList.add('hidden'));
+      const pane = document.getElementById(`tab-content-${tabId}`);
+      if (pane) pane.classList.remove('hidden');
+    }
+  </script>
+
+</body>
+</html>

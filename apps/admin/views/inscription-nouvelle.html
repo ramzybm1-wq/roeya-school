@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nouvelle Inscription &amp; Form Builder — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container" style="max-width: 1000px;">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <a href="/inscriptions">Inscriptions</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Nouvelle inscription</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Enregistrer une Nouvelle Inscription</h1>
+          <p class="page-subtitle">Saisie administrative directe d'un dossier candidat (accueil guichet / téléphone).</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/inscriptions" class="btn btn-secondary btn-sm">
+            <span class="material-symbols-outlined">close</span>
+            <span>Annuler</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div id="new-reg-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Form Card -->
+      <form id="form-new-registration" novalidate>
+        <!-- 1. Pedagogical choice -->
+        <div class="card mb-6">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--indigo);">school</span>
+              <span>1. Établissement &amp; Niveau souhaité</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-school">Établissement</label>
+                <select id="reg-school" class="form-control form-select" required>
+                  <option value="">Sélectionner un établissement…</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-level">Niveau scolaire</label>
+                <select id="reg-level" class="form-control form-select" required>
+                  <option value="">Sélectionner un niveau…</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Student Info -->
+        <div class="card mb-6">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--navy);">face</span>
+              <span>2. Informations sur l'élève</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-first-name">Prénom de l'enfant</label>
+                <input class="form-control" id="reg-first-name" type="text" placeholder="Ex: Rayane" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-last-name">Nom de famille</label>
+                <input class="form-control" id="reg-last-name" type="text" placeholder="Ex: Benali" required/>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-birth-date">Date de naissance</label>
+                <input class="form-control" id="reg-birth-date" type="date" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-gender">Genre</label>
+                <select id="reg-gender" class="form-control form-select" required>
+                  <option value="MALE">Garçon</option>
+                  <option value="FEMALE">Fille</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group mb-0">
+              <label class="form-label" for="reg-prev-school">Établissement scolaire précédent (si applicable)</label>
+              <input class="form-control" id="reg-prev-school" type="text" placeholder="Ex: École primaire publique Les Orangers"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Parent Info -->
+        <div class="card mb-6">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--navy);">family_restroom</span>
+              <span>3. Responsable légal / Parent</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-parent-name">Nom complet du tuteur</label>
+                <input class="form-control" id="reg-parent-name" type="text" placeholder="Ex: Karim Benali" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-parent-relation">Lien de parenté</label>
+                <select id="reg-parent-relation" class="form-control form-select">
+                  <option value="FATHER">Père</option>
+                  <option value="MOTHER">Mère</option>
+                  <option value="LEGAL_GUARDIAN">Tuteur légal</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-parent-phone">Téléphone mobile</label>
+                <input class="form-control" id="reg-parent-phone" type="tel" placeholder="0550 00 00 00" required/>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="reg-parent-email">Adresse email</label>
+                <input class="form-control" id="reg-parent-email" type="email" placeholder="parent@email.dz" required/>
+              </div>
+            </div>
+
+            <div class="form-group mb-0">
+              <label class="form-label" for="reg-parent-address">Adresse de résidence</label>
+              <input class="form-control" id="reg-parent-address" type="text" placeholder="Ex: Cité 500 logts, Hydra, Alger"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex items-center justify-end gap-3 mb-10">
+          <a href="/inscriptions" class="btn btn-secondary">Annuler</a>
+          <button id="btn-submit-reg" class="btn btn-primary btn-lg" type="submit">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>Enregistrer le dossier</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
