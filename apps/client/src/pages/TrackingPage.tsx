@@ -4,7 +4,7 @@
  * waiting list status, document replacement actions, and school contact buttons.
  */
 
-import { PublicDossierResponse } from '../../../api/src/services/tracking.service';
+import { PublicDossierResponse } from '@vision-school/shared';
 
 export interface TrackingPageProps {
   searchedCode?: string;

@@ -22,7 +22,7 @@ import {
   auditLogs,
 } from '@vision-school/database';
 import { eq, and, desc, asc } from 'drizzle-orm';
-import { AppError } from '@vision-school/shared';
+import { AppError, PublicDossierResponse, PublicTimelineEvent, PublicDocumentItem } from '@vision-school/shared';
 import { DocumentService } from './document.service';
 import { WaitingListService } from './waiting-list.service';
 import crypto from 'crypto';
@@ -33,63 +33,7 @@ export interface TrackingSessionPayload {
   expiresAt: number; // Unix timestamp in ms
 }
 
-export interface PublicTimelineEvent {
-  date: string;
-  status: string;
-  titleFr: string;
-  titleAr?: string | null;
-  descriptionFr?: string | null;
-}
-
-export interface PublicDocumentItem {
-  documentTypeId: string;
-  nameFr: string;
-  status: string; // 'VALIDATED', 'PENDING_REVIEW', 'REPLACEMENT_REQUIRED', 'REJECTED', 'MISSING', 'OPTIONAL'
-  statusLabelFr: string;
-  isRequired: boolean;
-  actionAllowed: 'ADD' | 'REPLACE' | 'NONE';
-  publicReplacementMessage?: string | null;
-}
-
-export interface PublicDossierResponse {
-  registrationCode: string;
-  submissionDate: string;
-  status: string;
-  statusLabelFr: string;
-  statusLabelAr?: string;
-  statusMessageFr: string;
-  statusMessageAr?: string;
-  student: {
-    fullNameFr: string;
-    fullNameAr?: string | null;
-    birthDate: string;
-  };
-  school: {
-    name: string;
-    address: string;
-    phone: string | null;
-    email: string | null;
-    gpsCoordinates?: string | null;
-  };
-  level: {
-    nameFr: string;
-    nameAr?: string | null;
-  };
-  academicYear: {
-    name: string;
-  };
-  waitingList?: {
-    isWaitlisted: boolean;
-    position: number | null; // only present if showWaitingPositionClient = true
-    messageFr: string;
-  } | null;
-  documents: PublicDocumentItem[];
-  timeline: PublicTimelineEvent[];
-  tariff?: {
-    amount: number;
-    currency: string;
-  } | null;
-}
+export type { PublicDossierResponse, PublicTimelineEvent, PublicDocumentItem };
 
 export class RegistrationTrackingService {
   private static readonly TRACKING_SECRET =

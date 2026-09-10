@@ -3,7 +3,7 @@
  * Connects to live operational metrics and notifications.
  */
 
-import { DashboardMetrics } from '../../api/src/services/dashboard.service';
+import { DashboardMetrics } from '@vision-school/shared';
 
 export interface DashboardPageProps {
   metrics?: DashboardMetrics;

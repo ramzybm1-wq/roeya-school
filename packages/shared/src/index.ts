@@ -13,6 +13,7 @@ export * from './types/media';
 export * from './types/user-auth';
 export * from './types/notification';
 export * from './types/system-setting';
+export * from './types/dashboard';
 export * from './types/tracking';
 export * from './errors/app-error';
 export * from './api/response';
