@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateAdminSession, unauthorizedResponse } from '@/lib/session';
+import { invalidateCache } from '@/lib/cache';
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await validateAdminSession(req);
@@ -78,9 +79,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       },
     });
 
+    invalidateCache('schools');
     return NextResponse.json({ success: true, data: updated });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: { code: 'INTERNAL_ERROR', message: err.message } }, { status: 500 });
+  } catch (err: unknown) {
+    console.error('[API] PUT /api/admin/schools/[id] error:', err);
+    return NextResponse.json({ success: false, error: { code: 'INTERNAL_ERROR', message: 'Une erreur interne est survenue.' } }, { status: 500 });
   }
 }
 
@@ -122,6 +125,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       });
 
       await prisma.schools.delete({ where: { id } });
+      invalidateCache('schools');
       return NextResponse.json({ success: true, data: { id, deleted: true, message: `Établissement "${existing.name}" supprimé définitivement.` } });
     }
 
@@ -130,8 +134,10 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
       where: { id },
       data: { is_active: false, status: 'ARCHIVED', archived_at: new Date(), updated_at: new Date() },
     });
+    invalidateCache('schools');
     return NextResponse.json({ success: true, data: { id, archived: true, school: updated } });
-  } catch (err: any) {
-    return NextResponse.json({ success: false, error: { code: 'INTERNAL_ERROR', message: err.message } }, { status: 500 });
+  } catch (err: unknown) {
+    console.error('[API] DELETE /api/admin/schools/[id] error:', err);
+    return NextResponse.json({ success: false, error: { code: 'INTERNAL_ERROR', message: 'Une erreur interne est survenue.' } }, { status: 500 });
   }
 }

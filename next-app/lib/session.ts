@@ -1,11 +1,17 @@
 /**
  * Session validation helper for API routes.
  * Validates the admin and client session tokens from the Authorization header or cookie.
+ *
+ * Performance: last_activity_at updates are throttled to at most once per 2 minutes
+ * to eliminate redundant DB writes on rapid sequential requests.
  */
 
 import { NextRequest } from 'next/server';
 import prisma from '@/lib/prisma';
 import { hashToken, IDLE_TIMEOUT_MS } from '@/lib/auth';
+
+// Throttle session activity updates — only write if >2 min since last recorded activity
+const ACTIVITY_THROTTLE_MS = 2 * 60 * 1000;
 
 export interface SessionUser {
   id: string;
@@ -77,10 +83,15 @@ export async function validateAdminSession(req: NextRequest): Promise<SessionUse
     return null;
   }
 
-  await prisma.user_sessions.update({
-    where: { id: session.id },
-    data: { last_activity_at: now },
-  });
+  // Throttle: only update last_activity_at if >2 minutes since last recorded activity
+  const timeSinceLastActivity = now.getTime() - session.last_activity_at.getTime();
+  if (timeSinceLastActivity > ACTIVITY_THROTTLE_MS) {
+    // Fire-and-forget — no await needed since session is already validated
+    prisma.user_sessions.update({
+      where: { id: session.id },
+      data: { last_activity_at: now },
+    }).catch(() => { /* Swallow non-critical activity update failures */ });
+  }
 
   const userRoleRows = await prisma.user_roles.findMany({
     where: { user_id: user.id },
@@ -148,10 +159,14 @@ export async function validateClientSession(req: NextRequest): Promise<ClientSes
     return null;
   }
 
-  await prisma.user_sessions.update({
-    where: { id: session.id },
-    data: { last_activity_at: now },
-  });
+  // Throttle: only update last_activity_at if >2 minutes since last recorded activity
+  const timeSinceLastActivity = now.getTime() - session.last_activity_at.getTime();
+  if (timeSinceLastActivity > ACTIVITY_THROTTLE_MS) {
+    prisma.user_sessions.update({
+      where: { id: session.id },
+      data: { last_activity_at: now },
+    }).catch(() => { /* Swallow non-critical activity update failures */ });
+  }
 
   return {
     id: user.id,

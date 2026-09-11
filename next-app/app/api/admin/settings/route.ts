@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateAdminSession, unauthorizedResponse } from '@/lib/session';
+import { invalidateCache } from '@/lib/cache';
 
 export async function GET(req: NextRequest) {
   const user = await validateAdminSession(req);
@@ -16,9 +17,10 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true, data: map });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    console.error('[API] GET /api/admin/settings error:', err);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: err.message } },
+      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Une erreur interne est survenue.' } },
       { status: 500 }
     );
   }
@@ -53,10 +55,12 @@ export async function PUT(req: NextRequest) {
       }
     }
 
+    invalidateCache('branding');
     return NextResponse.json({ success: true, message: 'Paramètres mis à jour.' });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    console.error('[API] PUT /api/admin/settings error:', err);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: err.message } },
+      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Une erreur interne est survenue.' } },
       { status: 500 }
     );
   }

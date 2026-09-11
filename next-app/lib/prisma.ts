@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
   pgPool: Pool | undefined;
 };
 
-function createPrismaClient() {
+function createPrismaClient(): PrismaClient {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
     throw new Error('DATABASE_URL environment variable is not defined');
@@ -17,20 +17,29 @@ function createPrismaClient() {
     connectionString,
     ssl: { rejectUnauthorized: false },
     min: 1,
-    max: 10,
+    max: process.env.NODE_ENV === 'production' ? 5 : 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 5000,
+  });
+
+  // Handle unexpected idle client errors gracefully without crashing the serverless worker
+  pool.on('error', (err) => {
+    console.error('[Postgres Pool Unexpected Error]:', err.message);
   });
 
   const adapter = new PrismaPg(pool);
-  const client = new PrismaClient({ adapter });
+  const client = new PrismaClient({
+    adapter,
+    log: process.env.NODE_ENV === 'development' ? ['warn', 'error'] : ['error'],
+  });
 
   globalForPrisma.pgPool = pool;
   return client;
 }
 
+// Reuse PrismaClient instance across hot-reloads in development AND across container warm starts in production
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-}
+globalForPrisma.prisma = prisma;
 
 export default prisma;

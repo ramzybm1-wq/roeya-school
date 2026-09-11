@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { validateAdminSession, unauthorizedResponse } from '@/lib/session';
+import { invalidateCache } from '@/lib/cache';
 
 export async function GET(req: NextRequest) {
   const user = await validateAdminSession(req);
@@ -32,9 +33,10 @@ export async function GET(req: NextRequest) {
         faviconUrl: map['branding:favicon_url'] || null,
       },
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    console.error('[API] GET /api/admin/settings/branding error:', err);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: err.message } },
+      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Une erreur interne est survenue.' } },
       { status: 500 }
     );
   }
@@ -79,10 +81,12 @@ export async function PUT(req: NextRequest) {
       }
     }
 
+    invalidateCache('branding');
     return NextResponse.json({ success: true, message: 'Branding mis à jour avec succès.' });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    console.error('[API] PUT /api/admin/settings/branding error:', err);
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: err.message } },
+      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Une erreur interne est survenue.' } },
       { status: 500 }
     );
   }
