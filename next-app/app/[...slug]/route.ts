@@ -76,35 +76,51 @@ export async function GET(
   }
 
   // Handle Logout
-  if (path === 'logout') {
+  if (path === 'logout' || path === 'admin/logout') {
     const res = NextResponse.redirect(new URL('/login?logout=1', req.url));
     res.cookies.delete('vs_admin_session');
     res.cookies.delete('vs_client_session');
     return res;
   }
 
+  // Handle /admin base URL -> redirects to /dashboard (or /login if not authenticated)
+  if (path === 'admin') {
+    const adminToken = req.cookies.get('vs_admin_session')?.value;
+    if (!adminToken) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
+    return NextResponse.redirect(new URL('/dashboard', req.url));
+  }
+
+  // Normalize path if prefixed with 'admin/' (e.g. /admin/dashboard -> dashboard, /admin/login -> login)
+  const lookupPath = path.startsWith('admin/') ? path.slice(6) : path;
+
   // Check Admin Routes
-  if (ADMIN_PAGES[path]) {
-    const isPublic = ADMIN_PUBLIC_PAGES.includes(path);
+  if (ADMIN_PAGES[lookupPath]) {
+    const isPublic = ADMIN_PUBLIC_PAGES.includes(lookupPath);
     const adminToken = req.cookies.get('vs_admin_session')?.value;
 
     if (isPublic) {
-      if (path === 'login' && adminToken && !req.nextUrl.searchParams.has('logout')) {
+      if (lookupPath === 'login' && adminToken && !req.nextUrl.searchParams.has('logout')) {
         return NextResponse.redirect(new URL('/dashboard', req.url));
       }
-      return renderAdminView(ADMIN_PAGES[path], 200, false);
+      return renderAdminView(ADMIN_PAGES[lookupPath], 200, false);
     }
 
     // Protected Admin Route
     if (!adminToken) {
-      return NextResponse.redirect(new URL(`/login?redirect=${encodeURIComponent('/' + path)}`, req.url));
+      return NextResponse.redirect(new URL(`/login?redirect=${encodeURIComponent('/' + lookupPath)}`, req.url));
     }
 
-    return renderAdminView(ADMIN_PAGES[path], 200, true);
+    return renderAdminView(ADMIN_PAGES[lookupPath], 200, true);
   }
 
-  // Check Dynamic Admin Route: /inscriptions/:id
-  if (slug[0] === 'inscriptions' && slug.length === 2 && slug[1] !== 'nouvelle') {
+  // Check Dynamic Admin Route: /inscriptions/:id or /admin/inscriptions/:id
+  const isDynamicInscription =
+    (slug[0] === 'inscriptions' && slug.length === 2 && slug[1] !== 'nouvelle') ||
+    (slug[0] === 'admin' && slug[1] === 'inscriptions' && slug.length === 3 && slug[2] !== 'nouvelle');
+
+  if (isDynamicInscription) {
     const adminToken = req.cookies.get('vs_admin_session')?.value;
     if (!adminToken) {
       return NextResponse.redirect(new URL(`/login?redirect=${encodeURIComponent('/' + path)}`, req.url));
