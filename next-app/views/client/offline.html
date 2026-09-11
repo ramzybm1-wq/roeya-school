@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hors Connexion | VISION SCHOOL</title>
+  <meta name="description" content="Vous semblez déconnecté d'Internet. Vérifiez votre connexion réseau pour continuer votre navigation sur VISION SCHOOL."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    body.public-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 24px;
+    }
+    .offline-card {
+      max-width: 520px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-2xl);
+      padding: 48px 36px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .offline-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--error-bg);
+      color: var(--error);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .offline-icon .material-symbols-outlined {
+      font-size: 34px;
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <div class="offline-card">
+    <div class="offline-icon">
+      <span class="material-symbols-outlined">wifi_off</span>
+    </div>
+    <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:var(--r-full);background:var(--error-bg);color:var(--error-text);font-size:12px;font-weight:700;margin-bottom:16px;">
+      Connexion Internet interrompue
+    </div>
+    <h1 style="font-size:24px;font-weight:800;color:var(--navy);margin-bottom:12px;">
+      Vous êtes actuellement hors ligne
+    </h1>
+    <p style="font-size:15px;color:var(--text-secondary);line-height:1.6;margin-bottom:28px;">
+      Il semble que votre appareil ne soit pas connecté au réseau. Dès que votre connexion sera rétablie, vous pourrez reprendre votre démarche là où vous l'avez laissée.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <button onclick="window.location.reload()" class="btn btn-navy w-full" style="padding:12px;font-size:14px;">
+        <span class="material-symbols-outlined">refresh</span>
+        Réessayer la connexion
+      </button>
+      <a href="tel:+21321000000" class="btn btn-outline w-full" style="padding:11px;font-size:13px;">
+        <span class="material-symbols-outlined">call</span>
+        Contacter l'école par téléphone
+      </a>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('online', () => {
+      window.location.reload();
+    });
+  </script>
+</body>
+</html>

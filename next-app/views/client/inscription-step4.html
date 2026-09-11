@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inscription — Étape 4 : Documents | VISION SCHOOL</title>
+  <meta name="description" content="Soumettez votre dossier de candidature à VISION SCHOOL."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <script>
+    (function() {
+      var token = localStorage.getItem('vs_client_token');
+      if (!token) {
+        var currentUrl = window.location.pathname + window.location.search;
+        window.location.replace('/connexion?redirect=' + encodeURIComponent(currentUrl));
+      } else if (!document.cookie.includes('vs_client_session=')) {
+        document.cookie = 'vs_client_session=' + encodeURIComponent(token) + '; path=/; max-age=28800; SameSite=Lax';
+      }
+    })();
+  </script>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/inscription" class="client-nav-link active">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="public-main">
+    <div class="funnel-wrap">
+      <div class="funnel-inner">
+
+        <!-- Stepper -->
+        <div class="stepper">
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Établissement</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Élève</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step done">
+            <div class="stepper-dot"><span class="material-symbols-outlined" style="font-size:15px;">check</span></div>
+            <span class="stepper-label">Parent</span>
+          </div>
+          <div class="stepper-line done"></div>
+          <div class="stepper-step active">
+            <div class="stepper-dot">4</div>
+            <span class="stepper-label">Documents</span>
+          </div>
+          <div class="stepper-line"></div>
+          <div class="stepper-step">
+            <div class="stepper-dot">5</div>
+            <span class="stepper-label">Confirmation</span>
+          </div>
+        </div>
+
+        <div class="funnel-cols">
+
+          <!-- Left: Documents & Submit -->
+          <div class="funnel-form-card">
+            <h1 class="funnel-title" id="step4-title">Pièces justificatives &amp; Soumission</h1>
+            <p class="funnel-subtitle" id="step4-subtitle">Joignez les documents requis. Vous pouvez aussi les envoyer ultérieurement par email ou en personne.</p>
+
+            <div id="step4-alert" class="alert hidden mb-6" role="alert"></div>
+
+            <!-- Document List (Loaded Dynamically) -->
+            <div id="step4-documents-container" style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
+              <div class="card p-6 text-center text-muted" style="border:1.5px dashed var(--border);">
+                Chargement des pièces justificatives requises…
+              </div>
+            </div>
+
+            <!-- Terms agreement -->
+            <div class="form-group mb-0">
+              <label class="form-check" for="terms-agree">
+                <input class="form-check-input" id="terms-agree" type="checkbox" required/>
+                <span class="form-check-label text-sm">
+                  Je certifie que les informations fournies sont exactes et j'accepte les
+                  <a href="/confidentialite" target="_blank">conditions d'utilisation</a>
+                  et la politique de traitement des données personnelles de VISION SCHOOL.
+                </span>
+              </label>
+            </div>
+
+            <div class="funnel-actions">
+              <a href="/inscription/parent" class="btn btn-secondary">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Retour
+              </a>
+              <button id="btn-step4-submit" class="btn btn-navy btn-lg" type="button">
+                <span class="material-symbols-outlined">send</span>
+                Soumettre le dossier
+              </button>
+            </div>
+          </div>
+
+          <!-- Right: Summary -->
+          <div class="funnel-summary-card">
+            <h3>
+              <span class="material-symbols-outlined" style="color:var(--indigo);">summarize</span>
+              Récapitulatif complet
+            </h3>
+            <div class="summary-row">
+              <span class="summary-label">Établissement</span>
+              <span class="summary-val" id="summary-school">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Niveau</span>
+              <span class="summary-val" id="summary-level">—</span>
+            </div>
+            <div class="summary-row" id="summary-choice-row" style="display:none;">
+              <span class="summary-label">Filière / Option</span>
+              <span class="summary-val" id="summary-choice">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Élève</span>
+              <span class="summary-val" id="summary-student">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Parent</span>
+              <span class="summary-val" id="summary-parent">—</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Email</span>
+              <span class="summary-val" style="font-size:12px;" id="summary-email">—</span>
+            </div>
+
+            <div style="margin-top:20px;padding:14px;background:var(--success-bg);border-radius:var(--r-lg);border:1px solid rgba(5,150,105,.2);">
+              <div class="text-sm font-semibold" style="color:var(--success-text);margin-bottom:4px;">✅ Prochaine étape</div>
+              <div style="font-size:12px;color:var(--success-text);">Après soumission, vous recevrez un numéro de dossier unique pour suivre votre candidature en ligne.</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="client-footer">
+    <div class="client-footer-bottom" style="max-width:1280px;margin:0 auto;padding:20px 0;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.4);">
+      <span>© 2026 VISION SCHOOL. Tous droits réservés.</span>
+    </div>
+  </footer>
+
+  <script>
+    // Load draft for summary
+    try {
+      const draft = JSON.parse(sessionStorage.getItem('vs_reg_draft') || '{}');
+      if (draft.schoolName) document.getElementById('summary-school').textContent = draft.schoolName;
+      if (draft.levelName) document.getElementById('summary-level').textContent = draft.levelName;
+      if (draft.student) {
+        const s = draft.student;
+        document.getElementById('summary-student').textContent =
+          `${s.firstNameFr || ''} ${s.lastNameFr || ''}`.trim() || '—';
+      }
+      if (draft.primaryParent) {
+        const p = draft.primaryParent;
+        document.getElementById('summary-parent').textContent =
+          `${p.firstNameFr || ''} ${p.lastNameFr || ''}`.trim() || '—';
+        if (p.email) document.getElementById('summary-email').textContent = p.email;
+      }
+    } catch(e) {}
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Liste d'Attente — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <a href="/inscriptions">Inscriptions</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Liste d'attente</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestion de la Liste d'Attente</h1>
+          <p class="page-subtitle">Priorisez et intégrez les candidats en attente dès libération de places.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-refresh-waitlist" class="btn btn-secondary btn-sm">
+            <span class="material-symbols-outlined">sync</span>
+            <span>Actualiser</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Banner -->
+      <div id="waitlist-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Filters Card -->
+      <div class="card mb-6">
+        <div class="card-body-sm">
+          <div class="grid grid-cols-3 gap-4">
+            <div class="search-input-wrap">
+              <span class="material-symbols-outlined">search</span>
+              <input id="search-waitlist" class="form-control" type="text" placeholder="Rechercher élève, parent, dossier…"/>
+            </div>
+            <div>
+              <select id="filter-waitlist-school" class="form-control form-select">
+                <option value="">Tous les établissements</option>
+              </select>
+            </div>
+            <div>
+              <select id="filter-waitlist-level" class="form-control form-select">
+                <option value="">Tous les niveaux</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Card -->
+      <div class="card mb-8">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Rang</th>
+                <th>N° Dossier</th>
+                <th>Élève</th>
+                <th>Parent &amp; Contact</th>
+                <th>Établissement &amp; Niveau</th>
+                <th>Date d'attente</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="waitlist-tbody">
+              <tr>
+                <td colspan="7" class="text-center py-10 text-muted">
+                  Chargement de la liste d'attente…
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

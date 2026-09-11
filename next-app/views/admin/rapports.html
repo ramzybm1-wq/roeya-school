@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rapports &amp; Exports — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Rapports &amp; Exports</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Rapports &amp; Analyses des Admissions</h1>
+          <p class="page-subtitle">Exportez les données administratives et visualisez les tendances globales.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-export-csv" class="btn btn-primary btn-sm" onclick="exportReport('CSV')">
+            <span class="material-symbols-outlined">table_view</span>
+            <span>Export CSV complet</span>
+          </button>
+          <button id="btn-export-pdf" class="btn btn-secondary btn-sm" onclick="exportReport('PDF')">
+            <span class="material-symbols-outlined">picture_as_pdf</span>
+            <span>Synthèse PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="card mb-6">
+        <div class="card-body">
+          <div class="flex items-center gap-4 flex-wrap">
+            <div class="form-group mb-0" style="min-width:200px;">
+              <label class="form-label">Établissement</label>
+              <select id="filter-school" class="form-control form-control-sm">
+                <option value="">Tous les établissements</option>
+              </select>
+            </div>
+            <div class="form-group mb-0" style="min-width:180px;">
+              <label class="form-label">Année scolaire</label>
+              <select id="filter-year" class="form-control form-control-sm">
+                <option value="">Active (par défaut)</option>
+              </select>
+            </div>
+            <div class="form-group mb-0" style="min-width:160px;">
+              <label class="form-label">Statut (export)</label>
+              <select id="filter-status" class="form-control form-control-sm">
+                <option value="">Tous les statuts</option>
+                <option value="ACCEPTED">Accepté</option>
+                <option value="REFUSED">Refusé</option>
+                <option value="WAITLISTED">Liste d'attente</option>
+                <option value="NEW">Nouveau</option>
+                <option value="UNDER_REVIEW">En cours</option>
+              </select>
+            </div>
+            <div class="form-group mb-0 flex items-end">
+              <button class="btn btn-outline btn-sm" onclick="refreshCharts()">
+                <span class="material-symbols-outlined" style="font-size:16px;">refresh</span>
+                <span>Actualiser</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div id="reports-kpi-row" class="grid grid-cols-5 gap-4 mb-6">
+        <div class="card" style="height:80px;"></div>
+        <div class="card" style="height:80px;"></div>
+        <div class="card" style="height:80px;"></div>
+        <div class="card" style="height:80px;"></div>
+        <div class="card" style="height:80px;"></div>
+      </div>
+
+      <!-- Quick Export Cards -->
+      <div class="grid grid-cols-3 gap-6 mb-6">
+        <div class="card">
+          <div class="card-body flex items-start gap-4">
+            <div class="stat-icon stat-icon-navy">
+              <span class="material-symbols-outlined">how_to_reg</span>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold">Dossiers d'inscriptions</div>
+              <div class="text-xs text-muted mt-1" id="card-desc-global">Liste exhaustive avec informations parents, statuts et montants.</div>
+              <button class="btn btn-outline btn-xs mt-3" onclick="exportReport('CSV', 'REGISTRATIONS_GLOBAL')">
+                <span class="material-symbols-outlined" style="font-size:14px;">download</span>
+                <span>Télécharger (CSV)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body flex items-start gap-4">
+            <div class="stat-icon stat-icon-blue">
+              <span class="material-symbols-outlined">format_list_numbered</span>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold">Liste d'attente active</div>
+              <div class="text-xs text-muted mt-1" id="card-desc-waitlist">Extraction des élèves ordonnés par rang de priorité et niveau.</div>
+              <button class="btn btn-outline btn-xs mt-3" onclick="exportReport('CSV', 'WAITING_LIST')">
+                <span class="material-symbols-outlined" style="font-size:14px;">download</span>
+                <span>Télécharger (CSV)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body flex items-start gap-4">
+            <div class="stat-icon stat-icon-indigo">
+              <span class="material-symbols-outlined">check_circle</span>
+            </div>
+            <div class="flex-1">
+              <div class="text-sm font-semibold">Dossiers acceptés</div>
+              <div class="text-xs text-muted mt-1" id="card-desc-accepted">Liste des inscriptions validées avec toutes les informations.</div>
+              <button class="btn btn-outline btn-xs mt-3" onclick="exportReport('CSV', 'ACCEPTED_REGISTRATIONS')">
+                <span class="material-symbols-outlined" style="font-size:14px;">download</span>
+                <span>Télécharger (CSV)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-2 gap-6 mb-8">
+        <!-- Chart 1: Admissions by School -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--indigo);">bar_chart</span>
+              <span>Demandes par établissement</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="chart-schools-loading" class="text-center text-muted py-8">Chargement...</div>
+            <div style="position: relative; height: 260px; display:none;" id="chart-schools-wrap">
+              <canvas id="chart-reports-schools"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart 2: Cycle Distribution -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title flex items-center gap-2">
+              <span class="material-symbols-outlined" style="color:var(--success);">pie_chart</span>
+              <span>Répartition par cycle</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="chart-cycles-loading" class="text-center text-muted py-8">Chargement...</div>
+            <div style="position: relative; height: 260px; display:none;" id="chart-cycles-wrap">
+              <canvas id="chart-reports-cycles"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Trend -->
+      <div class="card mb-8">
+        <div class="card-header">
+          <div class="card-title flex items-center gap-2">
+            <span class="material-symbols-outlined" style="color:var(--primary);">trending_up</span>
+            <span>Tendance mensuelle des dépôts de dossiers</span>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="chart-trend-loading" class="text-center text-muted py-8">Chargement...</div>
+          <div style="position: relative; height: 220px; display:none;" id="chart-trend-wrap">
+            <canvas id="chart-reports-trend"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    let _chartSchools = null;
+    let _chartCycles = null;
+    let _chartTrend = null;
+
+    function getFilters() {
+      return {
+        school: document.getElementById('filter-school')?.value || '',
+        year: document.getElementById('filter-year')?.value || '',
+        status: document.getElementById('filter-status')?.value || ''
+      };
+    }
+
+    async function exportReport(format, type) {
+      const f = getFilters();
+      const reportType = type || 'REGISTRATIONS_GLOBAL';
+      const token = localStorage.getItem('vs_admin_token') || localStorage.getItem('adminToken');
+      let url = `/api/admin/reports/export?format=${format}&type=${reportType}`;
+      if (f.school) url += `&schoolId=${encodeURIComponent(f.school)}`;
+      if (f.year) url += `&academicYearId=${encodeURIComponent(f.year)}`;
+      if (f.status) url += `&status=${encodeURIComponent(f.status)}`;
+      if (token) url += `&token=${encodeURIComponent(token)}`;
+
+      try {
+        const headers = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const resp = await fetch(url, { headers });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+        if (format === 'CSV') {
+          const blob = await resp.blob();
+          const downloadUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = `rapport_${reportType.toLowerCase()}_${Date.now()}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(downloadUrl);
+        } else {
+          // PDF / Print View
+          const html = await resp.text();
+          const printWindow = window.open('', '_blank');
+          if (printWindow) {
+            printWindow.document.write(html);
+            printWindow.document.close();
+          } else {
+            window.location.href = url;
+          }
+        }
+      } catch (err) {
+        console.error('[Export Error]', err);
+        alert('Erreur lors du téléchargement : ' + err.message);
+      }
+    }
+
+    async function refreshCharts() {
+      const f = getFilters();
+      const params = [];
+      if (f.school) params.push(`schoolId=${encodeURIComponent(f.school)}`);
+      if (f.year) params.push(`academicYearId=${encodeURIComponent(f.year)}`);
+      if (f.status) params.push(`status=${encodeURIComponent(f.status)}`);
+      const url = '/api/admin/reports/charts' + (params.length ? '?' + params.join('&') : '');
+
+      ['chart-schools-loading','chart-cycles-loading','chart-trend-loading'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = 'block'; el.innerHTML = 'Chargement...'; }
+      });
+      ['chart-schools-wrap','chart-cycles-wrap','chart-trend-wrap'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+      });
+
+      try {
+        const token = localStorage.getItem('vs_admin_token') || localStorage.getItem('adminToken');
+        const resp = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const json = await resp.json();
+        if (!json.success || !json.data) throw new Error(json.error?.message || 'Erreur');
+        renderCharts(json.data);
+      } catch (err) {
+        console.error('[Rapports]', err);
+        ['chart-schools-loading','chart-cycles-loading','chart-trend-loading'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.style.display = 'block';
+            el.innerHTML = '<span style="color:var(--danger)">Erreur de chargement.</span> <button class="btn btn-outline btn-xs" style="margin-left:8px;" onclick="refreshCharts()">Réessayer</button>';
+          }
+        });
+      }
+    }
+
+    function renderKpis(kpis) {
+      const row = document.getElementById('reports-kpi-row');
+      if (!row || !kpis) return;
+      const items = [
+        { label: 'Total dossiers', value: kpis.total ?? 0, icon: 'folder', color: 'stat-icon-navy' },
+        { label: 'Acceptés', value: kpis.accepted ?? 0, icon: 'check_circle', color: 'stat-icon-indigo' },
+        { label: 'Refusés', value: kpis.refused ?? 0, icon: 'cancel', color: 'stat-icon-red' },
+        { label: "En attente", value: kpis.waitlisted ?? 0, icon: 'hourglass', color: 'stat-icon-blue' },
+        { label: "Taux d'admission", value: (kpis.acceptanceRate ?? 0) + '%', icon: 'percent', color: 'stat-icon-green' },
+      ];
+      row.innerHTML = items.map(s => `
+        <div class="card">
+          <div class="card-body flex items-center gap-3">
+            <div class="stat-icon ${s.color}"><span class="material-symbols-outlined">${s.icon}</span></div>
+            <div>
+              <div class="text-xl font-bold">${s.value}</div>
+              <div class="text-xs text-muted">${s.label}</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Update card subtitles with live counts
+      const descGlobal = document.getElementById('card-desc-global');
+      if (descGlobal) descGlobal.textContent = `${kpis.total ?? 0} dossier(s) d'inscription au total.`;
+
+      const descWait = document.getElementById('card-desc-waitlist');
+      if (descWait) descWait.textContent = `${kpis.waitlisted ?? 0} dossier(s) en liste d'attente.`;
+
+      const descAccepted = document.getElementById('card-desc-accepted');
+      if (descAccepted) descAccepted.textContent = `${kpis.accepted ?? 0} dossier(s) validé(s) et accepté(s).`;
+    }
+
+    function renderCharts(data) {
+      renderKpis(data.kpis);
+
+      // Chart 1: By School
+      document.getElementById('chart-schools-loading').style.display = 'none';
+      document.getElementById('chart-schools-wrap').style.display = 'block';
+      if (_chartSchools) _chartSchools.destroy();
+      const sl = (data.bySchool || []).map(s => s.name);
+      const st = (data.bySchool || []).map(s => s.total);
+      const sa = (data.bySchool || []).map(s => s.accepted);
+      _chartSchools = new Chart(document.getElementById('chart-reports-schools'), {
+        type: 'bar',
+        data: {
+          labels: sl.length ? sl : ['Aucune donnée disponible'],
+          datasets: [
+            { label: 'Total dossiers', data: st.length ? st : [0], backgroundColor: 'rgba(79,70,229,0.75)', borderRadius: 4 },
+            { label: 'Acceptés', data: sa.length ? sa : [0], backgroundColor: 'rgba(34,197,94,0.75)', borderRadius: 4 }
+          ]
+        },
+        options: { responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+      });
+
+      // Chart 2: By Cycle
+      document.getElementById('chart-cycles-loading').style.display = 'none';
+      document.getElementById('chart-cycles-wrap').style.display = 'block';
+      if (_chartCycles) _chartCycles.destroy();
+      const cl = (data.byCycle || []).map(c => c.name);
+      const cc = (data.byCycle || []).map(c => c.count);
+      const hasCycleData = cc.some(v => v > 0);
+      _chartCycles = new Chart(document.getElementById('chart-reports-cycles'), {
+        type: 'doughnut',
+        data: {
+          labels: hasCycleData ? cl : ['Aucune donnée disponible'],
+          datasets: [{
+            data: hasCycleData ? cc : [1],
+            backgroundColor: hasCycleData ? ['#4f46e5','#10b981','#f59e0b','#ef4444','#8b5cf6'] : ['#e2e8f0'],
+            borderWidth: 2
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+      });
+
+      // Chart 3: Monthly Trend
+      document.getElementById('chart-trend-loading').style.display = 'none';
+      document.getElementById('chart-trend-wrap').style.display = 'block';
+      if (_chartTrend) _chartTrend.destroy();
+      const tl = (data.monthlyTrend || []).map(m => m.month);
+      const tc = (data.monthlyTrend || []).map(m => m.count);
+      _chartTrend = new Chart(document.getElementById('chart-reports-trend'), {
+        type: 'line',
+        data: {
+          labels: tl.length ? tl : ['Aucune donnée disponible'],
+          datasets: [{ label: 'Dossiers déposés', data: tc.length ? tc : [0],
+            borderColor: '#4f46e5', backgroundColor: 'rgba(79,70,229,0.08)',
+            fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#4f46e5' }]
+        },
+        options: { responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+      });
+    }
+
+    async function loadFilterOptions() {
+      const token = localStorage.getItem('vs_admin_token') || localStorage.getItem('adminToken');
+      try {
+        const [sr, yr] = await Promise.all([
+          fetch('/api/admin/schools', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/academic-years', { headers: { 'Authorization': `Bearer ${token}` } }),
+        ]);
+        const [sj, yj] = await Promise.all([sr.json(), yr.json()]);
+        const ssel = document.getElementById('filter-school');
+        if (sj.success && ssel) {
+          (sj.data || []).forEach(s => {
+            const o = document.createElement('option'); o.value = s.id; o.textContent = s.name;
+            ssel.appendChild(o);
+          });
+        }
+        const ysel = document.getElementById('filter-year');
+        if (yj.success && ysel) {
+          (yj.data || []).forEach(y => {
+            const o = document.createElement('option'); o.value = y.id;
+            o.textContent = y.name + (y.status === 'ACTIVE' ? ' (Active)' : '');
+            ysel.appendChild(o);
+          });
+        }
+      } catch (e) { console.warn('[Rapports] filtres:', e); }
+
+      // Hook change events to automatically recalculate
+      document.getElementById('filter-school')?.addEventListener('change', refreshCharts);
+      document.getElementById('filter-year')?.addEventListener('change', refreshCharts);
+      document.getElementById('filter-status')?.addEventListener('change', refreshCharts);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadFilterOptions();
+      await refreshCharts();
+    });
+  </script>
+</body>
+</html>

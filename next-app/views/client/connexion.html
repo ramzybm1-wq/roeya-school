@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion — Espace Parent | VISION SCHOOL</title>
+  <meta name="description" content="Connectez-vous ou créez votre compte parent pour suivre vos dossiers d'inscription en temps réel sur VISION SCHOOL."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .auth-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-600) 60%, var(--indigo-700) 100%);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+    .auth-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(37,99,235,0.15), transparent 60%),
+                  radial-gradient(circle at 70% 80%, rgba(212,160,23,0.08), transparent 50%);
+    }
+    .auth-hero::after {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: rgba(37,99,235,0.06);
+      filter: blur(100px);
+    }
+
+    .auth-container {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .auth-layout-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    .auth-showcase {
+      color: #fff;
+    }
+
+    .auth-brand-info {
+      margin-bottom: 24px;
+    }
+
+    .auth-brand-icon {
+      width: 56px;
+      height: 56px;
+      background: var(--indigo);
+      border-radius: var(--r-lg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(37,99,235,0.35);
+    }
+    .auth-brand-icon img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: inherit;
+    }
+    .auth-brand-icon .material-symbols-outlined {
+      font-size: 28px;
+      color: #fff;
+    }
+    .auth-brand-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.01em;
+      margin: 0;
+      line-height: 1.2;
+    }
+    .auth-brand-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .auth-feature-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 28px 0;
+    }
+    .auth-feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--r-lg);
+      backdrop-filter: blur(8px);
+    }
+    .auth-feature-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r-md);
+      background: rgba(37, 99, 235, 0.28);
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .auth-feature-icon .material-symbols-outlined {
+      font-size: 20px;
+      color: #93c5fd;
+    }
+    .auth-feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 2px;
+    }
+    .auth-feature-desc {
+      font-size: 12.5px;
+      color: rgba(255, 255, 255, 0.72);
+      line-height: 1.45;
+    }
+
+    .auth-contact-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: var(--r-full);
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 12.5px;
+    }
+    .auth-contact-sep {
+      opacity: 0.4;
+    }
+
+    .auth-card-wrap {
+      width: 100%;
+    }
+
+    .auth-card {
+      background: var(--surface);
+      border-radius: var(--r-2xl);
+      box-shadow: 0 24px 64px rgba(15,30,61,0.28), 0 0 0 1px rgba(255,255,255,0.08);
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Tabs */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 14px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      cursor: pointer;
+      transition: all var(--t-fast);
+      border: none;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .auth-tab:hover {
+      color: var(--text);
+      background: var(--surface);
+    }
+    .auth-tab.active {
+      color: var(--indigo);
+      background: var(--surface);
+      box-shadow: inset 0 -2px 0 var(--indigo);
+    }
+    .auth-tab .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    /* Form Body */
+    .auth-body {
+      padding: 28px 32px 32px;
+    }
+    .auth-form {
+      display: none;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .auth-form.active {
+      display: flex;
+    }
+    .auth-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .auth-field label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .auth-field input {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      transition: all var(--t-fast);
+      outline: none;
+    }
+    .auth-field input:focus {
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    }
+    .auth-field input::placeholder {
+      color: var(--text-subtle);
+    }
+    .auth-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .auth-submit {
+      padding: 12px;
+      background: var(--indigo);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-md);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--t-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+    }
+    .auth-submit:hover {
+      background: var(--indigo-700);
+      box-shadow: var(--shadow-md);
+    }
+    .auth-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .auth-submit .material-symbols-outlined {
+      font-size: 18px;
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-subtle);
+      font-size: 12px;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .auth-switch {
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 16px 32px 20px;
+      border-top: 1px solid var(--border);
+      background: var(--surface-alt);
+    }
+    .auth-switch a {
+      color: var(--indigo);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+
+    .auth-alert {
+      padding: 10px 14px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .auth-alert.error {
+      background: var(--error-bg);
+      color: var(--error-text);
+      border: 1px solid rgba(220,38,38,0.15);
+    }
+    .auth-alert.success {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid rgba(5,150,105,0.15);
+    }
+    .auth-alert.visible {
+      display: flex;
+    }
+    .auth-alert .material-symbols-outlined {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper input {
+      padding-right: 42px;
+      width: 100%;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-subtle);
+      cursor: pointer;
+      padding: 2px;
+      background: none;
+      border: none;
+    }
+    .password-toggle:hover {
+      color: var(--text-secondary);
+    }
+
+    .auth-back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      text-decoration: none;
+    }
+    .auth-back-link:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    @media (min-width: 1024px) {
+      .auth-layout-grid {
+        grid-template-columns: 1fr 1.15fr;
+        gap: 56px;
+      }
+    }
+
+    @media (max-width: 1023px) {
+      .auth-container {
+        max-width: 520px;
+      }
+      .auth-showcase {
+        text-align: center;
+      }
+      .auth-feature-list {
+        display: none;
+      }
+      .auth-contact-pill {
+        display: none;
+      }
+      .auth-brand-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .auth-hero {
+        padding: 84px 16px 40px;
+      }
+      .auth-body {
+        padding: 20px 18px 24px;
+      }
+      .auth-row {
+        grid-template-columns: 1fr;
+      }
+      .auth-brand-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body class="public-page auth-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/inscription" class="client-nav-link">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire mon enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Auth Section -->
+  <div class="auth-hero">
+    <div class="auth-container">
+      <div class="auth-layout-grid">
+        <!-- Left Showcase (Desktop) -->
+        <div class="auth-showcase">
+          <a href="/" class="auth-back-link">
+            <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>
+            Retour à l'accueil
+          </a>
+
+          <div class="auth-brand-info">
+            <div class="auth-brand-icon client-brand-icon">
+              <span class="material-symbols-outlined">school</span>
+            </div>
+            <h1 class="auth-brand-title client-brand-name">VISION SCHOOL</h1>
+            <p class="auth-brand-sub" id="auth-portal-tagline">Portail Parents &amp; Admissions — Suivi en temps réel</p>
+          </div>
+
+          <div class="auth-feature-list">
+            <div class="auth-feature-item">
+              <div class="auth-feature-icon"><span class="material-symbols-outlined">task_alt</span></div>
+              <div>
+                <div class="auth-feature-title">Suivi des candidatures 24/7</div>
+                <div class="auth-feature-desc">Consultez à tout moment l'instruction de vos dossiers et les décisions de la commission.</div>
+              </div>
+            </div>
+            <div class="auth-feature-item">
+              <div class="auth-feature-icon"><span class="material-symbols-outlined">cloud_upload</span></div>
+              <div>
+                <div class="auth-feature-title">Transmission numérique sécurisée</div>
+                <div class="auth-feature-desc">Déposez et complétez les pièces justificatives directement depuis votre espace.</div>
+              </div>
+            </div>
+            <div class="auth-feature-item">
+              <div class="auth-feature-icon"><span class="material-symbols-outlined">notifications_active</span></div>
+              <div>
+                <div class="auth-feature-title">Notifications directes</div>
+                <div class="auth-feature-desc">Soyez alerté par email et SMS des étapes d'admission et des convocations.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="auth-contact-pill" id="auth-contact-pill">
+            <span class="material-symbols-outlined text-sm">mail</span>
+            <span id="auth-contact-email" class="client-contact-email">contact@roeyaschool.dz</span>
+            <span class="auth-contact-sep">•</span>
+            <span class="material-symbols-outlined text-sm">call</span>
+            <span id="auth-contact-phone" class="client-contact-phone">+213 21 00 00 00</span>
+          </div>
+        </div>
+
+        <!-- Right: Auth Card -->
+        <div class="auth-card-wrap">
+          <div class="auth-card">
+        <!-- Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login" id="tab-login">
+            <span class="material-symbols-outlined">login</span>
+            Se connecter
+          </button>
+          <button class="auth-tab" data-tab="register" id="tab-register">
+            <span class="material-symbols-outlined">person_add</span>
+            Créer un compte
+          </button>
+        </div>
+
+        <div class="auth-body">
+          <!-- Alert -->
+          <div class="auth-alert" id="auth-alert">
+            <span class="material-symbols-outlined" id="auth-alert-icon">error</span>
+            <span id="auth-alert-msg"></span>
+          </div>
+
+          <!-- Login Form -->
+          <form class="auth-form active" id="form-login" autocomplete="on">
+            <div class="auth-field">
+              <label for="login-email">Adresse email</label>
+              <input type="email" id="login-email" name="email" placeholder="parent@exemple.com" required autocomplete="email"/>
+            </div>
+            <div class="auth-field">
+              <label for="login-password">Mot de passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="login-password" name="password" placeholder="Votre mot de passe" required autocomplete="current-password"/>
+                <button type="button" class="password-toggle" data-target="login-password" aria-label="Afficher le mot de passe">
+                  <span class="material-symbols-outlined" style="font-size:18px;">visibility</span>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="auth-submit" id="btn-login">
+              <span class="material-symbols-outlined">login</span>
+              Se connecter
+            </button>
+          </form>
+
+          <!-- Register Form -->
+          <form class="auth-form" id="form-register" autocomplete="on">
+            <div class="auth-row">
+              <div class="auth-field">
+                <label for="reg-lastname">Nom de famille</label>
+                <input type="text" id="reg-lastname" name="lastName" placeholder="Nom" required autocomplete="family-name"/>
+              </div>
+              <div class="auth-field">
+                <label for="reg-firstname">Prénom</label>
+                <input type="text" id="reg-firstname" name="firstName" placeholder="Prénom" required autocomplete="given-name"/>
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="reg-email">Adresse email</label>
+              <input type="email" id="reg-email" name="email" placeholder="parent@exemple.com" required autocomplete="email"/>
+            </div>
+            <div class="auth-field">
+              <label for="reg-phone">Téléphone</label>
+              <input type="tel" id="reg-phone" name="phone" placeholder="0550 00 00 00" required autocomplete="tel"/>
+            </div>
+            <div class="auth-field">
+              <label for="reg-password">Mot de passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="reg-password" name="password" placeholder="Minimum 6 caractères" required minlength="6" autocomplete="new-password"/>
+                <button type="button" class="password-toggle" data-target="reg-password" aria-label="Afficher le mot de passe">
+                  <span class="material-symbols-outlined" style="font-size:18px;">visibility</span>
+                </button>
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="reg-password-confirm">Confirmer le mot de passe</label>
+              <div class="password-wrapper">
+                <input type="password" id="reg-password-confirm" name="passwordConfirm" placeholder="Retapez votre mot de passe" required minlength="6" autocomplete="new-password"/>
+                <button type="button" class="password-toggle" data-target="reg-password-confirm" aria-label="Afficher le mot de passe">
+                  <span class="material-symbols-outlined" style="font-size:18px;">visibility</span>
+                </button>
+              </div>
+            </div>
+            <button type="submit" class="auth-submit" id="btn-register">
+              <span class="material-symbols-outlined">person_add</span>
+              Créer mon compte
+            </button>
+          </form>
+        </div>
+
+        <!-- Switch -->
+        <div class="auth-switch" id="auth-switch-login">
+          Pas encore de compte ? <a id="switch-to-register">Créer un compte →</a>
+        </div>
+        <div class="auth-switch" id="auth-switch-register" style="display:none;">
+          Déjà un compte ? <a id="switch-to-login">Se connecter →</a>
+        </div>
+      </div>
+        </div> <!-- /.auth-card-wrap -->
+      </div> <!-- /.auth-layout-grid -->
+    </div> <!-- /.auth-container -->
+  </div> <!-- /.auth-hero -->
+
+  <script src="/js/client-app.js"></script>
+</body>
+</html>
+

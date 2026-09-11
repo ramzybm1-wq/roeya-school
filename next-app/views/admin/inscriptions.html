@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inscriptions & Candidatures — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Inscriptions</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestion des Inscriptions</h1>
+          <p class="page-subtitle">Suivi, instruction et validation des dossiers de candidature scolaire.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/inscriptions/nouvelle" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined">add</span>
+            <span>Nouvelle Inscription</span>
+          </a>
+          <a href="/rapports" class="btn btn-secondary btn-sm">
+            <span class="material-symbols-outlined">download</span>
+            <span>Exporter</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Summary KPI Chips / Cards -->
+      <div class="grid grid-cols-4 gap-4 mb-6">
+        <div class="stat-card pointer" onclick="applyFilter('')">
+          <div class="stat-body">
+            <div class="stat-label">Toutes les demandes</div>
+            <div id="kpi-total" class="stat-value">—</div>
+          </div>
+        </div>
+        <div class="stat-card pointer" style="border-left: 3px solid var(--indigo);" onclick="applyFilter('NEW')">
+          <div class="stat-body">
+            <div class="stat-label text-primary-color">Nouvelles</div>
+            <div id="kpi-new" class="stat-value text-primary-color">—</div>
+          </div>
+        </div>
+        <div class="stat-card pointer" style="border-left: 3px solid var(--warning);" onclick="applyFilter('PENDING')">
+          <div class="stat-body">
+            <div class="stat-label" style="color:var(--warning);">En attente</div>
+            <div id="kpi-pending" class="stat-value" style="color:var(--warning);">—</div>
+          </div>
+        </div>
+        <div class="stat-card pointer" style="border-left: 3px solid var(--success);" onclick="applyFilter('ACCEPTED')">
+          <div class="stat-body">
+            <div class="stat-label" style="color:var(--success);">Acceptées</div>
+            <div id="kpi-accepted" class="stat-value" style="color:var(--success);">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Card -->
+      <div class="card mb-6">
+        <div class="card-body-sm">
+          <div class="grid grid-cols-4 gap-4">
+            <div class="search-input-wrap" style="grid-column: span 2;">
+              <span class="material-symbols-outlined">search</span>
+              <input 
+                id="filter-search" 
+                class="form-control" 
+                type="text" 
+                placeholder="Rechercher par élève, parent, téléphone, N° dossier…"
+              />
+            </div>
+            <div>
+              <select id="filter-status" class="form-control form-select">
+                <option value="">Tous les statuts</option>
+                <option value="NEW">Nouvelle</option>
+                <option value="PENDING">En attente</option>
+                <option value="ACCEPTED">Acceptée</option>
+                <option value="REFUSED">Refusée</option>
+                <option value="WAITLISTED">Liste d'attente</option>
+                <option value="CANCELLED">Annulée</option>
+              </select>
+            </div>
+            <div>
+              <select id="filter-school" class="form-control form-select">
+                <option value="">Tous les établissements</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between mt-3 pt-3" style="border-top: 1px solid var(--border);">
+            <div id="filter-result-count" class="text-xs text-muted font-medium">Chargement des dossiers…</div>
+            <div class="flex items-center gap-2">
+              <button id="btn-reset-filters" class="btn btn-ghost btn-sm">Réinitialiser</button>
+              <button id="btn-apply-filters" class="btn btn-primary btn-sm">Filtrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registrations Table Card -->
+      <div class="card mb-6">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th style="width: 140px;">N° Dossier</th>
+                <th>Élève</th>
+                <th>Parent &amp; Contact</th>
+                <th>Établissement</th>
+                <th>Niveau</th>
+                <th>Date dépôt</th>
+                <th>Statut</th>
+                <th style="text-align: right; width: 100px;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="inscriptions-tbody">
+              <tr>
+                <td colspan="8" class="text-center py-10">
+                  <div class="empty-state" style="padding: 20px;">
+                    <span class="material-symbols-outlined empty-state-icon" style="font-size: 32px; width:54px; height:54px; margin-bottom: 12px;">hourglass_empty</span>
+                    <div class="empty-state-title" style="font-size: 15px;">Chargement des inscriptions…</div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <div id="pagination-info" class="pagination-info">Affichage 0 sur 0</div>
+          <div class="pagination-controls">
+            <button id="btn-prev-page" class="page-btn" disabled title="Page précédente">
+              <span class="material-symbols-outlined" style="font-size:16px;">chevron_left</span>
+            </button>
+            <div id="page-indicators" class="flex items-center gap-1"></div>
+            <button id="btn-next-page" class="page-btn" disabled title="Page suivante">
+              <span class="material-symbols-outlined" style="font-size:16px;">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function applyFilter(status) {
+      const select = document.getElementById('filter-status');
+      if (select) {
+        select.value = status;
+        const btn = document.getElementById('btn-apply-filters');
+        if (btn) btn.click();
+      }
+    }
+  </script>
+</body>
+</html>

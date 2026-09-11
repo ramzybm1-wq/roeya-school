@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Structure Pédagogique &amp; Capacités — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    /* Custom styles for educational tree */
+    .edu-cycle-card {
+      border: 1px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-lg, 12px);
+      background: var(--surface, #ffffff);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    .edu-cycle-header {
+      padding: 1rem 1.25rem;
+      background: var(--bg-muted, #f8fafc);
+      border-bottom: 1px solid var(--border-color, #e2e8f0);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .edu-levels-container {
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .edu-level-item {
+      border: 1px solid var(--border-color, #e2e8f0);
+      border-radius: var(--radius-md, 8px);
+      padding: 0.875rem 1rem;
+      background: var(--surface, #ffffff);
+    }
+    .edu-level-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .edu-choices-list {
+      margin-top: 0.75rem;
+      padding-left: 1.5rem;
+      border-left: 2px dashed var(--border-color, #cbd5e1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .edu-choice-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      background: #f1f5f9;
+      border-radius: 6px;
+      font-size: 0.875rem;
+    }
+    .edu-subchoices-list {
+      margin-top: 0.375rem;
+      padding-left: 1.25rem;
+      border-left: 2px dotted #94a3b8;
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+    .edu-subchoice-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.375rem 0.625rem;
+      background: #e2e8f0;
+      border-radius: 4px;
+      font-size: 0.8125rem;
+    }
+  </style>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Structure Pédagogique &amp; Capacités</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Structure Pédagogique &amp; Capacités</h1>
+          <p class="page-subtitle">Gérez dynamiquement l'ensemble des cycles, niveaux, filières, spécialités et règles de progression.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-add-cycle" class="btn btn-secondary btn-sm">
+            <span class="material-symbols-outlined">add_box</span>
+            <span>Nouveau Cycle</span>
+          </button>
+          <button id="btn-add-level-global" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined">add</span>
+            <span>Nouveau Niveau</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Tabs -->
+      <div class="tabs mb-6">
+        <button id="tab-btn-tree" class="tab-item active" type="button">
+          <span class="material-symbols-outlined">account_tree</span>
+          <span>Arborescence Pédagogique</span>
+        </button>
+        <button id="tab-btn-transitions" class="tab-item" type="button">
+          <span class="material-symbols-outlined">alt_route</span>
+          <span>Règles d'Orientation &amp; Progression</span>
+        </button>
+        <button id="tab-btn-capacities" class="tab-item" type="button">
+          <span class="material-symbols-outlined">tune</span>
+          <span>Capacités &amp; Quotas par Établissement</span>
+        </button>
+      </div>
+
+      <!-- Alert -->
+      <div id="edu-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- PANE 1: Arborescence Pédagogique (Tree) -->
+      <div id="pane-tree">
+        <div class="card mb-4">
+          <div class="card-body-sm flex items-center justify-between">
+            <div class="text-sm text-muted">
+              Cycles éducatifs officiels configurés pour VISION SCHOOL. Cliquez sur un niveau pour ajouter des filières ou spécialités.
+            </div>
+            <button id="btn-refresh-tree" class="btn btn-outline btn-xs">
+              <span class="material-symbols-outlined" style="font-size:16px;">refresh</span>
+              <span>Actualiser</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="edu-tree-container">
+          <!-- Dynamic Educational Hierarchy injected here -->
+          <div class="card">
+            <div class="card-body text-center py-10 text-muted">
+              Chargement de la structure pédagogique…
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 2: Règles d'Orientation & Progression -->
+      <div id="pane-transitions" class="hidden">
+        <div class="card mb-6">
+          <div class="card-body flex items-center justify-between">
+            <div>
+              <div class="font-semibold text-primary">Matrice de Transition &amp; Passerelles</div>
+              <div class="text-sm text-muted">Définissez les passages autorisés entre niveaux et spécialités. Mode permissif : si aucune règle n'est définie pour un niveau, la transition reste libre.</div>
+            </div>
+            <button id="btn-add-transition" class="btn btn-primary btn-sm">
+              <span class="material-symbols-outlined">add</span>
+              <span>Nouvelle règle d'orientation</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="card mb-8">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Niveau d'origine</th>
+                  <th>Choix / Filière d'origine</th>
+                  <th style="width: 50px; text-align: center;">→</th>
+                  <th>Niveau de destination</th>
+                  <th>Choix / Spécialité autorisée</th>
+                  <th>Notes</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="transitions-tbody">
+                <tr>
+                  <td colspan="7" class="text-center py-10 text-muted">
+                    Chargement des règles de progression…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 3: Capacités & Quotas par Établissement -->
+      <div id="pane-capacities" class="hidden">
+        <div class="card mb-6">
+          <div class="card-body-sm">
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <label class="form-label" for="filter-cap-school">Établissement</label>
+                <select id="filter-cap-school" class="form-control form-select">
+                  <option value="">Tous les établissements</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" for="filter-cap-cycle">Cycle</label>
+                <select id="filter-cap-cycle" class="form-control form-select">
+                  <option value="">Tous les cycles</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" for="filter-cap-status">Disponibilité</label>
+                <select id="filter-cap-status" class="form-control form-select">
+                  <option value="">Toutes les disponibilités</option>
+                  <option value="AVAILABLE">Places disponibles (&lt; 90%)</option>
+                  <option value="LIMITED">Places limitées (&gt;= 90%)</option>
+                  <option value="FULL">Complet (100%)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-sm text-muted">Offres de niveaux et quotas d'accueil par établissement scolaire :</div>
+          <button id="btn-add-level-offering" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined">add</span>
+            <span>Assigner un niveau à un établissement</span>
+          </button>
+        </div>
+
+        <div class="card mb-8">
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Niveau</th>
+                  <th>Cycle</th>
+                  <th>Établissement</th>
+                  <th style="text-align: right;">Capacité Max</th>
+                  <th style="text-align: right;">Élèves Inscrits</th>
+                  <th style="text-align: right;">Places Restantes</th>
+                  <th style="width: 140px;">Taux de remplissage</th>
+                  <th>Statut Inscription</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="capacities-tbody">
+                <tr>
+                  <td colspan="9" class="text-center py-10 text-muted">
+                    Chargement des niveaux et des capacités…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Cycle (Create / Edit) -->
+  <div id="modal-cycle" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-cycle-title" class="modal-title">Nouveau Cycle Éducatif</h2>
+        <button id="btn-close-cycle-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-cycle" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="cycle-id"/>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="cycle-code">Code Unique (ex: MATERNELLE, SECONDAIRE)</label>
+            <input class="form-control" id="cycle-code" type="text" placeholder="CYCLE_CODE" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="cycle-name-fr">Nom du Cycle (Français)</label>
+            <input class="form-control" id="cycle-name-fr" type="text" placeholder="ex: Enseignement Secondaire" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="cycle-name-ar">Nom du Cycle (Arabe)</label>
+            <input class="form-control" id="cycle-name-ar" type="text" dir="rtl" placeholder="التعليم الثانوي"/>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label" for="cycle-order">Ordre d'affichage</label>
+            <input class="form-control" id="cycle-order" type="number" value="10" min="0"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-cycle" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-cycle" type="submit" class="btn btn-primary">Enregistrer le cycle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Level (Create / Edit) -->
+  <div id="modal-level" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-level-title" class="modal-title">Niveau Scolaire</h2>
+        <button id="btn-close-level-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-level" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="level-id"/>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="level-cycle-id">Cycle d'appartenance</label>
+            <select id="level-cycle-id" class="form-control form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="level-code">Code Niveau (ex: 1AS, 2AS, 4AM)</label>
+            <input class="form-control" id="level-code" type="text" placeholder="ex: 1AS" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="level-name-fr">Nom du Niveau (Français)</label>
+            <input class="form-control" id="level-name-fr" type="text" placeholder="ex: 1ère Année Secondaire" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="level-name-ar">Nom du Niveau (Arabe)</label>
+            <input class="form-control" id="level-name-ar" type="text" dir="rtl" placeholder="السنة الأولى ثانوي"/>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label" for="level-order">Ordre d'affichage</label>
+            <input class="form-control" id="level-order" type="number" value="10" min="0"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-level" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-level" type="submit" class="btn btn-primary">Enregistrer le niveau</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Choice / Sub-choice (Create / Edit) -->
+  <div id="modal-choice" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-choice-title" class="modal-title">Filière / Choix d'orientation</h2>
+        <button id="btn-close-choice-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-choice" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="choice-id"/>
+          <input type="hidden" id="choice-level-id"/>
+          <input type="hidden" id="choice-parent-id"/>
+
+          <div class="form-group">
+            <label class="form-label">Rattachement Pédagogique</label>
+            <div id="choice-parent-info" class="text-sm font-semibold text-primary">—</div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="choice-type">Type de nœud</label>
+              <select id="choice-type" class="form-control form-select">
+                <option value="CHOICE">Filière / Troncs Communs</option>
+                <option value="SPECIALITY">Spécialité / Option</option>
+                <option value="SUB_CHOICE">Sous-option / Langue</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="choice-code">Code (ex: LETTRES, MATH)</label>
+              <input class="form-control" id="choice-code" type="text" placeholder="LETTRES" required/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="choice-name-fr">Libellé (Français)</label>
+            <input class="form-control" id="choice-name-fr" type="text" placeholder="ex: Lettres &amp; Sciences Humaines" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="choice-name-ar">Libellé (Arabe)</label>
+            <input class="form-control" id="choice-name-ar" type="text" dir="rtl" placeholder="آداب وفلسفة"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="choice-description">Description / Remarques</label>
+            <textarea class="form-control" id="choice-description" rows="2" placeholder="Description optionnelle"></textarea>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label" for="choice-order">Ordre d'affichage</label>
+            <input class="form-control" id="choice-order" type="number" value="10" min="0"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-choice" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-choice" type="submit" class="btn btn-primary">Enregistrer le choix</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Transition Rule (Create) -->
+  <div id="modal-transition" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Nouvelle Règle d'Orientation &amp; Transition</h2>
+        <button id="btn-close-transition-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-transition" novalidate>
+        <div class="modal-body">
+          <div class="p-3 mb-4 rounded bg-slate-100 text-sm">
+            <strong>Origine (Niveau &amp; Choix actuel) :</strong>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+              <div>
+                <label class="form-label form-label-required" for="trans-from-level">Niveau d'origine</label>
+                <select id="trans-from-level" class="form-control form-select" required></select>
+              </div>
+              <div>
+                <label class="form-label" for="trans-from-choice">Filière d'origine (optionnel)</label>
+                <select id="trans-from-choice" class="form-control form-select">
+                  <option value="">Toutes filières confondues</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 mb-4 rounded bg-slate-100 text-sm">
+            <strong>Destination autorisée :</strong>
+            <div class="grid grid-cols-2 gap-4 mt-2">
+              <div>
+                <label class="form-label form-label-required" for="trans-to-level">Niveau suivant</label>
+                <select id="trans-to-level" class="form-control form-select" required></select>
+              </div>
+              <div>
+                <label class="form-label" for="trans-to-choice">Filière / Spécialité autorisée</label>
+                <select id="trans-to-choice" class="form-control form-select">
+                  <option value="">Pas de filière spécifique</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mb-0">
+            <label class="form-label" for="trans-notes">Notes / Conditions pédagogiques</label>
+            <input class="form-control" id="trans-notes" type="text" placeholder="ex: Orientation autorisée sur avis du conseil de classe"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-transition" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-transition" type="submit" class="btn btn-primary">Créer la passerelle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Edit Capacity (Existing) -->
+  <div id="modal-edit-capacity" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-cap-title" class="modal-title">Modifier la capacité</h2>
+        <button id="btn-close-cap-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-edit-capacity" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="cap-level-id"/>
+          <div class="form-group">
+            <label class="form-label">Niveau &amp; Établissement</label>
+            <div id="cap-level-info" class="text-sm font-semibold text-primary">—</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="cap-max-input">Capacité maximale (places)</label>
+            <input class="form-control" id="cap-max-input" type="number" min="1" max="1000" required/>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label" for="cap-status-select">Ouverture des inscriptions</label>
+            <select id="cap-status-select" class="form-control form-select">
+              <option value="OPEN">Ouvertes (Inscriptions acceptées)</option>
+              <option value="WAITLIST_ONLY">Liste d'attente uniquement</option>
+              <option value="CLOSED">Fermées</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-cap" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-cap" type="submit" class="btn btn-primary">Enregistrer les quotas</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Add School Year Level Offering (Existing) -->
+  <div id="modal-add-level" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modal-add-level-title" class="modal-title">Assigner un niveau à un établissement</h2>
+        <button id="btn-close-add-level-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-add-level" novalidate>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label form-label-required" for="add-level-school">Établissement</label>
+            <select id="add-level-school" class="form-control form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="add-level-year">Année scolaire</label>
+            <select id="add-level-year" class="form-control form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="add-level-level">Niveau scolaire</label>
+            <select id="add-level-level" class="form-control form-select" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="add-level-capacity">Capacité maximale (places)</label>
+            <input class="form-control" id="add-level-capacity" type="number" min="1" max="1000" value="200" required/>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-check" for="add-level-open">
+              <input class="form-check-input" id="add-level-open" type="checkbox" checked/>
+              <span class="form-check-label text-sm">Ouvrir immédiatement les inscriptions</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-add-level" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-save-add-level" type="submit" class="btn btn-primary">Créer l'assignation</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

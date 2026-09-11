@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Notre École — Vision, Valeurs &amp; Excellence | VISION SCHOOL</title>
+  <meta name="description" content="Découvrez VISION SCHOOL : un projet pédagogique d'excellence, nos valeurs humaines, nos campus modernes et notre engagement pour la réussite de chaque élève."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .school-hero {
+      position: relative;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-700) 100%);
+      color: #fff;
+      padding: 80px 40px 100px;
+      overflow: hidden;
+      text-align: center;
+    }
+    .school-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBlGtQhjDHa8lCF7J6E6lsSiOPpDwuYghABIbNZjUcJNzMyazHKMhWC8mTLNwoEwxvf2m9YwgqvI1E2bcWEc2k3_MNnCNjVGfPt8WLHENxgaVFnRsvlC74FGWkcmj24aOmrjcoCFNKTQVKnExRhTLVBz56qDRXrICCXw7rCfIkKRO-nUOqoFWg3wJVu4edXkMOqgvXwMG-d3ESqgDDrRYf5-qocJHtJhR8H3-07NwUGPx802N7J6KXp');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.22;
+      mix-blend-mode: overlay;
+    }
+    .hero-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 18px;
+      background: rgba(255,255,255,0.14);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--r-full);
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .intro-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin: 64px auto;
+      max-width: 1280px;
+      padding: 0 40px;
+    }
+    .intro-img-wrap {
+      position: relative;
+      border-radius: var(--r-2xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border);
+      height: 480px;
+    }
+    .intro-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .stats-card-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .stat-pill-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 18px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-pill-num {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--indigo);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .stat-pill-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .values-section {
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 40px;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 1280px;
+      margin: 48px auto 0;
+    }
+    .value-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 32px 24px;
+      transition: all var(--t-normal);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+    .value-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--indigo-300);
+    }
+    .value-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--r-lg);
+      background: var(--indigo-50);
+      color: var(--indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .value-icon .material-symbols-outlined {
+      font-size: 28px;
+    }
+    .value-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .value-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .pedagogy-section {
+      padding: 80px 40px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .pillar-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+    }
+    .pillar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--r-md);
+      background: var(--navy-50);
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 992px) {
+      .intro-grid {
+        grid-template-columns: 1fr;
+      }
+      .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .intro-img-wrap {
+        height: 360px;
+      }
+    }
+    @media (max-width: 640px) {
+      .values-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-card-row {
+        grid-template-columns: 1fr;
+      }
+      .school-hero {
+        padding: 50px 20px 60px;
+      }
+      .intro-grid, .values-section, .pedagogy-section {
+        padding: 40px 16px;
+      }
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link active">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/inscription" class="client-nav-link">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire mon enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <div class="public-main">
+
+    <!-- Hero Section -->
+    <div class="school-hero">
+      <div class="school-hero-bg"></div>
+      <div style="position:relative;z-index:2;max-width:820px;margin:0 auto;">
+        <div class="hero-stat-pill">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--gold);">workspace_premium</span>
+          Établissement Privé d'Enseignement Bilingue &amp; Trilingue
+        </div>
+        <h1 style="font-size:42px;font-weight:800;letter-spacing:-0.02em;margin-bottom:16px;line-height:1.2;color:#fff;">
+          Former des esprits éclairés, bienveillants et audacieux
+        </h1>
+        <p style="font-size:17px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:32px;">
+          Depuis plus de 15 ans, VISION SCHOOL cultive la rigueur intellectuelle, la curiosité scientifique et l'épanouissement humain dans un environnement d'apprentissage d'exception.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="/inscription" class="btn btn-primary" style="padding:13px 32px;font-size:15px;">
+            <span class="material-symbols-outlined">edit</span>
+            Déposer une candidature
+          </a>
+          <a href="/galerie" class="btn btn-navy" style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);padding:13px 28px;font-size:15px;">
+            <span class="material-symbols-outlined">photo_library</span>
+            Visiter nos campus
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Introduction & Numbers -->
+    <div class="intro-grid">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">
+          <span class="material-symbols-outlined" style="font-size:15px;">history_edu</span>
+          Notre Histoire &amp; Projet
+        </div>
+        <h2 style="font-size:30px;font-weight:800;color:var(--navy);margin-bottom:16px;line-height:1.25;">
+          Un engagement indéfectible envers la jeunesse et le savoir
+        </h2>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:16px;">
+          À VISION SCHOOL, nous croyons fermement que chaque enfant possède un potentiel unique. Notre mission est de lui fournir les outils académiques, linguistiques et émotionnels nécessaires pour naviguer avec confiance dans un monde en mutation permanente.
+        </p>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.7;margin-bottom:24px;">
+          Nos programmes conjuguent le programme officiel national avec des certifications linguistiques internationales reconnues (Cambridge, DELF), renforcés par un apprentissage précoce de la robotique et de la programmation.
+        </p>
+
+        <!-- Stats Row -->
+        <div class="stats-card-row">
+          <div class="stat-pill-box">
+            <div class="stat-pill-num">15+</div>
+            <div class="stat-pill-label">Années d'excellence</div>
+          </div>
+          <div class="stat-pill-box">
+            <div class="stat-pill-num">98.5%</div>
+            <div class="stat-pill-label">Réussite aux examens</div>
+          </div>
+          <div class="stat-pill-box">
+            <div class="stat-pill-num">1:18</div>
+            <div class="stat-pill-label">Encadrement élève/prof</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="intro-img-wrap">
+        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOCRB9LpxP_ei6nFr4UGhHqyiAAwATrURgW04mq1Sh8ru-5Sbf1V8nlFJvgosqCNaJmhv58v6zA0sS0ev7Jrplj6AecU4qDKUpjyaiKPGCb_tQSUlVBGvnme5YSURgnSvc64r6hiIfogSeIoKhhLzoldWnEd4YEIv-jwQE5d_ru7ZjutP1PZjeaQu6DSvzguteGz0ydK-Ng6a6gsX5e1Bud7eT-q0podQ4qaKIcXtbMVyjjwmlUUuP" alt="Élèves VISION SCHOOL collaborant en médiathèque"/>
+      </div>
+    </div>
+
+    <!-- Values Bento Section -->
+    <div class="values-section">
+      <div style="text-align:center;max-width:700px;margin:0 auto;">
+        <div style="font-size:12px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">
+          Nos Piliers Fondateurs
+        </div>
+        <h2 style="font-size:28px;font-weight:800;color:var(--navy);margin-bottom:12px;">
+          Les 4 valeurs qui guident notre communauté
+        </h2>
+        <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">
+          De la maternelle au lycée, notre communauté éducative est unie autour de principes éthiques et pédagogiques forts.
+        </p>
+      </div>
+
+      <div class="values-grid">
+        <!-- Value 1 -->
+        <div class="value-card">
+          <div class="value-icon">
+            <span class="material-symbols-outlined">psychology</span>
+          </div>
+          <div class="value-title">Excellence Académique</div>
+          <div class="value-desc">
+            Une méthodologie rigoureuse, un suivi personnalisé et des cours d'approfondissement garantissant à chaque élève les meilleures bases pour l'enseignement supérieur.
+          </div>
+        </div>
+
+        <!-- Value 2 -->
+        <div class="value-card">
+          <div class="value-icon">
+            <span class="material-symbols-outlined">diversity_3</span>
+          </div>
+          <div class="value-title">Bienveillance &amp; Respect</div>
+          <div class="value-desc">
+            Une écoute active et une ambiance chaleureuse où l'empathie, la mixité culturelle et le respect mutuel constituent le socle de toutes nos interactions.
+          </div>
+        </div>
+
+        <!-- Value 3 -->
+        <div class="value-card">
+          <div class="value-icon">
+            <span class="material-symbols-outlined">public</span>
+          </div>
+          <div class="value-title">Ouverture Internationale</div>
+          <div class="value-desc">
+            Enseignement trilingue (Arabe, Français, Anglais), clubs de débat, échanges culturels et immersion linguistique pour former des citoyens du monde.
+          </div>
+        </div>
+
+        <!-- Value 4 -->
+        <div class="value-card">
+          <div class="value-icon">
+            <span class="material-symbols-outlined">lightbulb</span>
+          </div>
+          <div class="value-title">Créativité &amp; Innovation</div>
+          <div class="value-desc">
+            Laboratoires STEAM (Sciences, Technologie, Ingénierie, Arts, Mathématiques), ateliers robotiques, coding et projets artistiques hebdomadaires.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Pillars Detail -->
+    <div class="pedagogy-section">
+      <div style="text-align:center;max-width:700px;margin:0 auto 48px;">
+        <h2 style="font-size:28px;font-weight:800;color:var(--navy);margin-bottom:12px;">
+          Un environnement pensé pour l'épanouissement
+        </h2>
+        <p style="font-size:15px;color:var(--text-secondary);line-height:1.6;">
+          Nos infrastructures ont été conçues pour allier modernité, sécurité et confort de vie au quotidien.
+        </p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:24px;">
+        <div class="pillar-card">
+          <div class="pillar-icon"><span class="material-symbols-outlined">science</span></div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">Infrastructures Technologiques</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.5;">
+              Classes équipées de tableaux interactifs, fibre optique dédiée, laboratoires de sciences avec normes de sécurité internationales et fab-labs d'expérimentation.
+            </div>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon"><span class="material-symbols-outlined">fitness_center</span></div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">Sport &amp; Santé Globale</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.5;">
+              Gymnase multisport couvert, piste d'athlétisme, terrains de football en gazon synthétique et piscine semi-olympique pour les cycles primaire et secondaire.
+            </div>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon"><span class="material-symbols-outlined">restaurant</span></div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">Restauration Équilibrée &amp; Fraîche</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.5;">
+              Menus supervisés par un nutritionniste pédiatrique, préparés sur place à base de produits frais locaux et respectant les normes d'hygiène les plus strictes.
+            </div>
+          </div>
+        </div>
+
+        <div class="pillar-card">
+          <div class="pillar-icon"><span class="material-symbols-outlined">shield</span></div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;">Sécurité &amp; Contrôle d'Accès</div>
+            <div style="font-size:14px;color:var(--text-secondary);line-height:1.5;">
+              Portails sécurisés avec badges RFID, vidéosurveillance périmétrique 24h/24, infirmerie permanente avec médecin référent et transport scolaire géolocalisé.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-Enrollment CTA Banner -->
+    <div style="background:linear-gradient(135deg, var(--navy) 0%, var(--indigo-700) 100%);color:#fff;padding:64px 40px;text-align:center;">
+      <div style="max-width:720px;margin:0 auto;">
+        <h2 style="font-size:30px;font-weight:800;margin-bottom:12px;color:#fff;">
+          Prêts à offrir à votre enfant l'éducation qu'il mérite ?
+        </h2>
+        <p style="font-size:16px;color:rgba(255,255,255,0.85);margin-bottom:28px;line-height:1.6;">
+          Les inscriptions pour l'année scolaire 2026 / 2027 sont ouvertes. Remplissez votre dossier en ligne en moins de 5 minutes.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="/inscription" class="btn btn-primary" style="background:#fff;color:var(--navy);border-color:#fff;padding:13px 32px;font-size:15px;">
+            <span class="material-symbols-outlined" style="color:var(--navy);">edit_document</span>
+            Commencer l'inscription
+          </a>
+          <a href="/contact" class="btn btn-navy" style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);padding:13px 28px;font-size:15px;">
+            <span class="material-symbols-outlined">calendar_today</span>
+            Prendre un rendez-vous
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="client-brand-icon" style="width:32px;height:32px;"><span class="material-symbols-outlined" style="color:#fff;font-size:18px;">school</span></div>
+          <span class="client-footer-name" style="margin:0;">VISION SCHOOL</span>
+        </div>
+        <p class="client-footer-desc">
+          Établissement d'excellence dédié à l'épanouissement intellectuel, humain et créatif de chaque élève, de la maternelle au secondaire.
+        </p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/" class="client-footer-link">Accueil</a>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie photos</a>
+        <a href="/faq" class="client-footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Admissions</div>
+        <a href="/inscription" class="client-footer-link">Inscription en ligne</a>
+        <a href="/suivi" class="client-footer-link">Suivi de dossier</a>
+        <a href="/contact" class="client-footer-link">Prendre rendez-vous</a>
+        <a href="/niveaux-admissions#tarifs" class="client-footer-link">Grille tarifaire</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">location_on</span>
+          Alger, Algérie
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">call</span>
+          +213 21 00 00 00
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">mail</span>
+          contact@visionschool.dz
+        </div>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <div>© 2026 VISION SCHOOL. Tous droits réservés.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="/confidentialite" class="client-footer-link" style="margin:0;">Confidentialité &amp; Mentions</a>
+        <a href="http://localhost:3001" class="client-footer-link" style="margin:0;" target="_blank">Portail Administration</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

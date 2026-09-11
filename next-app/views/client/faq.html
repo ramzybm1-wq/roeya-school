@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Foire Aux Questions (FAQ) | VISION SCHOOL</title>
+  <meta name="description" content="Toutes les réponses à vos questions sur les inscriptions, les critères d'admission, les tarifs, la vie scolaire et les listes d'attente à VISION SCHOOL."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .faq-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-600) 100%);
+      color: #fff;
+      padding: 56px 40px 64px;
+      text-align: center;
+      position: relative;
+    }
+    .faq-search-wrap {
+      max-width: 580px;
+      margin: 24px auto 0;
+      position: relative;
+    }
+    .faq-search-input {
+      width: 100%;
+      padding: 14px 20px 14px 48px;
+      border-radius: var(--r-full);
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      font-size: 15px;
+      color: var(--text);
+      outline: none;
+      box-shadow: var(--shadow-lg);
+      transition: all var(--t-fast);
+    }
+    .faq-search-input:focus {
+      background: #fff;
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 4px rgba(37,99,235,0.2);
+    }
+    .faq-search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .faq-filter-bar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 68px;
+      z-index: 30;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .faq-chip {
+      padding: 6px 18px;
+      border-radius: var(--r-full);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .faq-chip:hover {
+      border-color: var(--indigo-500);
+      color: var(--indigo);
+    }
+    .faq-chip.active {
+      background: var(--indigo);
+      color: #fff;
+      border-color: var(--indigo-700);
+      box-shadow: 0 2px 8px rgba(37,99,235,.25);
+    }
+
+    .faq-container {
+      max-width: 860px;
+      margin: 40px auto 60px;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .faq-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--t-fast);
+    }
+    .faq-item:hover {
+      border-color: var(--indigo-300);
+      box-shadow: var(--shadow-md);
+    }
+    .faq-question {
+      padding: 22px 24px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+    .faq-chevron {
+      transition: transform var(--t-normal);
+      color: var(--indigo);
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-chevron {
+      transform: rotate(180deg);
+    }
+    .faq-answer {
+      display: none;
+      padding: 0 24px 22px;
+      font-size: 14.5px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      border-top: 1px solid transparent;
+    }
+    .faq-item.open .faq-answer {
+      display: block;
+      border-top-color: var(--bg);
+    }
+
+    @media (max-width: 640px) {
+      .faq-container {
+        padding: 0 16px;
+        margin: 24px auto 40px;
+      }
+      .faq-filter-bar {
+        padding: 12px 16px;
+      }
+      .faq-question {
+        font-size: 15px;
+        padding: 18px 20px;
+      }
+      .faq-answer {
+        padding: 0 20px 18px;
+      }
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/inscription" class="client-nav-link">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire mon enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <div class="public-main">
+
+    <!-- Hero Header -->
+    <div class="faq-hero">
+      <div style="max-width:800px;margin:0 auto;position:relative;z-index:2;">
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 14px;background:rgba(255,255,255,0.14);border-radius:var(--r-full);font-size:12px;font-weight:600;margin-bottom:16px;letter-spacing:0.05em;text-transform:uppercase;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--gold);">help</span>
+          Questions Fréquentes
+        </div>
+        <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;color:#fff;">
+          Comment pouvons-nous vous aider ?
+        </h1>
+        <p style="font-size:16px;color:rgba(255,255,255,0.85);max-width:620px;margin:0 auto;line-height:1.6;">
+          Retrouvez les réponses immédiates à toutes vos interrogations sur la scolarité, les inscriptions et la vie quotidienne à VISION SCHOOL.
+        </p>
+
+        <!-- Search Input -->
+        <div class="faq-search-wrap">
+          <span class="material-symbols-outlined faq-search-icon">search</span>
+          <input type="text" id="faq-search" class="faq-search-input" placeholder="Rechercher un mot-clé (ex: tarifs, transport, documents)..."/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="faq-filter-bar" role="tablist">
+      <button class="faq-chip active" data-cat="all">Toutes les questions</button>
+      <button class="faq-chip" data-cat="inscriptions">Inscriptions</button>
+      <button class="faq-chip" data-cat="tarifs">Tarifs &amp; Paiement</button>
+      <button class="faq-chip" data-cat="pedago">Pédagogie &amp; Langues</button>
+      <button class="faq-chip" data-cat="attente">Liste d'attente</button>
+      <button class="faq-chip" data-cat="vie">Vie scolaire &amp; Transport</button>
+    </div>
+
+    <!-- FAQ Accordion List -->
+    <div class="faq-container" id="faq-list">
+
+      <!-- Question 1 -->
+      <div class="faq-item" data-cat="inscriptions">
+        <button class="faq-question">
+          <span>Quand débutent et se terminent les inscriptions pour l'année 2026 / 2027 ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          Les inscriptions ouvrent officiellement dès le mois de mars et restent ouvertes jusqu'à épuisement des places disponibles par niveau. Une priorité est accordée aux fratries des élèves déjà scolarisés durant les deux premières semaines. Nous vous conseillons de finaliser votre dossier en ligne le plus tôt possible, certains niveaux (notre cycle primaire notamment) affichant complet rapidement.
+        </div>
+      </div>
+
+      <!-- Question 2 -->
+      <div class="faq-item" data-cat="inscriptions">
+        <button class="faq-question">
+          <span>Quelles sont les pièces justificatives exigées pour le dossier ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          Le dossier d'inscription en ligne requiert :
+          <ul style="margin:8px 0 0 18px;line-height:1.6;">
+            <li>L'acte de naissance de l'élève (N° 12)</li>
+            <li>Une copie du carnet de vaccination à jour</li>
+            <li>Les bulletins des 3 trimestres de l'année précédente (pour toute réinscription ou transfert à partir du primaire)</li>
+            <li>3 photos d'identité récentes format passeport</li>
+            <li>Une pièce d'identité du parent ou tuteur légal</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Question 3 -->
+      <div class="faq-item" data-cat="pedago">
+        <button class="faq-question">
+          <span>Quel est le programme linguistique enseigné à VISION SCHOOL ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          VISION SCHOOL applique le programme officiel national agréé par le Ministère de l'Éducation, renforcé par un dispositif trilingue d'excellence. Dès la petite section de maternelle, les élèves bénéficient d'un bain linguistique quotidien en Arabe, Français et Anglais. Des certifications internationales (DELF Prim/Junior et Cambridge English) sont préparées et passées au sein de notre établissement.
+        </div>
+      </div>
+
+      <!-- Question 4 -->
+      <div class="faq-item" data-cat="tarifs">
+        <button class="faq-question">
+          <span>Quelles sont les facilités et modalités de paiement acceptées ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          Les familles peuvent opter pour un règlement au comptant annuel (avec une remise de 5%), un règlement trimestriel en 3 échéances (septembre, décembre, mars) ou un échéancier mensuel sur 10 mois par prélèvement bancaire ou chèques certifiés. Une réduction fratrie de 10% s'applique sur le 2ème enfant et de 15% à partir du 3ème enfant inscrit.
+        </div>
+      </div>
+
+      <!-- Question 5 -->
+      <div class="faq-item" data-cat="attente">
+        <button class="faq-question">
+          <span>Comment fonctionne la liste d'attente lorsqu'un niveau est complet ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          Si la capacité maximale d'une classe est atteinte, vous pouvez inscrire votre enfant sur la liste d'attente officielle sans frais d'engagement. Les admissions sont alors accordées par ordre chronologique de dépôt et en fonction des désistements ou déménagements. Notre secrétariat vous contacte immédiatement par SMS et appel dès qu'une place se libère.
+        </div>
+      </div>
+
+      <!-- Question 6 -->
+      <div class="faq-item" data-cat="vie">
+        <button class="faq-question">
+          <span>Proposez-vous un service de restauration et de transport scolaire ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          Oui, nos deux campus disposent d'un restaurant scolaire servant des repas chauds et équilibrés préparés sur place chaque jour sous contrôle diététique. Pour le transport, nous exploitons une flotte de minibus modernes et climatisés, équipés de ceintures de sécurité, de caméras de bord et d'un système de géolocalisation GPS en direct accessible aux parents via leur smartphone.
+        </div>
+      </div>
+
+      <!-- Question 7 -->
+      <div class="faq-item" data-cat="vie">
+        <button class="faq-question">
+          <span>Quels sont les horaires d'accueil et proposez-vous une garderie ?</span>
+          <span class="material-symbols-outlined faq-chevron">expand_more</span>
+        </button>
+        <div class="faq-answer">
+          Les cours se déroulent du dimanche au jeudi de 08h30 à 16h00. Une garderie surveillée et animée accueille les élèves dès 07h30 le matin et jusqu'à 17h30 le soir pour faciliter l'organisation des parents qui travaillent. Des activités extrascolaires (robotique, échecs, théâtre, natation) sont également proposées les mardis après-midi et samedis matin.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Need More Help Banner -->
+    <div style="background:var(--surface-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:60px 40px;text-align:center;">
+      <div style="max-width:680px;margin:0 auto;">
+        <div style="width:48px;height:48px;border-radius:var(--r-full);background:var(--indigo-50);color:var(--indigo);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <span class="material-symbols-outlined">headset_mic</span>
+        </div>
+        <h2 style="font-size:24px;font-weight:800;color:var(--navy);margin-bottom:10px;">
+          Vous n'avez pas trouvé réponse à votre question ?
+        </h2>
+        <p style="font-size:15px;color:var(--text-secondary);margin-bottom:24px;line-height:1.6;">
+          Nos conseillers d'admission répondent à toutes vos demandes spécifiques par email ou par téléphone du dimanche au jeudi.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <a href="/contact" class="btn btn-navy" style="padding:12px 28px;">
+            <span class="material-symbols-outlined">mail</span>
+            Poser une question directe
+          </a>
+          <a href="tel:+21321000000" class="btn btn-outline" style="padding:12px 24px;">
+            <span class="material-symbols-outlined">call</span>
+            Appeler le secrétariat
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="client-brand-icon" style="width:32px;height:32px;"><span class="material-symbols-outlined" style="color:#fff;font-size:18px;">school</span></div>
+          <span class="client-footer-name" style="margin:0;">VISION SCHOOL</span>
+        </div>
+        <p class="client-footer-desc">
+          Établissement d'excellence dédié à l'épanouissement intellectuel, humain et créatif de chaque élève, de la maternelle au secondaire.
+        </p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/" class="client-footer-link">Accueil</a>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie photos</a>
+        <a href="/faq" class="client-footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Admissions</div>
+        <a href="/inscription" class="client-footer-link">Inscription en ligne</a>
+        <a href="/suivi" class="client-footer-link">Suivi de dossier</a>
+        <a href="/contact" class="client-footer-link">Prendre rendez-vous</a>
+        <a href="/niveaux-admissions#tarifs" class="client-footer-link">Grille tarifaire</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">location_on</span>
+          Alger, Algérie
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">call</span>
+          +213 21 00 00 00
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">mail</span>
+          contact@visionschool.dz
+        </div>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <div>© 2026 VISION SCHOOL. Tous droits réservés.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="/confidentialite" class="client-footer-link" style="margin:0;">Confidentialité &amp; Mentions</a>
+        <a href="http://localhost:3001" class="client-footer-link" style="margin:0;" target="_blank">Portail Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // FAQ Accordion & Live Filter Script
+    document.addEventListener('DOMContentLoaded', () => {
+      const items = document.querySelectorAll('.faq-item');
+      const searchInput = document.getElementById('faq-search');
+      const chips = document.querySelectorAll('.faq-chip');
+
+      let currentCat = 'all';
+
+      // Toggle accordion
+      items.forEach(item => {
+        const btn = item.querySelector('.faq-question');
+        btn.addEventListener('click', () => {
+          const isOpen = item.classList.contains('open');
+          items.forEach(i => i.classList.remove('open'));
+          if (!isOpen) {
+            item.classList.add('open');
+          }
+        });
+      });
+
+      // Filter function
+      function applyFilter() {
+        const query = searchInput.value.toLowerCase().trim();
+        items.forEach(item => {
+          const itemCat = item.getAttribute('data-cat');
+          const text = item.textContent.toLowerCase();
+
+          const matchesCat = currentCat === 'all' || itemCat === currentCat;
+          const matchesQuery = !query || text.includes(query);
+
+          if (matchesCat && matchesQuery) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+
+      // Filter by category
+      chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+          chips.forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          currentCat = chip.getAttribute('data-cat');
+          applyFilter();
+        });
+      });
+
+      // Filter by search text
+      if (searchInput) {
+        searchInput.addEventListener('input', applyFilter);
+      }
+    });
+  </script>
+</body>
+</html>

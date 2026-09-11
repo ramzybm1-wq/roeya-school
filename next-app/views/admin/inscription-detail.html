@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Détail du Dossier d'Inscription — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <a href="/inscriptions">Inscriptions</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span id="dossier-ref-breadcrumb" class="breadcrumb-current">Chargement…</span>
+      </div>
+
+      <!-- Detail Top Header -->
+      <div class="page-header">
+        <div>
+          <div class="flex items-center gap-3">
+            <h1 id="dossier-ref-title" class="page-title">Dossier d'Inscription</h1>
+            <span id="dossier-status-badge" class="badge badge-lg badge-new">En attente</span>
+          </div>
+          <p id="dossier-subtitle" class="page-subtitle">Soumis le — • Année scolaire 2026/2027</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/inscriptions" class="btn btn-secondary btn-sm">
+            <span class="material-symbols-outlined">arrow_back</span>
+            <span>Retour aux inscriptions</span>
+          </a>
+          <button id="btn-print-dossier" class="btn btn-outline btn-sm" onclick="window.print()">
+            <span class="material-symbols-outlined">print</span>
+            <span>Imprimer la fiche</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Feedback Banner -->
+      <div id="detail-action-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Main Layout: 2 Columns (8 / 4) -->
+      <div class="grid grid-cols-3 gap-6">
+        <!-- Left 2-Column Content -->
+        <div style="grid-column: span 2;" class="flex flex-col gap-6">
+          <!-- 1. Pedagogical Assignment Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title flex items-center gap-2">
+                <span class="material-symbols-outlined" style="color:var(--indigo);">school</span>
+                <span>Affectation Pédagogique</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="grid grid-cols-5 gap-4">
+                <div>
+                  <div class="text-xs text-muted uppercase font-semibold">Établissement</div>
+                  <div id="dossier-school" class="text-sm font-semibold mt-1">—</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted uppercase font-semibold">Cycle</div>
+                  <div id="dossier-cycle" class="text-sm font-semibold mt-1">—</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted uppercase font-semibold">Niveau d'admission</div>
+                  <div id="dossier-level" class="text-sm font-semibold mt-1 text-primary-color">—</div>
+                </div>
+                <div id="dossier-choice-col" style="display:none;">
+                  <div class="text-xs text-muted uppercase font-semibold">Filière / Option</div>
+                  <div id="dossier-choice" class="text-sm font-semibold mt-1" style="color:var(--indigo);">—</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted uppercase font-semibold">Année scolaire</div>
+                  <div id="dossier-year" class="text-sm font-semibold mt-1">2026/2027</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Student & Parent Cards Side-by-Side -->
+          <div class="grid grid-cols-2 gap-6">
+            <!-- Student Info -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title flex items-center gap-2">
+                  <span class="material-symbols-outlined" style="color:var(--navy);">face</span>
+                  <span>Informations de l'élève</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="flex flex-col gap-3">
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Nom complet</span>
+                    <span id="student-name" class="text-sm font-semibold">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Date de naissance</span>
+                    <span id="student-dob" class="text-sm font-semibold">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Genre</span>
+                    <span id="student-gender" class="text-sm font-semibold">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2">
+                    <span class="text-sm text-muted">Établissement d'origine</span>
+                    <span id="student-prev-school" class="text-sm font-semibold">—</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Parent Info -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title flex items-center gap-2">
+                  <span class="material-symbols-outlined" style="color:var(--navy);">family_restroom</span>
+                  <span>Responsable légal</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="flex flex-col gap-3">
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Nom du parent</span>
+                    <span id="parent-name" class="text-sm font-semibold">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Téléphone</span>
+                    <span id="parent-phone" class="text-sm font-semibold">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Email</span>
+                    <span id="parent-email" class="text-sm font-semibold truncate" style="max-width: 170px;">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2" style="border-bottom: 1px solid var(--border);">
+                    <span class="text-sm text-muted">Adresse / Ville</span>
+                    <span id="parent-address" class="text-sm font-semibold">—</span>
+                  </div>
+                  <div class="flex justify-between items-center py-2">
+                    <span class="text-sm text-muted">Compte Espace Client</span>
+                    <span id="parent-account-badge" class="badge badge-success">Vérifié</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Documents Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title flex items-center gap-2">
+                <span class="material-symbols-outlined" style="color:var(--indigo);">folder_shared</span>
+                <span>Pièces justificatives &amp; Documents déposés</span>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Type de document</th>
+                    <th>Nom du fichier</th>
+                    <th>Statut</th>
+                    <th style="text-align: right;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dossier-docs-tbody">
+                  <tr>
+                    <td colspan="4" class="text-center py-6 text-muted">Aucun document attaché ou chargement en cours…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 4. Internal Notes Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title flex items-center gap-2">
+                <span class="material-symbols-outlined" style="color:var(--navy);">edit_note</span>
+                <span>Notes internes &amp; Observations pédagogiques</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="form-group mb-3">
+                <textarea 
+                  id="internal-note-input" 
+                  class="form-control form-textarea" 
+                  rows="3" 
+                  placeholder="Rédiger une observation confidentielle sur ce dossier..."
+                ></textarea>
+              </div>
+              <div class="flex justify-end">
+                <button id="btn-save-note" class="btn btn-primary btn-sm">
+                  <span class="material-symbols-outlined">save</span>
+                  <span>Enregistrer la note</span>
+                </button>
+              </div>
+
+              <!-- Notes Timeline List -->
+              <div id="internal-notes-list" class="flex flex-col gap-3 mt-4 pt-4" style="border-top: 1px solid var(--border);"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 1-Column Sticky Action Panel -->
+        <div class="flex flex-col gap-6">
+          <!-- 1. Decision Card -->
+          <div class="card" style="border-top: 4px solid var(--indigo);">
+            <div class="card-header">
+              <div class="card-title">Décision administrative</div>
+            </div>
+            <div class="card-body">
+              <p class="text-xs text-muted mb-4">
+                Modifier le statut du dossier mettra automatiquement à jour le suivi parent et les indicateurs de capacité.
+              </p>
+
+              <div id="dossier-actions-standard" class="flex flex-col gap-2">
+                <!-- Accept -->
+                <button id="btn-accept-registration" class="btn btn-success w-full">
+                  <span class="material-symbols-outlined">check_circle</span>
+                  <span>Accepter l'inscription</span>
+                </button>
+
+                <!-- Waitlist -->
+                <button id="btn-waitlist-registration" class="btn btn-warning w-full">
+                  <span class="material-symbols-outlined">hourglass_top</span>
+                  <span>Mettre sur liste d'attente</span>
+                </button>
+
+                <!-- Refuse -->
+                <button id="btn-refuse-registration" class="btn btn-danger-outline w-full">
+                  <span class="material-symbols-outlined">cancel</span>
+                  <span>Refuser le dossier</span>
+                </button>
+              </div>
+
+              <!-- Accepted State Actions -->
+              <div id="dossier-actions-accepted" class="flex flex-col gap-2 hidden">
+                <div class="alert alert-info py-2 px-3 text-xs mb-1">
+                  Ce dossier occupe actuellement 1 place dans les effectifs acceptés.
+                </div>
+                <button id="btn-cancel-acceptance" class="btn btn-warning w-full">
+                  <span class="material-symbols-outlined">undo</span>
+                  <span>Annuler l'acceptation</span>
+                </button>
+                <button id="btn-cancel-delete" class="btn btn-danger w-full">
+                  <span class="material-symbols-outlined">delete_forever</span>
+                  <span>Annuler et supprimer</span>
+                </button>
+              </div>
+
+              <!-- General Delete Action for Non-Accepted -->
+              <div id="dossier-actions-delete" class="flex flex-col gap-2 mt-2">
+                <button id="btn-delete-registration" class="btn btn-outline btn-danger-outline btn-xs w-full">
+                  <span class="material-symbols-outlined text-xs">delete</span>
+                  <span>Supprimer définitivement</span>
+                </button>
+              </div>
+
+              <div class="divider"></div>
+
+              <div class="form-group mb-0">
+                <label class="form-label" for="select-status-override">Statut direct :</label>
+                <select id="select-status-override" class="form-control form-select">
+                  <option value="NEW">Nouvelle demande</option>
+                  <option value="PENDING">En attente d'instruction</option>
+                  <option value="ACCEPTED">Acceptée (validée)</option>
+                  <option value="REFUSED">Refusée</option>
+                  <option value="WAITLISTED">Liste d'attente</option>
+                  <option value="CANCELLED">Annulée par le parent</option>
+                </select>
+                <button id="btn-apply-status-override" class="btn btn-secondary btn-sm w-full mt-2">
+                  <span>Mettre à jour le statut</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Capacity Gauge Card -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title flex items-center gap-2">
+                <span class="material-symbols-outlined" style="color:var(--navy);">pie_chart</span>
+                <span>Capacité du niveau</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-muted">Places totales :</span>
+                  <span id="capacity-total" class="font-bold">—</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-muted">Élèves acceptés :</span>
+                  <span id="capacity-accepted" class="font-bold text-success">—</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-muted">Places restantes :</span>
+                  <span id="capacity-remaining" class="font-bold text-primary-color">—</span>
+                </div>
+
+                <div class="mt-2">
+                  <div class="flex justify-between text-xs text-muted mb-1">
+                    <span>Taux d'occupation</span>
+                    <span id="capacity-pct-label" class="font-semibold">0%</span>
+                  </div>
+                  <div class="capacity-bar">
+                    <div id="capacity-bar-fill" class="capacity-bar-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Dossier History Timeline -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title flex items-center gap-2">
+                <span class="material-symbols-outlined" style="color:var(--navy);">history</span>
+                <span>Historique du dossier</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="dossier-timeline" class="timeline">
+                <div class="timeline-item">
+                  <div class="timeline-line">
+                    <div class="timeline-dot neutral"></div>
+                    <div class="timeline-connector"></div>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">Dépôt du dossier</div>
+                    <div class="timeline-desc">Demande enregistrée en ligne</div>
+                    <div id="timeline-submit-date" class="timeline-date">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

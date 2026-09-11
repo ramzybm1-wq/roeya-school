@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Niveaux Scolaires &amp; Procédure d'Admissions | VISION SCHOOL</title>
+  <meta name="description" content="Consultez nos cycles d'enseignement de la maternelle au lycée, les capacités d'accueil disponibles, les tarifs de scolarité et les pièces requises pour l'inscription."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    .admissions-hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-600) 100%);
+      color: #fff;
+      padding: 56px 40px 64px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .filter-wrapper {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 68px;
+      z-index: 30;
+      padding: 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+    .cycle-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .cycle-btn {
+      padding: 7px 18px;
+      border-radius: var(--r-full);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all var(--t-fast);
+    }
+    .cycle-btn:hover {
+      border-color: var(--indigo-500);
+      color: var(--indigo);
+    }
+    .cycle-btn.active {
+      background: var(--indigo);
+      color: #fff;
+      border-color: var(--indigo-700);
+      box-shadow: 0 2px 8px rgba(37,99,235,.3);
+    }
+
+    .levels-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1280px;
+      margin: 40px auto 60px;
+      padding: 0 40px;
+    }
+    .level-card-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--t-normal), box-shadow var(--t-normal);
+      position: relative;
+    }
+    .level-card-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--indigo-300);
+    }
+    .level-card-item::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--indigo);
+    }
+    .level-card-item.status-open::before {
+      background: var(--success);
+    }
+    .level-card-item.status-warn::before {
+      background: var(--warning);
+    }
+    .level-card-item.status-wait::before {
+      background: var(--gold);
+    }
+    .level-card-item.status-full::before {
+      background: var(--error);
+    }
+
+    .level-card-header {
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .level-card-body {
+      padding: 20px 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .level-card-footer {
+      padding: 16px 24px 20px;
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+    }
+
+    .process-section {
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 40px;
+    }
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      max-width: 1280px;
+      margin: 48px auto 0;
+      position: relative;
+    }
+    .process-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px 20px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .process-num {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--r-full);
+      background: var(--navy);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    /* Pricing Table */
+    .pricing-wrap {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 40px;
+    }
+    .pricing-table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      box-shadow: var(--shadow-md);
+    }
+
+    @media(max-width: 992px) {
+      .process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media(max-width: 640px) {
+      .levels-grid, .pricing-wrap, .process-section {
+        padding: 40px 16px;
+      }
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-wrapper {
+        padding: 12px 16px;
+      }
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link active">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/inscription" class="client-nav-link">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire mon enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <div class="public-main">
+
+    <!-- Hero Header -->
+    <div class="admissions-hero">
+      <div style="max-width:800px;margin:0 auto;position:relative;z-index:2;">
+        <div style="display:inline-flex;align-items:center;gap:8px;padding:4px 14px;background:rgba(255,255,255,0.14);border-radius:var(--r-full);font-size:12px;font-weight:600;margin-bottom:16px;letter-spacing:0.05em;text-transform:uppercase;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--gold);">school</span>
+          Année Scolaire 2026 / 2027
+        </div>
+        <h1 style="font-size:36px;font-weight:800;letter-spacing:-0.02em;margin-bottom:12px;color:#fff;">
+          Niveaux d'Enseignement &amp; Modalités d'Admission
+        </h1>
+        <p style="font-size:16px;color:rgba(255,255,255,0.85);max-width:620px;margin:0 auto;line-height:1.6;">
+          Découvrez notre offre pédagogique de la maternelle au cycle secondaire, les capacités d'accueil disponibles en temps réel et préparez le dossier de votre enfant.
+        </p>
+      </div>
+    </div>
+
+    <!-- Cycle Filters -->
+    <div class="filter-wrapper">
+      <div class="cycle-chips" role="tablist">
+        <button class="cycle-btn active" data-cycle="all">Tous les cycles</button>
+        <button class="cycle-btn" data-cycle="preparatoire">Maternelle &amp; Préparatoire</button>
+        <button class="cycle-btn" data-cycle="primaire">Primaire (1AP - 5AP)</button>
+        <button class="cycle-btn" data-cycle="moyen">Moyen / Collège (1AM - 4AM)</button>
+        <button class="cycle-btn" data-cycle="secondaire">Secondaire / Lycée</button>
+      </div>
+    </div>
+
+    <!-- Levels Grid (dynamically populated by client-app.js) -->
+    <div class="levels-grid" id="levels-container">
+      <!-- Loading state -->
+      <div id="offerings-loading" style="grid-column:1/-1;text-align:center;padding:48px 24px;">
+        <div style="width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--indigo);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+        <div style="font-size:14px;color:var(--text-muted);">Chargement des niveaux disponibles…</div>
+      </div>
+    </div>
+
+    <!-- 4 Steps Admissions Timeline -->
+    <div class="process-section">
+      <div style="text-align:center;max-width:700px;margin:0 auto;">
+        <div style="font-size:12px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">
+          Processus d'Inscription
+        </div>
+        <h2 style="font-size:28px;font-weight:800;color:var(--navy);margin-bottom:12px;">
+          Comment se déroulent les admissions ?
+        </h2>
+        <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">
+          Une procédure transparente, simplifiée et 100% numérisée pour le confort des familles.
+        </p>
+      </div>
+
+      <div class="process-grid">
+        <div class="process-card">
+          <div class="process-num">1</div>
+          <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Candidature en Ligne</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">
+            Remplissez le formulaire en 5 étapes et téléversez les pièces justificatives numérisées (photos, bulletins, état civil).
+          </p>
+        </div>
+
+        <div class="process-card">
+          <div class="process-num">2</div>
+          <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Étude &amp; Entretien</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">
+            La commission pédagogique analyse le dossier et invite l'élève et ses parents pour un entretien bienveillant de positionnement.
+          </p>
+        </div>
+
+        <div class="process-card">
+          <div class="process-num">3</div>
+          <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Décision sous 72h</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">
+            Notification officielle reçue par SMS et email avec accès à votre espace de suivi en direct sur notre portail.
+          </p>
+        </div>
+
+        <div class="process-card">
+          <div class="process-num">4</div>
+          <h3 style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Finalisation &amp; Accueil</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.5;">
+            Règlement des frais de scolarité, remise du livret d'accueil et journée d'intégration des nouveaux élèves avant la rentrée.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Summary Section -->
+    <div class="pricing-wrap" id="tarifs">
+      <div style="text-align:center;margin-bottom:32px;">
+        <h2 style="font-size:26px;font-weight:800;color:var(--navy);margin-bottom:8px;">Grille Tarifaire &amp; Modalités</h2>
+        <p style="font-size:14px;color:var(--text-muted);">Frais de scolarité annuels pour l'année académique 2026 / 2027.</p>
+      </div>
+
+      <div class="pricing-table-card">
+        <table class="table" style="margin:0;">
+          <thead>
+            <tr>
+              <th>Cycle &amp; Niveau</th>
+              <th>Paiement Annuel</th>
+              <th>Paiement Trimestriel</th>
+              <th>Services Inclus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Maternelle (PS, MS, GS)</strong></td>
+              <td><span style="font-weight:700;color:var(--navy);">48 000 DZD</span></td>
+              <td>3 × 17 500 DZD</td>
+              <td><span class="text-xs text-muted">Manuels, activités d'éveil, goûter</span></td>
+            </tr>
+            <tr>
+              <td><strong>Primaire (1AP à 5AP)</strong></td>
+              <td><span style="font-weight:700;color:var(--navy);">55 000 - 58 000 DZD</span></td>
+              <td>3 × 20 000 DZD</td>
+              <td><span class="text-xs text-muted">Laboratoire STEAM, manuels bilingues</span></td>
+            </tr>
+            <tr>
+              <td><strong>Moyen (1AM à 4AM)</strong></td>
+              <td><span style="font-weight:700;color:var(--navy);">68 000 - 75 000 DZD</span></td>
+              <td>3 × 26 000 DZD</td>
+              <td><span class="text-xs text-muted">Préparation examens, médiathèque</span></td>
+            </tr>
+            <tr>
+              <td><strong>Secondaire (1AS, 2AS, BAC)</strong></td>
+              <td><span style="font-weight:700;color:var(--navy);">85 000 - 95 000 DZD</span></td>
+              <td>3 × 33 000 DZD</td>
+              <td><span class="text-xs text-muted">Séances de soutien intensif, orientation</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--text-muted);flex-wrap:wrap;gap:8px;">
+        <span>* Réduction fratrie : -10% sur le 2ème enfant, -15% à partir du 3ème enfant.</span>
+        <span>Options : Restauration scolaire et transport géolocalisé disponibles sur demande.</span>
+      </div>
+    </div>
+
+    <!-- Final Call to Action -->
+    <div style="background:linear-gradient(135deg, var(--navy) 0%, var(--indigo-700) 100%);color:#fff;padding:64px 40px;text-align:center;">
+      <div style="max-width:700px;margin:0 auto;">
+        <h2 style="font-size:28px;font-weight:800;margin-bottom:12px;color:#fff;">
+          Une question sur un niveau ou les modalités ?
+        </h2>
+        <p style="font-size:15px;color:rgba(255,255,255,0.85);margin-bottom:28px;line-height:1.6;">
+          Nos conseillers d'admission sont à votre entière disposition pour vous guider dans le choix du cycle idéal pour votre enfant.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="/inscription" class="btn btn-primary" style="background:#fff;color:var(--navy);border-color:#fff;padding:12px 30px;font-size:15px;">
+            <span class="material-symbols-outlined" style="color:var(--navy);">edit</span>
+            Déposer une inscription
+          </a>
+          <a href="/contact" class="btn btn-navy" style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);padding:12px 26px;font-size:15px;">
+            <span class="material-symbols-outlined">mail</span>
+            Poser une question
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="client-brand-icon" style="width:32px;height:32px;"><span class="material-symbols-outlined" style="color:#fff;font-size:18px;">school</span></div>
+          <span class="client-footer-name" style="margin:0;">VISION SCHOOL</span>
+        </div>
+        <p class="client-footer-desc">
+          Établissement d'excellence dédié à l'épanouissement intellectuel, humain et créatif de chaque élève, de la maternelle au secondaire.
+        </p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/" class="client-footer-link">Accueil</a>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie photos</a>
+        <a href="/faq" class="client-footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Admissions</div>
+        <a href="/inscription" class="client-footer-link">Inscription en ligne</a>
+        <a href="/suivi" class="client-footer-link">Suivi de dossier</a>
+        <a href="/contact" class="client-footer-link">Prendre rendez-vous</a>
+        <a href="/niveaux-admissions#tarifs" class="client-footer-link">Grille tarifaire</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">location_on</span>
+          Alger, Algérie
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">call</span>
+          +213 21 00 00 00
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">mail</span>
+          contact@visionschool.dz
+        </div>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <div>© 2026 VISION SCHOOL. Tous droits réservés.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="/confidentialite" class="client-footer-link" style="margin:0;">Confidentialité &amp; Mentions</a>
+        <a href="http://localhost:3001" class="client-footer-link" style="margin:0;" target="_blank">Portail Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/client-app.js"></script>
+</body>
+</html>
+

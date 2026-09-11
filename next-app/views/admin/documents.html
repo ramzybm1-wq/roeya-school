@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestion des Documents — VISION SCHOOL Administration</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="app-shell">
+  <aside id="admin-sidebar" class="sidebar"></aside>
+  <header id="admin-topbar" class="topbar"></header>
+
+  <main class="main-content">
+    <div class="page-container">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="material-symbols-outlined breadcrumb-sep">chevron_right</span>
+        <span class="breadcrumb-current">Documents</span>
+      </div>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Gestion &amp; Exigences Documentaires</h1>
+          <p class="page-subtitle">Configurez les pièces demandées aux familles par niveau et consultez les justificatifs transmis.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="btn-add-doc-requirement" class="btn btn-primary btn-sm">
+            <span class="material-symbols-outlined">add_circle</span>
+            <span>Nouvelle exigence documentaire</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feedback Alert -->
+      <div id="docs-alert" class="alert hidden mb-6" role="alert"></div>
+
+      <!-- Navigation Tabs -->
+      <div class="tabs mb-6">
+        <button id="tab-btn-requirements" class="tab active" onclick="switchDocsTab('requirements')">
+          <span class="material-symbols-outlined">rule_settings</span>
+          <span>Exigences par niveau (Configuration)</span>
+        </button>
+        <button id="tab-btn-received" class="tab" onclick="switchDocsTab('received')">
+          <span class="material-symbols-outlined">folder_shared</span>
+          <span>Pièces reçues des dossiers</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: REQUIREMENTS CONFIGURATION -->
+      <div id="pane-requirements" class="tab-pane">
+        <div class="card mb-8">
+          <div class="card-header flex justify-between items-center">
+            <div>
+              <div class="card-title">Pièces Justificatives Requises à l'Inscription</div>
+              <div class="text-xs text-muted mt-1">Ces règles déterminent la liste des fichiers que le portail public demande aux parents à l'étape 4.</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <select id="filter-req-school" class="form-control form-select text-xs py-1" style="width: auto;">
+                <option value="">Tous les établissements</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Pièce demandée</th>
+                  <th>Établissement</th>
+                  <th>Niveau scolaire</th>
+                  <th>Obligatoire</th>
+                  <th>Visible Client</th>
+                  <th>Actif</th>
+                  <th>Ordre</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="requirements-tbody">
+                <tr>
+                  <td colspan="8" class="text-center py-10 text-muted">
+                    Chargement des exigences documentaires…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: RECEIVED DOCUMENTS -->
+      <div id="pane-received" class="tab-pane hidden">
+        <!-- Filter Controls -->
+        <div class="card mb-6">
+          <div class="card-body-sm">
+            <div class="grid grid-cols-2 gap-4">
+              <div class="search-input-wrap">
+                <span class="material-symbols-outlined">search</span>
+                <input id="search-docs" class="form-control" type="text" placeholder="Rechercher par n° de dossier, élève, nom de fichier…"/>
+              </div>
+              <div>
+                <select id="filter-doc-type" class="form-control form-select">
+                  <option value="">Tous les types de document</option>
+                  <option value="BIRTH_CERTIFICATE">Extrait de naissance</option>
+                  <option value="ID_CARD">Pièce d'identité du tuteur</option>
+                  <option value="SCHOOL_CERTIFICATE">Certificat de scolarité</option>
+                  <option value="REPORT_CARD">Bulletin de notes</option>
+                  <option value="PHOTO">Photo d'identité</option>
+                  <option value="VACCINATION">Carnet de santé / vaccination</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Table Card -->
+        <div class="card mb-8">
+          <div class="card-header">
+            <div class="card-title">Justificatifs Transmis par les Familles</div>
+          </div>
+          <div class="table-wrap">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Document</th>
+                  <th>Dossier / N° Suivi</th>
+                  <th>Type de pièce</th>
+                  <th>Format</th>
+                  <th>Statut</th>
+                  <th>Date d'envoi</th>
+                  <th style="text-align: right;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="documents-tbody">
+                <tr>
+                  <td colspan="7" class="text-center py-10 text-muted">
+                    Chargement des documents reçus…
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modal: Add/Edit Requirement -->
+  <div id="modal-requirement" class="modal-backdrop">
+    <div class="modal" style="max-width: 580px;">
+      <div class="modal-header">
+        <h2 id="modal-req-title" class="modal-title">Nouvelle exigence documentaire</h2>
+        <button id="btn-close-req-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-requirement" novalidate>
+        <input type="hidden" id="req-id"/>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label form-label-required" for="req-type-id">Type de document</label>
+            <select id="req-type-id" class="form-control form-select" required>
+              <option value="">Sélectionnez un type de document…</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="req-school-id">Établissement cible</label>
+              <select id="req-school-id" class="form-control form-select" required>
+                <option value="">Sélectionnez un établissement…</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="req-academic-year-id">Année scolaire</label>
+              <select id="req-academic-year-id" class="form-control form-select" required></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label" for="req-level-id">Niveau scolaire cible (optionnel)</label>
+              <select id="req-level-id" class="form-control form-select">
+                <option value="">Tous les niveaux de l'établissement</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="req-display-order">Ordre d'affichage</label>
+              <input class="form-control" id="req-display-order" type="number" min="0" value="0"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="form-group">
+              <label class="form-label" for="req-max-size">Taille max (en Mo)</label>
+              <input class="form-control" id="req-max-size" type="number" min="1" max="25" value="5" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="req-extensions">Extensions autorisées</label>
+              <input class="form-control" id="req-extensions" type="text" value="pdf, jpg, jpeg, png" required/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 p-3 bg-subtle rounded-lg mb-3" style="background:var(--surface-alt);border:1px solid var(--border);border-radius:var(--r-md);">
+            <label class="form-check mb-0">
+              <input class="form-check-input" id="req-show-client" type="checkbox" checked/>
+              <span class="form-check-label text-xs font-semibold">Afficher côté client</span>
+            </label>
+            <label class="form-check mb-0">
+              <input class="form-check-input" id="req-is-required" type="checkbox" checked/>
+              <span class="form-check-label text-xs font-semibold">Obligatoire</span>
+            </label>
+            <label class="form-check mb-0">
+              <input class="form-check-input" id="req-is-active" type="checkbox" checked/>
+              <span class="form-check-label text-xs font-semibold">Actif</span>
+            </label>
+          </div>
+          <div class="text-xs text-muted mb-2">
+            💡 Un document masqué côté client ne peut pas être obligatoire.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-req" type="button" class="btn btn-secondary">Annuler</button>
+          <button id="btn-submit-req" type="submit" class="btn btn-primary">Enregistrer l'exigence</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Reject Document -->
+  <div id="modal-reject-doc" class="modal-backdrop">
+    <div class="modal" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Rejeter la pièce justificative</h2>
+        <button id="btn-close-reject-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-reject-doc">
+        <input type="hidden" id="reject-doc-id"/>
+        <div class="modal-body">
+          <p class="text-sm text-muted mb-4" id="reject-doc-name">Indiquez le motif de non-conformité de ce document.</p>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="reject-reason-code">Motif de rejet</label>
+            <select id="reject-reason-code" class="form-control form-select" required>
+              <option value="UNREADABLE">Document illisible ou tronqué</option>
+              <option value="INCOMPLETE">Pages manquantes / Document incomplet</option>
+              <option value="WRONG_DOCUMENT">Mauvais type de pièce fourni</option>
+              <option value="EXPIRED">Document expiré ou hors validité</option>
+              <option value="INVALID_INFORMATION">Incohérence des informations / Faux</option>
+            </select>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label" for="reject-comment">Commentaire interne (facultatif)</label>
+            <textarea id="reject-comment" class="form-control" rows="3" placeholder="Notes pour l'équipe administrative…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-reject" type="button" class="btn btn-secondary">Annuler</button>
+          <button type="submit" class="btn btn-danger">Confirmer le rejet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Request Replacement -->
+  <div id="modal-replace-doc" class="modal-backdrop">
+    <div class="modal" style="max-width: 520px;">
+      <div class="modal-header">
+        <h2 class="modal-title">Demander le remplacement du document</h2>
+        <button id="btn-close-replace-modal" class="btn-icon btn-icon-sm" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      <form id="form-replace-doc">
+        <input type="hidden" id="replace-doc-id"/>
+        <div class="modal-body">
+          <p class="text-sm text-muted mb-4">Un email ou une consigne sera transmise au parent lui demandant de re-téléverser une version conforme.</p>
+          <div class="form-group">
+            <label class="form-label form-label-required" for="replace-public-message">Consigne pour la famille (affichée au parent)</label>
+            <textarea id="replace-public-message" class="form-control" rows="3" required placeholder="Ex: Merci de fournir une copie scannée plus nette et non coupée du document."></textarea>
+          </div>
+          <div class="form-group mb-0">
+            <label class="form-label" for="replace-comment">Commentaire interne (équipe administrative)</label>
+            <textarea id="replace-comment" class="form-control" rows="2" placeholder="Note pour le suivi du dossier…"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-cancel-replace" type="button" class="btn btn-secondary">Annuler</button>
+          <button type="submit" class="btn btn-warning">Envoyer la demande</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Secure Preview -->
+  <div id="modal-preview-doc" class="modal-backdrop">
+    <div class="modal" style="max-width: 850px; width: 90vw; height: 85vh; display: flex; flex-direction: column;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="preview-doc-title">Aperçu sécurisé du document</h2>
+        <div class="flex items-center gap-2">
+          <a id="btn-preview-external" href="#" target="_blank" class="btn btn-secondary btn-sm flex items-center gap-1">
+            <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span>
+            <span>Ouvrir</span>
+          </a>
+          <button id="btn-close-preview-modal" class="btn-icon btn-icon-sm" type="button">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-body" style="flex: 1; padding: 0; display: flex; align-items: center; justify-content: center; background: #1e293b; overflow: hidden;">
+        <iframe id="preview-doc-iframe" style="width: 100%; height: 100%; border: none;" src="about:blank"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .badge-status.VALIDATED { background: rgba(16, 185, 129, 0.15); color: #059669; }
+    .badge-status.PENDING_REVIEW, .badge-status.UPLOADED { background: rgba(59, 130, 246, 0.15); color: #2563eb; }
+    .badge-status.REPLACEMENT_REQUIRED { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+    .badge-status.REJECTED { background: rgba(239, 68, 68, 0.15); color: #dc2626; }
+    .btn-action-icon {
+      padding: 5px;
+      border-radius: var(--r-md);
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+      background: transparent;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .btn-action-icon:hover {
+      background: var(--surface-alt);
+      color: var(--text-primary);
+      border-color: var(--border);
+    }
+    .btn-action-icon.success:hover { background: rgba(16, 185, 129, 0.1); color: #059669; }
+    .btn-action-icon.warning:hover { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+    .btn-action-icon.danger:hover { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+  </style>
+
+  <script>
+    const API_BASE = '/api';
+    const tok = () => localStorage.getItem('vs_admin_token') || localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken') || (document.cookie.match(/(?:^|;\s*)vs_admin_session=([^;]+)/)?.[1]);
+    const hdr = () => {
+      const token = tok();
+      const h = { 'Content-Type': 'application/json' };
+      if (token) h['Authorization'] = `Bearer ${token}`;
+      return h;
+    };
+
+    let allRequirements = [];
+    let allReceivedDocs = [];
+    let docTypes = [];
+    let schoolsList = [];
+    let academicYearsList = [];
+    let levelsList = [];
+
+    function switchDocsTab(tab) {
+      document.getElementById('tab-btn-requirements').classList.toggle('active', tab === 'requirements');
+      document.getElementById('tab-btn-received').classList.toggle('active', tab === 'received');
+      document.getElementById('pane-requirements').classList.toggle('hidden', tab !== 'requirements');
+      document.getElementById('pane-received').classList.toggle('hidden', tab !== 'received');
+      if (tab === 'received' && allReceivedDocs.length === 0) {
+        loadReceivedDocs();
+      }
+    }
+
+    function showAlert(msg, type = 'success') {
+      const el = document.getElementById('docs-alert');
+      if (!el) return;
+      el.textContent = msg;
+      el.className = `alert alert-${type} mb-6`;
+      el.classList.remove('hidden');
+      setTimeout(() => {
+        el.classList.add('hidden');
+      }, 5000);
+    }
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 Ko';
+      const k = 1024;
+      const sizes = ['Octets', 'Ko', 'Mo', 'Go'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    }
+
+    // ── Metadata Loading ──
+    async function loadMetadata() {
+      try {
+        const [typesRes, schoolsRes, yearsRes, levelsRes] = await Promise.all([
+          fetch(`${API_BASE}/admin/documents/types`, { headers: hdr() }).then(r => r.json()),
+          fetch(`${API_BASE}/admin/schools`, { headers: hdr() }).then(r => r.json()),
+          fetch(`${API_BASE}/admin/academic-years`, { headers: hdr() }).then(r => r.json()),
+          fetch(`${API_BASE}/admin/school-year-levels`, { headers: hdr() }).then(r => r.json()).catch(() => ({ success: false })),
+        ]);
+
+        if (typesRes.success) docTypes = typesRes.data || [];
+        if (schoolsRes.success) schoolsList = schoolsRes.data || [];
+        if (yearsRes.success) academicYearsList = yearsRes.data || [];
+
+        // Populate filter school
+        const filterSchool = document.getElementById('filter-req-school');
+        if (filterSchool) {
+          filterSchool.innerHTML = '<option value="">Tous les établissements</option>' + 
+            schoolsList.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+          filterSchool.addEventListener('change', () => loadRequirements(filterSchool.value));
+        }
+
+        // Populate modal selects
+        const selType = document.getElementById('req-type-id');
+        if (selType) {
+          selType.innerHTML = '<option value="">Sélectionnez un type de document…</option>' +
+            docTypes.map(t => `<option value="${t.id}">${escapeHtml(t.nameFr)}</option>`).join('');
+        }
+
+        const selSchool = document.getElementById('req-school-id');
+        if (selSchool) {
+          selSchool.innerHTML = '<option value="">Sélectionnez un établissement…</option>' +
+            schoolsList.map(s => `<option value="${s.id}">${escapeHtml(s.name)}</option>`).join('');
+          
+          selSchool.addEventListener('change', () => {
+            loadLevelsForSchool(selSchool.value);
+          });
+        }
+
+        const selYear = document.getElementById('req-academic-year-id');
+        if (selYear) {
+          selYear.innerHTML = academicYearsList.map(y => 
+            `<option value="${y.id}" ${y.isCurrent || y.status === 'ACTIVE' ? 'selected' : ''}>${escapeHtml(y.name)}</option>`
+          ).join('');
+        }
+
+      } catch (err) {
+        console.error('[Documents] Error loading metadata:', err);
+      }
+    }
+
+    async function loadLevelsForSchool(schoolId) {
+      const selLevel = document.getElementById('req-level-id');
+      if (!selLevel) return;
+      selLevel.innerHTML = '<option value="">Tous les niveaux de l\'établissement</option>';
+      if (!schoolId) return;
+
+      try {
+        const res = await fetch(`${API_BASE}/public/levels/${schoolId}`);
+        const data = await res.json();
+        if (data.success && data.data) {
+          levelsList = data.data;
+          selLevel.innerHTML = '<option value="">Tous les niveaux de l\'établissement</option>' +
+            levelsList.map(l => `<option value="${l.id}">${escapeHtml(l.nameFr || l.name)}</option>`).join('');
+        }
+      } catch (e) {
+        console.warn('Could not load levels for school:', e);
+      }
+    }
+
+    // ── Tab 1: Document Requirements ──
+    async function loadRequirements(schoolId = '') {
+      const tbody = document.getElementById('requirements-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="8" class="text-center py-10 text-muted">Chargement des exigences documentaires…</td></tr>';
+
+      try {
+        const url = schoolId 
+          ? `${API_BASE}/admin/documents/requirements?schoolId=${encodeURIComponent(schoolId)}`
+          : `${API_BASE}/admin/documents/requirements`;
+        const res = await fetch(url, { headers: hdr() });
+        const json = await res.json();
+
+        if (!json.success || !json.data || json.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="8" class="text-center py-10 text-muted">Aucune exigence documentaire configurée. Cliquez sur "Nouvelle exigence documentaire" pour en ajouter une.</td></tr>';
+          allRequirements = [];
+          return;
+        }
+
+        allRequirements = json.data;
+        renderRequirementsTable(allRequirements);
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-10 text-danger">Erreur lors du chargement des exigences documentaires.</td></tr>';
+      }
+    }
+
+    function renderRequirementsTable(reqs) {
+      const tbody = document.getElementById('requirements-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = reqs.map(r => `
+        <tr data-req-id="${r.id}">
+          <td>
+            <div class="font-semibold text-sm">${escapeHtml(r.docTypeNameFr || 'Document')}</div>
+            <div class="text-xs text-muted">Règle: ${escapeHtml(r.fileRuleType || 'IMAGE_OR_PDF')} • Max ${Math.round((r.maxFileSizeBytes || 5242880)/(1024*1024))} Mo</div>
+          </td>
+          <td>
+            <span class="text-xs font-medium">${escapeHtml(r.schoolName || 'Global (Tous)')}</span>
+          </td>
+          <td>
+            <span class="text-xs text-muted">${escapeHtml(r.levelName || 'Tous les niveaux')}</span>
+          </td>
+          <td>
+            <span class="badge ${r.isRequired ? 'badge-pending' : 'badge-inactive'}">${r.isRequired ? 'Oui' : 'Non'}</span>
+          </td>
+          <td>
+            <span class="badge ${r.showClient ? 'badge-active' : 'badge-inactive'}">${r.showClient ? 'Visible' : 'Masqué'}</span>
+          </td>
+          <td>
+            <span class="badge ${r.isActive ? 'badge-active' : 'badge-inactive'}">${r.isActive ? 'Actif' : 'Inactif'}</span>
+          </td>
+          <td>
+            <span class="text-xs">${r.displayOrder ?? 0}</span>
+          </td>
+          <td style="text-align: right;">
+            <div class="flex items-center justify-end gap-1">
+              <button class="btn-action-icon" title="Modifier" onclick="editRequirement('${r.id}')">
+                <span class="material-symbols-outlined" style="font-size:18px;">edit</span>
+              </button>
+              <button class="btn-action-icon danger" title="Supprimer" onclick="deleteRequirement('${r.id}')">
+                <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openReqModal(isEdit = false, req = null) {
+      const modal = document.getElementById('modal-requirement');
+      const title = document.getElementById('modal-req-title');
+      const form = document.getElementById('form-requirement');
+      if (!modal || !form) return;
+
+      form.reset();
+      document.getElementById('req-id').value = '';
+
+      if (isEdit && req) {
+        title.textContent = 'Modifier l\'exigence documentaire';
+        document.getElementById('req-id').value = req.id;
+        document.getElementById('req-type-id').value = req.documentTypeId || '';
+        document.getElementById('req-school-id').value = req.schoolId || '';
+        document.getElementById('req-academic-year-id').value = req.academicYearId || '';
+        document.getElementById('req-display-order').value = req.displayOrder ?? 0;
+        document.getElementById('req-max-size').value = Math.round((req.maxFileSizeBytes || 5242880) / (1024 * 1024));
+        document.getElementById('req-show-client').checked = req.showClient !== false;
+        document.getElementById('req-is-required').checked = req.isRequired !== false;
+        document.getElementById('req-is-active').checked = req.isActive !== false;
+
+        if (req.schoolId) {
+          loadLevelsForSchool(req.schoolId).then(() => {
+            document.getElementById('req-level-id').value = req.levelId || '';
+          });
+        }
+      } else {
+        title.textContent = 'Nouvelle exigence documentaire';
+        document.getElementById('req-max-size').value = 5;
+        document.getElementById('req-extensions').value = 'pdf, jpg, jpeg, png';
+        document.getElementById('req-show-client').checked = true;
+        document.getElementById('req-is-required').checked = true;
+        document.getElementById('req-is-active').checked = true;
+      }
+
+      modal.classList.add('open');
+    }
+
+    function closeReqModal() {
+      const modal = document.getElementById('modal-requirement');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function editRequirement(id) {
+      const req = allRequirements.find(r => r.id === id);
+      if (req) openReqModal(true, req);
+    }
+
+    async function deleteRequirement(id) {
+      if (!confirm('Êtes-vous certain de vouloir supprimer cette exigence documentaire ?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/requirements/${id}`, {
+          method: 'DELETE',
+          headers: hdr(),
+        });
+        const json = await res.json();
+        if (json.success) {
+          showAlert('Exigence supprimée avec succès.', 'success');
+          loadRequirements(document.getElementById('filter-req-school')?.value || '');
+        } else {
+          showAlert(json.error?.message || 'Erreur lors de la suppression.', 'danger');
+        }
+      } catch (err) {
+        showAlert('Erreur de communication serveur.', 'danger');
+      }
+    }
+
+    // ── Tab 2: Received Documents Review Queue ──
+    async function loadReceivedDocs() {
+      const tbody = document.getElementById('documents-tbody');
+      if (!tbody) return;
+      tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-muted">Chargement des documents reçus…</td></tr>';
+
+      try {
+        const docType = document.getElementById('filter-doc-type')?.value || '';
+        const search = document.getElementById('search-docs')?.value || '';
+
+        let url = `${API_BASE}/admin/documents/review-queue?`;
+        if (search) url += `search=${encodeURIComponent(search)}&`;
+
+        const res = await fetch(url, { headers: hdr() });
+        const json = await res.json();
+
+        if (!json.success || !json.data || json.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-muted">Aucun justificatif en attente d\'examen.</td></tr>';
+          allReceivedDocs = [];
+          return;
+        }
+
+        allReceivedDocs = json.data;
+        renderReceivedDocsTable(allReceivedDocs);
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-danger">Erreur lors du chargement des pièces reçues.</td></tr>';
+      }
+    }
+
+    function renderReceivedDocsTable(docs) {
+      const tbody = document.getElementById('documents-tbody');
+      if (!tbody) return;
+
+      const docTypeFilter = document.getElementById('filter-doc-type')?.value || '';
+      let filtered = docs;
+      if (docTypeFilter) {
+        filtered = filtered.filter(d => d.documentTypeId === docTypeFilter || d.documentTypeNameFr?.toUpperCase().includes(docTypeFilter));
+      }
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center py-10 text-muted">Aucune pièce ne correspond à vos filtres.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(d => {
+        const dateStr = d.uploadedAt ? new Date(d.uploadedAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+        const statusMap = {
+          VALIDATED: 'Validé',
+          PENDING_REVIEW: 'En attente d\'examen',
+          UPLOADED: 'Reçu',
+          REPLACEMENT_REQUIRED: 'Remplacement demandé',
+          REJECTED: 'Rejeté'
+        };
+        const statusText = statusMap[d.status] || d.status;
+
+        return `
+          <tr data-doc-id="${d.id}">
+            <td>
+              <div class="font-semibold text-sm flex items-center gap-2">
+                <span class="material-symbols-outlined" style="font-size:18px;color:var(--text-muted);">description</span>
+                <span>${escapeHtml(d.originalFilename || 'document')}</span>
+              </div>
+              <div class="text-xs text-muted">${formatBytes(d.fileSizeBytes)}</div>
+            </td>
+            <td>
+              <a href="/inscriptions/${d.registrationId}" class="text-xs font-semibold text-primary hover:underline">
+                ${escapeHtml(d.registrationCode || '—')}
+              </a>
+              <div class="text-xs text-muted">${escapeHtml(d.studentFullName || '')}</div>
+            </td>
+            <td>
+              <span class="text-xs font-medium">${escapeHtml(d.documentTypeNameFr || 'Justificatif')}</span>
+            </td>
+            <td>
+              <span class="text-xs text-muted">${escapeHtml(d.mimeType || 'application/pdf')}</span>
+            </td>
+            <td>
+              <span class="badge-status ${d.status}">${statusText}</span>
+              ${d.publicReplacementMessage ? `<div class="text-xs text-warning mt-1" title="${escapeHtml(d.publicReplacementMessage)}">⚠️ Demande transmise</div>` : ''}
+            </td>
+            <td>
+              <span class="text-xs text-muted">${dateStr}</span>
+            </td>
+            <td style="text-align: right;">
+              <div class="flex items-center justify-end gap-1">
+                <button class="btn-action-icon" title="Aperçu sécurisé" onclick="previewDoc('${d.id}', '${escapeHtml(d.originalFilename)}')">
+                  <span class="material-symbols-outlined" style="font-size:18px;">visibility</span>
+                </button>
+                <button class="btn-action-icon" title="Télécharger" onclick="downloadDoc('${d.id}')">
+                  <span class="material-symbols-outlined" style="font-size:18px;">download</span>
+                </button>
+                <button class="btn-action-icon success" title="Valider le document" onclick="validateDoc('${d.id}')">
+                  <span class="material-symbols-outlined" style="font-size:18px;">check_circle</span>
+                </button>
+                <button class="btn-action-icon warning" title="Demander un remplacement" onclick="openReplaceModal('${d.id}')">
+                  <span class="material-symbols-outlined" style="font-size:18px;">published_with_changes</span>
+                </button>
+                <button class="btn-action-icon danger" title="Rejeter" onclick="openRejectModal('${d.id}', '${escapeHtml(d.originalFilename)}')">
+                  <span class="material-symbols-outlined" style="font-size:18px;">cancel</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ── Document Review Actions ──
+    async function previewDoc(id, filename) {
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/${id}/preview-url`, {
+          method: 'POST',
+          headers: hdr()
+        });
+        const json = await res.json();
+        if (json.success && json.data?.previewUrl) {
+          const previewModal = document.getElementById('modal-preview-doc');
+          const previewIframe = document.getElementById('preview-doc-iframe');
+          const previewTitle = document.getElementById('preview-doc-title');
+          const previewExt = document.getElementById('btn-preview-external');
+
+          if (previewModal && previewIframe) {
+            previewTitle.textContent = `Aperçu sécurisé : ${filename}`;
+            previewIframe.src = json.data.previewUrl;
+            previewExt.href = json.data.previewUrl;
+            previewModal.classList.add('open');
+          } else {
+            window.open(json.data.previewUrl, '_blank');
+          }
+        } else {
+          showAlert(json.error?.message || 'Impossible d\'obtenir l\'aperçu.', 'danger');
+        }
+      } catch (err) {
+        showAlert('Erreur lors de la génération de l\'aperçu sécurisé.', 'danger');
+      }
+    }
+
+    async function downloadDoc(id) {
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/${id}/download-url`, {
+          method: 'POST',
+          headers: hdr()
+        });
+        const json = await res.json();
+        if (json.success && json.data?.downloadUrl) {
+          window.open(json.data.downloadUrl, '_blank');
+        } else {
+          showAlert(json.error?.message || 'Impossible de télécharger le fichier.', 'danger');
+        }
+      } catch (err) {
+        showAlert('Erreur lors du téléchargement sécurisé.', 'danger');
+      }
+    }
+
+    async function validateDoc(id) {
+      if (!confirm('Confirmez-vous la validation conforme de cette pièce justificative ?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/admin/documents/${id}/validate`, {
+          method: 'POST',
+          headers: hdr()
+        });
+        const json = await res.json();
+        if (json.success) {
+          showAlert('Pièce justificative validée avec succès.', 'success');
+          loadReceivedDocs();
+        } else {
+          showAlert(json.error?.message || 'Erreur lors de la validation.', 'danger');
+        }
+      } catch (err) {
+        showAlert('Erreur de communication serveur.', 'danger');
+      }
+    }
+
+    function openRejectModal(id, filename) {
+      const modal = document.getElementById('modal-reject-doc');
+      document.getElementById('reject-doc-id').value = id;
+      document.getElementById('reject-doc-name').textContent = `Document concerné : ${filename}`;
+      document.getElementById('reject-comment').value = '';
+      if (modal) modal.classList.add('open');
+    }
+
+    function openReplaceModal(id) {
+      const modal = document.getElementById('modal-replace-doc');
+      document.getElementById('replace-doc-id').value = id;
+      document.getElementById('replace-public-message').value = '';
+      document.getElementById('replace-comment').value = '';
+      if (modal) modal.classList.add('open');
+    }
+
+    // ── Helper Escape HTML ──
+    function escapeHtml(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    // ── Document Event Listeners Initialization ──
+    document.addEventListener('DOMContentLoaded', () => {
+      loadMetadata();
+      loadRequirements();
+
+      // Modal open/close bindings
+      document.getElementById('btn-add-doc-requirement')?.addEventListener('click', () => openReqModal(false));
+      document.getElementById('btn-close-req-modal')?.addEventListener('click', closeReqModal);
+      document.getElementById('btn-cancel-req')?.addEventListener('click', closeReqModal);
+
+      document.getElementById('btn-close-reject-modal')?.addEventListener('click', () => {
+        document.getElementById('modal-reject-doc')?.classList.remove('open');
+      });
+      document.getElementById('btn-cancel-reject')?.addEventListener('click', () => {
+        document.getElementById('modal-reject-doc')?.classList.remove('open');
+      });
+
+      document.getElementById('btn-close-replace-modal')?.addEventListener('click', () => {
+        document.getElementById('modal-replace-doc')?.classList.remove('open');
+      });
+      document.getElementById('btn-cancel-replace')?.addEventListener('click', () => {
+        document.getElementById('modal-replace-doc')?.classList.remove('open');
+      });
+
+      document.getElementById('btn-close-preview-modal')?.addEventListener('click', () => {
+        const pModal = document.getElementById('modal-preview-doc');
+        const pIframe = document.getElementById('preview-doc-iframe');
+        if (pModal) pModal.classList.remove('open');
+        if (pIframe) pIframe.src = 'about:blank';
+      });
+
+      // Form: Requirement Submit
+      document.getElementById('form-requirement')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('req-id').value;
+        const documentTypeId = document.getElementById('req-type-id').value;
+        const schoolId = document.getElementById('req-school-id').value;
+        const academicYearId = document.getElementById('req-academic-year-id').value;
+        const levelId = document.getElementById('req-level-id').value || null;
+        const displayOrder = parseInt(document.getElementById('req-display-order').value || '0', 10);
+        const showClient = document.getElementById('req-show-client').checked;
+        const isRequired = document.getElementById('req-is-required').checked;
+        const isActive = document.getElementById('req-is-active').checked;
+
+        if (!showClient && isRequired) {
+          showAlert('Un document masqué côté client ne peut pas être obligatoire.', 'danger');
+          return;
+        }
+
+        const payload = {
+          documentTypeId,
+          schoolId,
+          academicYearId,
+          levelId,
+          displayOrder,
+          showClient,
+          isRequired,
+          isActive
+        };
+
+        try {
+          const url = id ? `${API_BASE}/admin/documents/requirements/${id}` : `${API_BASE}/admin/documents/requirements`;
+          const method = id ? 'PUT' : 'POST';
+
+          const res = await fetch(url, {
+            method,
+            headers: hdr(),
+            body: JSON.stringify(payload)
+          });
+          const json = await res.json();
+
+          if (json.success) {
+            showAlert(id ? 'Exigence mise à jour avec succès.' : 'Exigence créée avec succès.', 'success');
+            closeReqModal();
+            loadRequirements(document.getElementById('filter-req-school')?.value || '');
+          } else {
+            showAlert(json.error?.message || 'Erreur lors de l\'enregistrement.', 'danger');
+          }
+        } catch (err) {
+          showAlert('Erreur serveur lors de l\'enregistrement.', 'danger');
+        }
+      });
+
+      // Form: Reject Doc Submit
+      document.getElementById('form-reject-doc')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('reject-doc-id').value;
+        const reasonCode = document.getElementById('reject-reason-code').value;
+        const internalComment = document.getElementById('reject-comment').value;
+
+        try {
+          const res = await fetch(`${API_BASE}/admin/documents/${id}/reject`, {
+            method: 'POST',
+            headers: hdr(),
+            body: JSON.stringify({ reasonCode, internalComment })
+          });
+          const json = await res.json();
+          if (json.success) {
+            showAlert('Document marqué comme rejeté.', 'success');
+            document.getElementById('modal-reject-doc')?.classList.remove('open');
+            loadReceivedDocs();
+          } else {
+            showAlert(json.error?.message || 'Erreur lors du rejet.', 'danger');
+          }
+        } catch (err) {
+          showAlert('Erreur serveur.', 'danger');
+        }
+      });
+
+      // Form: Request Replacement Submit
+      document.getElementById('form-replace-doc')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('replace-doc-id').value;
+        const publicMessage = document.getElementById('replace-public-message').value;
+        const internalComment = document.getElementById('replace-comment').value;
+
+        try {
+          const res = await fetch(`${API_BASE}/admin/documents/${id}/request-replacement`, {
+            method: 'POST',
+            headers: hdr(),
+            body: JSON.stringify({ publicMessage, internalComment })
+          });
+          const json = await res.json();
+          if (json.success) {
+            showAlert('Demande de remplacement transmise.', 'success');
+            document.getElementById('modal-replace-doc')?.classList.remove('open');
+            loadReceivedDocs();
+          } else {
+            showAlert(json.error?.message || 'Erreur lors de la demande.', 'danger');
+          }
+        } catch (err) {
+          showAlert('Erreur serveur.', 'danger');
+        }
+      });
+
+      // Filter & Search bindings for Received Docs
+      let searchTimeout;
+      document.getElementById('search-docs')?.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(loadReceivedDocs, 300);
+      });
+      document.getElementById('filter-doc-type')?.addEventListener('change', () => {
+        renderReceivedDocsTable(allReceivedDocs);
+      });
+    });
+  </script>
+</body>
+</html>

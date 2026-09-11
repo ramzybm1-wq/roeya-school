@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Connexion Administration — VISION SCHOOL</title>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+</head>
+<body class="auth-page">
+  <main class="auth-card animate-fadeIn">
+    <!-- Brand Header -->
+    <div class="auth-logo">
+      <div class="auth-logo-icon">
+        <span class="material-symbols-outlined">school</span>
+      </div>
+      <div>
+        <div class="auth-logo-name">VISION SCHOOL</div>
+        <div class="auth-logo-sub">Administration</div>
+      </div>
+    </div>
+
+    <h1 class="auth-title">Espace Administration</h1>
+    <p class="auth-desc">Accédez à la plateforme de gestion des inscriptions scolaires.</p>
+
+    <!-- Global Error Banner -->
+    <div id="login-error" class="alert alert-error mb-4 hidden" role="alert">
+      <span class="material-symbols-outlined">error</span>
+      <span id="login-error-message" class="flex-1 font-medium"></span>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" novalidate>
+      <!-- Email Field -->
+      <div class="form-group">
+        <label class="form-label form-label-required" for="email">Adresse email</label>
+        <div class="search-input-wrap">
+          <span class="material-symbols-outlined">mail</span>
+          <input 
+            class="form-control" 
+            id="email" 
+            name="email" 
+            type="email" 
+            placeholder="admin@visionschool.dz" 
+            autocomplete="email" 
+            required
+          />
+        </div>
+        <div id="email-error" class="form-error hidden">
+          <span class="material-symbols-outlined">warning</span>
+          <span id="email-error-text"></span>
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <div class="flex items-center justify-between mb-1">
+          <label class="form-label form-label-required" for="password">Mot de passe</label>
+          <a class="text-xs text-primary-color" href="/forgot-password">Mot de passe oublié ?</a>
+        </div>
+        <div class="input-password-wrap">
+          <input 
+            class="form-control" 
+            id="password" 
+            name="password" 
+            type="password" 
+            placeholder="••••••••" 
+            autocomplete="current-password" 
+            required
+          />
+          <button 
+            type="button" 
+            id="toggle-password" 
+            class="btn-password-toggle" 
+            aria-label="Afficher le mot de passe"
+            title="Afficher/Masquer le mot de passe"
+          >
+            <span id="toggle-password-icon" class="material-symbols-outlined">visibility</span>
+          </button>
+        </div>
+        <div id="password-error" class="form-error hidden">
+          <span class="material-symbols-outlined">warning</span>
+          <span id="password-error-text"></span>
+        </div>
+      </div>
+
+      <!-- Remember Device Checkbox -->
+      <div class="form-group mb-4">
+        <label class="form-check" for="remember-me">
+          <input class="form-check-input" id="remember-me" name="remember-me" type="checkbox"/>
+          <span class="form-check-label text-sm">Se souvenir de cet appareil</span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button id="btn-login" class="btn btn-primary btn-lg w-full" type="submit">
+        <span id="btn-login-text">Se connecter</span>
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <p class="text-xs text-muted text-center">
+      Accès strictement réservé au personnel autorisé de VISION SCHOOL.<br/>
+      Connexion sécurisée TLS 1.3 chiffrée.
+    </p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VISION SCHOOL | Établissement Scolaire Privé d'Excellence</title>
+  <meta name="description" content="VISION SCHOOL offre un enseignement bilingue et trilingue d'excellence de la maternelle au secondaire. Inscriptions 2026/2027 ouvertes en ligne."/>
+  <link rel="stylesheet" href="/public/css/design-system.css"/>
+  <style>
+    /* Home Specific Styles */
+    .home-hero {
+      position: relative;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-700) 100%);
+      color: #fff;
+      padding: 80px 40px 100px;
+      overflow: hidden;
+    }
+    .home-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBCOSQay7xBCWyCEkFx9y--uX3gt4fep17I8kOpaaNlt1CtCs1JORtRh-lkzYkyy0mH7T0fRu-3O3I1T1oxloEXBRuxn8ZKvAONI8rMr272u-NhFP9RQgx9rl6xucX2wxZ93vm8PIyq4yB4XONBc6yZ1Pk4cuy0sHX7ZI4IutPFLUElGP6Ry1tvUG4TsN452pjSRvSjmgOocsZ9BazZD8vePBxhgmJFJpBQhxK9oJRiBBNC_pS159Iz');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.22;
+      mix-blend-mode: overlay;
+    }
+    .hero-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.14);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: var(--r-full);
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 20px;
+      letter-spacing: 0.04em;
+    }
+    .hero-title {
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 18px;
+      color: #fff;
+    }
+    .hero-lead {
+      font-size: 17px;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 32px;
+      max-width: 580px;
+    }
+    .hero-card {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: var(--r-2xl);
+      padding: 32px 28px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      color: var(--text);
+    }
+    .stats-strip {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 28px 40px;
+    }
+    .stats-strip-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+    .stat-box {
+      text-align: center;
+      padding: 10px;
+    }
+    .stat-box-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .stat-box-lbl {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Cycles Section */
+    .cycles-section {
+      padding: 80px 40px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .cycles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .cycle-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px 24px;
+      transition: all var(--t-normal);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+    }
+    .cycle-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--indigo);
+    }
+    .cycle-badge {
+      align-self: flex-start;
+      padding: 4px 10px;
+      border-radius: var(--r-full);
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    /* Tracking CTA strip */
+    .track-strip {
+      background: var(--navy-50);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 48px 40px;
+    }
+    .track-strip-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 992px) {
+      .hero-container {
+        grid-template-columns: 1fr;
+      }
+      .cycles-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stats-strip-inner {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 640px) {
+      .home-hero {
+        padding: 50px 16px 60px;
+      }
+      .hero-title {
+        font-size: 32px;
+      }
+      .cycles-grid {
+        grid-template-columns: 1fr;
+      }
+      .stats-strip-inner {
+        grid-template-columns: 1fr;
+      }
+      .cycles-section, .stats-strip, .track-strip {
+        padding: 40px 16px;
+      }
+      .hero-btns {
+        flex-direction: column;
+      }
+      .hero-btns .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body class="public-page">
+
+  <!-- Client Navbar -->
+  <nav class="client-nav">
+    <div class="client-nav-inner">
+      <a href="/" class="client-brand">
+        <div class="client-brand-icon"><span class="material-symbols-outlined">school</span></div>
+        <span class="client-brand-name">VISION SCHOOL</span>
+      </a>
+      <div class="client-nav-links">
+        <a href="/" class="client-nav-link active">Accueil</a>
+        <a href="/notre-ecole" class="client-nav-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-nav-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-nav-link">Galerie</a>
+        <a href="/inscription" class="client-nav-link">Inscription</a>
+        <a href="/suivi" class="client-nav-link">Suivi</a>
+        <a href="/contact" class="client-nav-link">Contact</a>
+      </div>
+      <div class="client-nav-actions">
+        <a href="/suivi" class="client-nav-track">
+          <span class="material-symbols-outlined" style="font-size:16px;">search</span>
+          Suivre mon dossier
+        </a>
+        <a href="/inscription" class="client-nav-cta">
+          <span class="material-symbols-outlined" style="font-size:16px;">edit</span>
+          Inscrire mon enfant
+        </a>
+      </div>
+      <button class="client-nav-mobile-btn" id="mobile-menu-btn" aria-label="Menu mobile">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <div class="public-main">
+
+    <!-- Hero Section -->
+    <section class="home-hero">
+      <div class="home-hero-bg"></div>
+      <div class="hero-container">
+
+        <!-- Left: Hero Pitch -->
+        <div>
+          <div class="hero-badge">
+            <span class="material-symbols-outlined" style="font-size:16px;color:var(--gold);">event</span>
+            INSCRIPTIONS 2026 / 2027 OUVERTES
+          </div>
+          <h1 class="hero-title">
+            Construisons ensemble <br/>
+            <span style="color:var(--indigo-300);">l’avenir d'excellence</span> de votre enfant.
+          </h1>
+          <p class="hero-lead">
+            Un enseignement rigoureux, trilingue et humaniste de la maternelle au secondaire. Des campus sécurisés pensés pour révéler tous les talents.
+          </p>
+          <div class="hero-btns" style="display:flex;gap:14px;flex-wrap:wrap;">
+            <a href="/inscription" class="btn btn-primary" style="padding:14px 32px;font-size:15px;box-shadow:0 8px 24px rgba(37,99,235,0.4);">
+              <span class="material-symbols-outlined">edit_square</span>
+              Déposer une candidature
+            </a>
+            <a href="/notre-ecole" class="btn btn-navy" style="background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);padding:14px 26px;font-size:15px;">
+              <span class="material-symbols-outlined">play_circle</span>
+              Découvrir l'école
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Fast Funnel Launcher Card -->
+        <div>
+          <div class="hero-card">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+              <div style="width:36px;height:36px;border-radius:var(--r-md);background:var(--indigo-50);display:flex;align-items:center;justify-content:center;">
+                <span class="material-symbols-outlined" style="color:var(--indigo);">assignment</span>
+              </div>
+              <div>
+                <h2 style="font-size:17px;font-weight:700;color:var(--navy);margin:0;">Pré-inscription Rapide</h2>
+                <div class="text-xs text-muted">Vérifiez les disponibilités en 2 clics</div>
+              </div>
+            </div>
+
+            <form action="/inscription" method="GET" style="display:flex;flex-direction:column;gap:14px;">
+              <div class="form-group mb-0">
+                <label class="form-label">Établissement souhaité</label>
+                <select class="form-control" name="school" id="home-school-select">
+                  <option value="alger">VISION SCHOOL — Campus Alger-Centre</option>
+                  <option value="oran">VISION SCHOOL — Campus Ouest</option>
+                </select>
+              </div>
+
+              <div class="form-group mb-0">
+                <label class="form-label">Cycle d'enseignement</label>
+                <select class="form-control" name="cycle" id="home-cycle-select">
+                  <option value="maternelle">Maternelle / Préscolaire (3 - 5 ans)</option>
+                  <option value="primaire" selected>Primaire (1AP à 5AP)</option>
+                  <option value="moyen">Moyen / Collège (1AM à 4AM)</option>
+                  <option value="secondaire">Secondaire / Lycée (1AS à BAC)</option>
+                </select>
+              </div>
+
+              <div class="form-group mb-0">
+                <label class="form-label">Niveau recherché</label>
+                <select class="form-control" name="level" id="home-level-select">
+                  <option value="1ap" selected>1ère Année Primaire (1AP)</option>
+                  <option value="2ap">2ème Année Primaire (2AP)</option>
+                  <option value="3ap">3ème Année Primaire (3AP)</option>
+                  <option value="4ap">4ème Année Primaire (4AP)</option>
+                  <option value="5ap">5ème Année Primaire (5AP)</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-navy w-full" style="padding:13px;font-size:14px;margin-top:6px;">
+                <span>Vérifier et démarrer</span>
+                <span class="material-symbols-outlined">arrow_forward</span>
+              </button>
+            </form>
+
+            <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--text-muted);">
+              Déjà candidat ? <a href="/suivi" style="font-weight:600;">Consulter l'état de votre dossier</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Key Metrics Strip -->
+    <div class="stats-strip">
+      <div class="stats-strip-inner">
+        <div class="stat-box">
+          <div class="stat-box-num">15+</div>
+          <div class="stat-box-lbl">Années d'excellence</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">98.5%</div>
+          <div class="stat-box-lbl">Taux de réussite officiel</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">1 : 18</div>
+          <div class="stat-box-lbl">Encadrement personnalisé</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-num">100%</div>
+          <div class="stat-box-lbl">Mention bilingue &amp; STEAM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cycles of Education Overview -->
+    <section class="cycles-section">
+      <div style="text-align:center;max-width:700px;margin:0 auto;">
+        <div style="font-size:12px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">
+          Un Cursus Continu &amp; Harmonieux
+        </div>
+        <h2 style="font-size:30px;font-weight:800;color:var(--navy);margin-bottom:12px;">
+          Nos 4 Cycles Pédagogiques
+        </h2>
+        <p style="font-size:15px;color:var(--text-muted);line-height:1.6;">
+          De l'éveil en maternelle jusqu'aux portes des universités internationales, chaque cycle dispose d'un projet éducatif adapté aux besoins de l'enfant.
+        </p>
+      </div>
+
+      <div class="cycles-grid">
+        <!-- Cycle 1 -->
+        <div class="cycle-card">
+          <span class="cycle-badge badge-success">Admissions ouvertes</span>
+          <div style="width:44px;height:44px;border-radius:var(--r-md);background:var(--indigo-50);color:var(--indigo);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <span class="material-symbols-outlined">child_care</span>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">Maternelle &amp; Éveil</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px;flex:1;">
+            Immersion bilingue précoce, développement moteur, créativité et socialisation dans des espaces sécurisés et colorés.
+          </p>
+          <a href="/niveaux-admissions" class="btn btn-outline w-full" style="font-size:13px;padding:8px;">En savoir plus</a>
+        </div>
+
+        <!-- Cycle 2 -->
+        <div class="cycle-card">
+          <span class="cycle-badge badge-success">Admissions ouvertes</span>
+          <div style="width:44px;height:44px;border-radius:var(--r-md);background:var(--indigo-50);color:var(--indigo);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <span class="material-symbols-outlined">menu_book</span>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">Primaire (1AP - 5AP)</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px;flex:1;">
+            Acquisition solide des savoirs fondamentaux, apprentissage de l'anglais renforcé, découverte du coding et activités STEAM.
+          </p>
+          <a href="/niveaux-admissions" class="btn btn-outline w-full" style="font-size:13px;padding:8px;">En savoir plus</a>
+        </div>
+
+        <!-- Cycle 3 -->
+        <div class="cycle-card">
+          <span class="cycle-badge badge-warning">Dernières places</span>
+          <div style="width:44px;height:44px;border-radius:var(--r-md);background:var(--indigo-50);color:var(--indigo);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <span class="material-symbols-outlined">psychology</span>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">Moyen (1AM - 4AM)</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px;flex:1;">
+            Développement de l'esprit critique, laboratoires scientifiques, clubs de débat et préparation méticuleuse à l'examen du BEM.
+          </p>
+          <a href="/niveaux-admissions" class="btn btn-outline w-full" style="font-size:13px;padding:8px;">En savoir plus</a>
+        </div>
+
+        <!-- Cycle 4 -->
+        <div class="cycle-card">
+          <span class="cycle-badge badge-info">Filières Bac</span>
+          <div style="width:44px;height:44px;border-radius:var(--r-md);background:var(--indigo-50);color:var(--indigo);display:flex;align-items:center;justify-content:center;margin-bottom:16px;">
+            <span class="material-symbols-outlined">school</span>
+          </div>
+          <h3 style="font-size:18px;font-weight:700;color:var(--navy);margin-bottom:8px;">Secondaire (Lycée)</h3>
+          <p style="font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px;flex:1;">
+            Filières scientifiques, mathématiques et littéraires. Coaching personnalisé pour l'accès aux meilleures écoles supérieures.
+          </p>
+          <a href="/niveaux-admissions" class="btn btn-outline w-full" style="font-size:13px;padding:8px;">En savoir plus</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tracking Live Banner -->
+    <div class="track-strip">
+      <div class="track-strip-inner">
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:48px;height:48px;border-radius:var(--r-full);background:var(--navy);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;">
+            <span class="material-symbols-outlined">track_changes</span>
+          </div>
+          <div>
+            <div style="font-size:18px;font-weight:700;color:var(--navy);">Vous avez déjà déposé un dossier ?</div>
+            <div style="font-size:14px;color:var(--text-secondary);margin-top:2px;">Consultez les décisions d'admission et l'historique de votre candidature en temps réel.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <a href="/suivi" class="btn btn-navy" style="padding:11px 24px;">
+            <span class="material-symbols-outlined">search</span>
+            Suivre mon dossier
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Client Footer -->
+  <footer class="client-footer">
+    <div class="client-footer-inner">
+      <div class="client-footer-brand">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div class="client-brand-icon" style="width:32px;height:32px;"><span class="material-symbols-outlined" style="color:#fff;font-size:18px;">school</span></div>
+          <span class="client-footer-name" style="margin:0;">VISION SCHOOL</span>
+        </div>
+        <p class="client-footer-desc">
+          Établissement d'excellence dédié à l'épanouissement intellectuel, humain et créatif de chaque élève, de la maternelle au secondaire.
+        </p>
+      </div>
+      <div>
+        <div class="client-footer-heading">Navigation</div>
+        <a href="/" class="client-footer-link">Accueil</a>
+        <a href="/notre-ecole" class="client-footer-link">Notre école</a>
+        <a href="/niveaux-admissions" class="client-footer-link">Niveaux &amp; Admissions</a>
+        <a href="/galerie" class="client-footer-link">Galerie photos</a>
+        <a href="/faq" class="client-footer-link">FAQ</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Admissions</div>
+        <a href="/inscription" class="client-footer-link">Inscription en ligne</a>
+        <a href="/suivi" class="client-footer-link">Suivi de dossier</a>
+        <a href="/contact" class="client-footer-link">Prendre rendez-vous</a>
+        <a href="/niveaux-admissions#tarifs" class="client-footer-link">Grille tarifaire</a>
+      </div>
+      <div>
+        <div class="client-footer-heading">Contact</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">location_on</span>
+          Alger, Algérie
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">call</span>
+          +213 21 00 00 00
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:8px;">
+          <span class="material-symbols-outlined" style="font-size:16px;color:var(--indigo-300);">mail</span>
+          contact@visionschool.dz
+        </div>
+      </div>
+    </div>
+    <div class="client-footer-bottom">
+      <div>© 2026 VISION SCHOOL. Tous droits réservés.</div>
+      <div style="display:flex;gap:16px;">
+        <a href="/confidentialite" class="client-footer-link" style="margin:0;">Confidentialité &amp; Mentions</a>
+        <a href="http://localhost:3001" class="client-footer-link" style="margin:0;" target="_blank">Portail Administration</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Dynamic Level Dropdown based on Cycle Selection in Hero Card
+    document.addEventListener('DOMContentLoaded', () => {
+      const cycleSelect = document.getElementById('home-cycle-select');
+      const levelSelect = document.getElementById('home-level-select');
+
+      const levelsByCycle = {
+        maternelle: [
+          { value: 'ps', text: 'Petite Section (PS)' },
+          { value: 'ms', text: 'Moyenne Section (MS)' },
+          { value: 'gs', text: 'Grande Section (GS)' }
+        ],
+        primaire: [
+          { value: '1ap', text: '1ère Année (1AP)' },
+          { value: '2ap', text: '2ème Année (2AP)' },
+          { value: '3ap', text: '3ème Année (3AP)' },
+          { value: '4ap', text: '4ème Année (4AP)' },
+          { value: '5ap', text: '5ème Année (5AP)' }
+        ],
+        moyen: [
+          { value: '1am', text: '1ère Année Moyenne (1AM)' },
+          { value: '2am', text: '2ème Année Moyenne (2AM)' },
+          { value: '3am', text: '3ème Année Moyenne (3AM)' },
+          { value: '4am', text: '4ème Année Moyenne (BEM)' }
+        ],
+        secondaire: [
+          { value: '1as', text: '1ère Année Secondaire (Tronc Commun)' },
+          { value: '2as', text: '2ème Année Secondaire' },
+          { value: '3as', text: 'Terminale (BAC)' }
+        ]
+      };
+
+      if (cycleSelect && levelSelect) {
+        cycleSelect.addEventListener('change', () => {
+          const selected = cycleSelect.value;
+          const options = levelsByCycle[selected] || [];
+          levelSelect.innerHTML = '';
+          options.forEach(opt => {
+            const el = document.createElement('option');
+            el.value = opt.value;
+            el.textContent = opt.text;
+            levelSelect.appendChild(el);
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>

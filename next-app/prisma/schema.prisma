@@ -1,0 +1,763 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model academic_years {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               String               @unique @db.VarChar(100)
+  start_date         DateTime             @db.Date
+  end_date           DateTime             @db.Date
+  status             academic_year_status @default(DRAFT)
+  is_active_default  Boolean              @default(false)
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime             @default(now()) @db.Timestamptz(6)
+  archived_at        DateTime?            @db.Timestamptz(6)
+  registrations      registrations[]
+  school_year_levels school_year_levels[]
+}
+
+model audit_logs {
+  id            String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?      @db.Uuid
+  action        String       @db.VarChar(100)
+  module        String?      @db.VarChar(100)
+  entity_type   String       @db.VarChar(50)
+  entity_id     String?      @db.Uuid
+  school_id     String?      @db.Uuid
+  before_json   Json?
+  after_json    Json?
+  metadata_json Json?
+  ip_address    String?      @db.VarChar(45)
+  user_agent    String?
+  result        audit_result @default(SUCCESS)
+  created_at    DateTime     @default(now()) @db.Timestamptz(6)
+  schools       schools?     @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+  users         users?       @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}
+
+model contact_messages {
+  id               String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  school_id        String?                @db.Uuid
+  full_name        String                 @db.VarChar(300)
+  phone            String?                @db.VarChar(30)
+  email            String?                @db.VarChar(255)
+  subject          String?                @db.VarChar(500)
+  message          String
+  status           contact_message_status @default(NEW)
+  assigned_user_id String?                @db.Uuid
+  resolved_at      DateTime?              @db.Timestamptz(6)
+  created_at       DateTime               @default(now()) @db.Timestamptz(6)
+  users            users?                 @relation(fields: [assigned_user_id], references: [id], onUpdate: NoAction)
+  schools          schools?               @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+}
+
+model cycles {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code          String    @unique @db.VarChar(50)
+  name_fr       String    @db.VarChar(150)
+  name_ar       String?   @db.VarChar(150)
+  display_order Int       @default(0)
+  is_active     Boolean   @default(true)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime  @default(now()) @db.Timestamptz(6)
+  archived_at   DateTime? @db.Timestamptz(6)
+  levels        levels[]
+}
+
+model document_types {
+  id                  String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name_fr             String         @db.VarChar(255)
+  name_ar             String?        @db.VarChar(255)
+  description_fr      String?
+  description_ar      String?
+  file_rule_type      file_rule_type @default(IMAGE_OR_PDF)
+  max_file_size_bytes Int?           @default(5242880)
+  max_files           Int?           @default(1)
+  is_active           Boolean        @default(true)
+  created_at          DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime       @default(now()) @db.Timestamptz(6)
+}
+
+model education_transitions {
+  id                                                                String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  from_level_id                                                     String         @db.Uuid
+  from_choice_id                                                    String?        @db.Uuid
+  to_level_id                                                       String         @db.Uuid
+  to_choice_id                                                      String?        @db.Uuid
+  is_active                                                         Boolean        @default(true)
+  notes                                                             String?
+  created_at                                                        DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at                                                        DateTime       @default(now()) @db.Timestamptz(6)
+  level_choices_education_transitions_from_choice_idTolevel_choices level_choices? @relation("education_transitions_from_choice_idTolevel_choices", fields: [from_choice_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  levels_education_transitions_from_level_idTolevels                levels         @relation("education_transitions_from_level_idTolevels", fields: [from_level_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  level_choices_education_transitions_to_choice_idTolevel_choices   level_choices? @relation("education_transitions_to_choice_idTolevel_choices", fields: [to_choice_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  levels_education_transitions_to_level_idTolevels                  levels         @relation("education_transitions_to_level_idTolevels", fields: [to_level_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model faq_items {
+  id            String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  school_id     String?    @db.Uuid
+  category      String?    @db.VarChar(100)
+  question_fr   String
+  question_ar   String?
+  answer_fr     String
+  answer_ar     String?
+  keywords_json Json?
+  display_order Int        @default(0)
+  is_featured   Boolean    @default(false)
+  status        faq_status @default(PUBLISHED)
+  created_at    DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime   @default(now()) @db.Timestamptz(6)
+  published_at  DateTime?  @default(now()) @db.Timestamptz(6)
+  schools       schools?   @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+}
+
+model level_choices {
+  id                                                                        String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  level_id                                                                  String                  @db.Uuid
+  parent_id                                                                 String?                 @db.Uuid
+  code                                                                      String                  @unique @db.VarChar(50)
+  name_fr                                                                   String                  @db.VarChar(150)
+  name_ar                                                                   String?                 @db.VarChar(150)
+  description                                                               String?
+  node_type                                                                 String                  @default("CHOICE") @db.VarChar(30)
+  display_order                                                             Int                     @default(0)
+  is_active                                                                 Boolean                 @default(true)
+  created_at                                                                DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                                                                DateTime                @default(now()) @db.Timestamptz(6)
+  archived_at                                                               DateTime?               @db.Timestamptz(6)
+  education_transitions_education_transitions_from_choice_idTolevel_choices education_transitions[] @relation("education_transitions_from_choice_idTolevel_choices")
+  education_transitions_education_transitions_to_choice_idTolevel_choices   education_transitions[] @relation("education_transitions_to_choice_idTolevel_choices")
+  levels                                                                    levels                  @relation(fields: [level_id], references: [id], onUpdate: NoAction)
+  level_choices                                                             level_choices?          @relation("level_choicesTolevel_choices", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  other_level_choices                                                       level_choices[]         @relation("level_choicesTolevel_choices")
+  registrations                                                             registrations[]
+  school_year_levels                                                        school_year_levels[]
+}
+
+model levels {
+  id                                                                String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cycle_id                                                          String                  @db.Uuid
+  code                                                              String                  @unique @db.VarChar(50)
+  name_fr                                                           String                  @db.VarChar(150)
+  name_ar                                                           String?                 @db.VarChar(150)
+  display_order                                                     Int                     @default(0)
+  is_active                                                         Boolean                 @default(true)
+  created_at                                                        DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                                                        DateTime                @default(now()) @db.Timestamptz(6)
+  archived_at                                                       DateTime?               @db.Timestamptz(6)
+  education_transitions_education_transitions_from_level_idTolevels education_transitions[] @relation("education_transitions_from_level_idTolevels")
+  education_transitions_education_transitions_to_level_idTolevels   education_transitions[] @relation("education_transitions_to_level_idTolevels")
+  level_choices                                                     level_choices[]
+  cycles                                                            cycles                  @relation(fields: [cycle_id], references: [id], onUpdate: NoAction)
+  registrations                                                     registrations[]
+  school_year_levels                                                school_year_levels[]
+}
+
+model login_events {
+  id              String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String?            @db.Uuid
+  email_attempted String?            @db.VarChar(255)
+  event_type      login_event_type
+  result          login_event_result
+  ip_address      String?            @db.VarChar(45)
+  user_agent      String?
+  created_at      DateTime           @default(now()) @db.Timestamptz(6)
+  users           users?             @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}
+
+model notifications {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  school_id          String?  @db.Uuid
+  user_id            String?  @db.Uuid
+  type               String   @db.VarChar(50)
+  title              String   @db.VarChar(255)
+  message            String
+  target_entity_type String?  @db.VarChar(50)
+  target_entity_id   String?  @db.Uuid
+  is_read            Boolean  @default(false)
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  schools            schools? @relation(fields: [school_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users              users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model parents {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  full_name       String          @db.VarChar(300)
+  address         String?
+  phone_primary   String          @db.VarChar(30)
+  phone_secondary String?         @db.VarChar(30)
+  whatsapp        String?         @db.VarChar(30)
+  email           String?         @db.VarChar(255)
+  wilaya          String?         @db.VarChar(100)
+  commune         String?         @db.VarChar(100)
+  created_at      DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime        @default(now()) @db.Timestamptz(6)
+  registrations   registrations[]
+}
+
+model permissions {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code             String             @unique @db.VarChar(100)
+  description      String?
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  role_permissions role_permissions[]
+}
+
+model public_content_blocks {
+  id            String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  school_id     String?              @db.Uuid
+  page          String               @db.VarChar(100)
+  section_key   String               @db.VarChar(100)
+  content_json  Json?
+  status        content_block_status @default(PUBLISHED)
+  display_order Int                  @default(0)
+  created_at    DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime             @default(now()) @db.Timestamptz(6)
+  published_at  DateTime?            @default(now()) @db.Timestamptz(6)
+  schools       schools?             @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+}
+
+model registration_notes {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id String        @db.Uuid
+  user_id         String?       @db.Uuid
+  content         String
+  created_at      DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime      @default(now()) @db.Timestamptz(6)
+  deleted_at      DateTime?     @db.Timestamptz(6)
+  registrations   registrations @relation(fields: [registration_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users           users?        @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+}
+
+model registration_status_history {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id    String               @db.Uuid
+  from_status        registration_status?
+  to_status          registration_status
+  changed_by_user_id String?              @db.Uuid
+  reason_code        String?              @db.VarChar(100)
+  internal_comment   String?
+  public_comment     String?
+  created_at         DateTime             @default(now()) @db.Timestamptz(6)
+  registrations      registrations        @relation(fields: [registration_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model registrations {
+  id                             String                        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_code              String                        @unique @db.VarChar(30)
+  school_id                      String                        @db.Uuid
+  academic_year_id               String                        @db.Uuid
+  level_id                       String                        @db.Uuid
+  choice_id                      String?                       @db.Uuid
+  school_year_level_id           String                        @db.Uuid
+  parent_id                      String                        @db.Uuid
+  student_id                     String                        @db.Uuid
+  status                         registration_status           @default(NEW)
+  source                         registration_source           @default(PUBLIC_WEB)
+  tariff_id                      String?                       @db.Uuid
+  tariff_amount_snapshot         Int?
+  tariff_currency_snapshot       String?                       @default("DZD") @db.VarChar(10)
+  client_tariff_visible_snapshot Boolean?                      @default(true)
+  form_definition_id             String?                       @db.Uuid
+  form_version                   Int?
+  public_tracking_enabled        Boolean                       @default(true)
+  submitted_at                   DateTime?                     @default(now()) @db.Timestamptz(6)
+  accepted_at                    DateTime?                     @db.Timestamptz(6)
+  refused_at                     DateTime?                     @db.Timestamptz(6)
+  cancelled_at                   DateTime?                     @db.Timestamptz(6)
+  waitlisted_at                  DateTime?                     @db.Timestamptz(6)
+  assigned_user_id               String?                       @db.Uuid
+  created_at                     DateTime                      @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime                      @default(now()) @db.Timestamptz(6)
+  archived_at                    DateTime?                     @db.Timestamptz(6)
+  registration_notes             registration_notes[]
+  registration_status_history    registration_status_history[]
+  academic_years                 academic_years                @relation(fields: [academic_year_id], references: [id], onUpdate: NoAction)
+  users                          users?                        @relation(fields: [assigned_user_id], references: [id], onUpdate: NoAction)
+  level_choices                  level_choices?                @relation(fields: [choice_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  levels                         levels                        @relation(fields: [level_id], references: [id], onUpdate: NoAction)
+  parents                        parents                       @relation(fields: [parent_id], references: [id], onUpdate: NoAction)
+  schools                        schools                       @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+  school_year_levels             school_year_levels            @relation(fields: [school_year_level_id], references: [id], onUpdate: NoAction)
+  students                       students                      @relation(fields: [student_id], references: [id], onUpdate: NoAction)
+  tariffs                        tariffs?                      @relation(fields: [tariff_id], references: [id], onUpdate: NoAction)
+  waiting_list_entries           waiting_list_entries[]
+}
+
+model report_exports {
+  id                String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id           String    @db.Uuid
+  report_type       String    @db.VarChar(100)
+  school_scope_json Json?
+  filters_json      Json?
+  format            String    @db.VarChar(20)
+  record_count      Int       @default(0)
+  storage_key       String?
+  status            String    @default("READY") @db.VarChar(50)
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  expires_at        DateTime? @db.Timestamptz(6)
+  users             users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([created_at], map: "idx_re_created")
+  @@index([user_id], map: "idx_re_user")
+}
+
+model role_permissions {
+  role_id       String      @db.Uuid
+  permission_id String      @db.Uuid
+  created_at    DateTime    @default(now()) @db.Timestamptz(6)
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  roles         roles       @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([role_id, permission_id])
+}
+
+model roles {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code             String             @unique @db.VarChar(50)
+  name             String             @db.VarChar(100)
+  description      String?
+  is_system_role   Boolean            @default(false)
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime           @default(now()) @db.Timestamptz(6)
+  role_permissions role_permissions[]
+  user_roles       user_roles[]
+}
+
+model saved_reports {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String   @db.Uuid
+  school_id    String?  @db.Uuid
+  name         String   @db.VarChar(255)
+  report_type  String   @db.VarChar(100)
+  filters_json Json?
+  columns_json Json?
+  sort_json    Json?
+  is_shared    Boolean  @default(false)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @db.Timestamptz(6)
+  schools      schools? @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+  users        users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([report_type], map: "idx_sr_type")
+  @@index([user_id], map: "idx_sr_user")
+}
+
+model school_year_levels {
+  id                    String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  school_id             String                 @db.Uuid
+  academic_year_id      String                 @db.Uuid
+  level_id              String                 @db.Uuid
+  choice_id             String?                @db.Uuid
+  is_visible_client     Boolean                @default(true)
+  registration_status   registration_status    @default(NEW)
+  registration_open     Boolean                @default(true)
+  registration_open_at  DateTime?              @db.Timestamptz(6)
+  registration_close_at DateTime?              @db.Timestamptz(6)
+  capacity_mode         capacity_mode          @default(LIMITED)
+  capacity_max          Int?                   @default(255)
+  full_behavior         full_behavior          @default(WAITLIST)
+  waiting_list_enabled  Boolean                @default(true)
+  waiting_list_max      Int?
+  show_remaining_places Boolean                @default(false)
+  show_status_client    Boolean                @default(true)
+  show_fill_rate        Boolean                @default(false)
+  near_full_threshold   Int?                   @default(85)
+  display_order         Int                    @default(0)
+  created_at            DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime               @default(now()) @db.Timestamptz(6)
+  archived_at           DateTime?              @db.Timestamptz(6)
+  registrations         registrations[]
+  academic_years        academic_years         @relation(fields: [academic_year_id], references: [id], onUpdate: NoAction)
+  level_choices         level_choices?         @relation(fields: [choice_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  levels                levels                 @relation(fields: [level_id], references: [id], onUpdate: NoAction)
+  schools               schools                @relation(fields: [school_id], references: [id], onUpdate: NoAction)
+  tariffs               tariffs[]
+  waiting_list_entries  waiting_list_entries[]
+}
+
+model schools {
+  id                    String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                  String                  @db.VarChar(255)
+  short_name            String?                 @db.VarChar(100)
+  code                  String                  @unique @db.VarChar(50)
+  description           String?
+  phone_primary         String?                 @db.VarChar(50)
+  phone_secondary       String?                 @db.VarChar(50)
+  whatsapp              String?                 @db.VarChar(50)
+  email_primary         String?                 @db.VarChar(255)
+  email_secondary       String?                 @db.VarChar(255)
+  website               String?                 @db.VarChar(500)
+  opening_hours_json    Json?
+  social_links_json     Json?
+  is_phone_public       Boolean                 @default(true)
+  is_email_public       Boolean                 @default(true)
+  is_whatsapp_public    Boolean                 @default(true)
+  is_map_public         Boolean                 @default(true)
+  address               String?
+  wilaya                String?                 @db.VarChar(100)
+  commune               String?                 @db.VarChar(100)
+  postal_code           String?                 @db.VarChar(10)
+  country               String?                 @default("Algérie") @db.VarChar(100)
+  latitude              Float?
+  longitude             Float?
+  google_maps_url       String?
+  status                String                  @default("ACTIVE") @db.VarChar(30)
+  is_active             Boolean                 @default(true)
+  created_at            DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                @default(now()) @db.Timestamptz(6)
+  archived_at           DateTime?               @db.Timestamptz(6)
+  audit_logs            audit_logs[]
+  contact_messages      contact_messages[]
+  faq_items             faq_items[]
+  notifications         notifications[]
+  public_content_blocks public_content_blocks[]
+  registrations         registrations[]
+  saved_reports         saved_reports[]
+  school_year_levels    school_year_levels[]
+  system_settings       system_settings[]
+  user_school_access    user_school_access[]
+}
+
+model students {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  full_name      String          @db.VarChar(300)
+  first_name     String?         @db.VarChar(150)
+  last_name      String?         @db.VarChar(150)
+  birth_date     DateTime        @db.Date
+  birth_place    String?         @db.VarChar(255)
+  gender         gender
+  current_school String?         @db.VarChar(255)
+  wilaya         String?         @db.VarChar(100)
+  commune        String?         @db.VarChar(100)
+  created_at     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime        @default(now()) @db.Timestamptz(6)
+  registrations  registrations[]
+}
+
+model system_settings {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scope      String   @default("GLOBAL") @db.VarChar(30)
+  school_id  String?  @db.Uuid
+  key        String   @db.VarChar(200)
+  value_json Json?
+  is_public  Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @db.Timestamptz(6)
+  schools    schools? @relation(fields: [school_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model tariffs {
+  id                       String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  school_year_level_id     String             @db.Uuid
+  amount                   Int
+  currency                 String             @default("DZD") @db.VarChar(10)
+  show_client              Boolean            @default(true)
+  hidden_client_message_fr String?
+  hidden_client_message_ar String?
+  status                   String             @default("ACTIVE") @db.VarChar(30)
+  valid_from               DateTime?          @db.Timestamptz(6)
+  valid_to                 DateTime?          @db.Timestamptz(6)
+  created_by               String?            @db.Uuid
+  created_at               DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime           @default(now()) @db.Timestamptz(6)
+  registrations            registrations[]
+  school_year_levels       school_year_levels @relation(fields: [school_year_level_id], references: [id], onUpdate: NoAction)
+}
+
+model two_factor_challenges {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id         String   @db.Uuid
+  challenge_token String   @unique @db.VarChar(255)
+  attempts        Int      @default(0)
+  max_attempts    Int      @default(5)
+  expires_at      DateTime @db.Timestamptz(6)
+  ip_address      String?  @db.VarChar(45)
+  user_agent      String?
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  users           users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model user_roles {
+  user_id    String   @db.Uuid
+  role_id    String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  roles      roles    @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, role_id])
+}
+
+model user_school_access {
+  user_id    String   @db.Uuid
+  school_id  String   @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  schools    schools  @relation(fields: [school_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, school_id])
+}
+
+model user_sessions {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id             String    @db.Uuid
+  token_hash          String    @unique @db.VarChar(255)
+  session_provider_id String?   @db.VarChar(255)
+  device_info         String?
+  ip_address          String?   @db.VarChar(45)
+  user_agent          String?
+  is_revoked          Boolean   @default(false)
+  expires_at          DateTime  @db.Timestamptz(6)
+  last_activity_at    DateTime  @default(now()) @db.Timestamptz(6)
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  revoked_at          DateTime? @db.Timestamptz(6)
+  users               users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id                        String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  auth_provider_id          String?                 @db.VarChar(255)
+  first_name                String                  @db.VarChar(150)
+  last_name                 String                  @db.VarChar(150)
+  email                     String                  @unique @db.VarChar(255)
+  phone                     String?                 @db.VarChar(50)
+  avatar_media_id           String?                 @db.Uuid
+  status                    user_status             @default(ACTIVE)
+  password_hash             String?                 @db.VarChar(255)
+  two_factor_secret         String?                 @db.VarChar(255)
+  is_two_factor_enabled     Boolean                 @default(false)
+  two_factor_recovery_codes Json?
+  two_factor_configured_at  DateTime?               @db.Timestamptz(6)
+  failed_login_attempts     Int                     @default(0)
+  locked_until              DateTime?               @db.Timestamptz(6)
+  last_failed_login_at      DateTime?               @db.Timestamptz(6)
+  invitation_token          String?                 @db.VarChar(255)
+  invitation_expires_at     DateTime?               @db.Timestamptz(6)
+  invited_by_user_id        String?                 @db.Uuid
+  invited_at                DateTime?               @db.Timestamptz(6)
+  accepted_invitation_at    DateTime?               @db.Timestamptz(6)
+  password_reset_token      String?                 @db.VarChar(255)
+  password_reset_expires_at DateTime?               @db.Timestamptz(6)
+  suspended_until           DateTime?               @db.Timestamptz(6)
+  suspension_reason         String?
+  last_login_at             DateTime?               @db.Timestamptz(6)
+  created_at                DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                @default(now()) @db.Timestamptz(6)
+  disabled_at               DateTime?               @db.Timestamptz(6)
+  archived_at               DateTime?               @db.Timestamptz(6)
+  audit_logs                audit_logs[]
+  contact_messages          contact_messages[]
+  login_events              login_events[]
+  notifications             notifications[]
+  registration_notes        registration_notes[]
+  registrations             registrations[]
+  report_exports            report_exports[]
+  saved_reports             saved_reports[]
+  two_factor_challenges     two_factor_challenges[]
+  user_roles                user_roles[]
+  user_school_access        user_school_access[]
+  user_sessions             user_sessions[]
+}
+
+model waiting_list_entries {
+  id                   String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  registration_id      String                     @db.Uuid
+  school_year_level_id String                     @db.Uuid
+  entered_at           DateTime                   @default(now()) @db.Timestamptz(6)
+  original_position    Int?
+  priority_type        String?                    @db.VarChar(50)
+  priority_reason      String?
+  manual_priority      Int?
+  status               waiting_list_status        @default(ACTIVE)
+  offer_status         waiting_list_offer_status?
+  offer_created_at     DateTime?                  @db.Timestamptz(6)
+  offer_expires_at     DateTime?                  @db.Timestamptz(6)
+  created_at           DateTime                   @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime                   @default(now()) @db.Timestamptz(6)
+  registrations        registrations              @relation(fields: [registration_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  school_year_levels   school_year_levels         @relation(fields: [school_year_level_id], references: [id], onUpdate: NoAction)
+}
+
+enum academic_year_status {
+  DRAFT
+  PREPARING
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum audit_result {
+  SUCCESS
+  FAILURE
+  PARTIAL
+}
+
+enum capacity_mode {
+  LIMITED
+  UNLIMITED
+}
+
+enum capacity_reservation_status {
+  ACTIVE
+  CONSUMED
+  EXPIRED
+  RELEASED
+  CANCELLED
+}
+
+enum contact_message_status {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  ARCHIVED
+}
+
+enum content_block_status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum document_status {
+  UPLOADED
+  PENDING_REVIEW
+  VALIDATED
+  REJECTED
+  REPLACEMENT_REQUIRED
+}
+
+enum faq_status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum file_rule_type {
+  IMAGE
+  PDF
+  IMAGE_OR_PDF
+  ANY
+}
+
+enum full_behavior {
+  WAITLIST
+  CLOSE
+  RECEIVE_WITHOUT_ACCEPTANCE
+}
+
+enum gender {
+  MALE
+  FEMALE
+}
+
+enum login_event_result {
+  SUCCESS
+  FAILURE
+  BLOCKED
+  CHALLENGE_REQUIRED
+}
+
+enum login_event_type {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGOUT
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  TWO_FACTOR_CHALLENGE_ISSUED
+  TWO_FACTOR_VERIFIED
+  TWO_FACTOR_FAILED
+  SESSION_REVOKED
+  ACCOUNT_LOCKED
+  ACCOUNT_UNLOCKED
+}
+
+enum media_placement {
+  CLIENT_HEADER_LOGO
+  CLIENT_FOOTER_LOGO
+  CLIENT_HERO
+  CLIENT_REGISTRATION_BACKGROUND
+  CLIENT_ABOUT_IMAGE
+  CLIENT_CONTACT_IMAGE
+  CLIENT_GALLERY
+  ADMIN_SIDEBAR_LOGO
+  ADMIN_LOGIN_LOGO
+  ADMIN_LOGIN_BACKGROUND
+  APP_LOGO
+  APP_SPLASH
+  FAVICON
+  SCHOOL_CARD_IMAGE
+  HEADER_LOGO
+  ADMIN_LOGO
+  CONTACT_IMAGE
+  GALLERY
+  LOGIN_BACKGROUND
+  OTHER
+}
+
+enum media_status {
+  DRAFT
+  PUBLISHED
+  INACTIVE
+  ARCHIVED
+}
+
+enum media_type {
+  LOGO
+  HERO
+  BACKGROUND
+  GALLERY
+  ICON
+  OTHER
+}
+
+enum registration_source {
+  PUBLIC_WEB
+  MOBILE_APP
+  ADMIN_MANUAL
+  OTHER
+}
+
+enum registration_status {
+  NEW
+  UNDER_REVIEW
+  PENDING
+  ACCEPTED
+  REFUSED
+  WAITLISTED
+  CANCELLED
+}
+
+enum uploaded_by_type {
+  PARENT
+  ADMIN
+}
+
+enum user_status {
+  INVITED
+  ACTIVE
+  SUSPENDED
+  DISABLED
+  LOCKED
+}
+
+enum waiting_list_offer_status {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum waiting_list_status {
+  ACTIVE
+  SKIPPED_TEMPORARILY
+  OFFERED
+  PROMOTED
+  REMOVED
+  CANCELLED
+  EXPIRED
+}
